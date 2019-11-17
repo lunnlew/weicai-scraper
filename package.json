@@ -1,6 +1,7 @@
 {
   "name": "weicai-scraper",
   "version": "0.1.0",
+  "description": "One scraper",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -16,6 +17,19 @@
     "test:unit": "vue-cli-service test:unit"
   },
   "main": "background.js",
+  "engines": {
+    "node": ">=8.11.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lunnlew/weicai-scraper.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lunnlew/weicai-scraper/issues"
+  },
+  "homepage": "https://weicai.karoy.cn/",
+  "author": "lunnlew",
+  "license": "MIT",
   "dependencies": {
     "axios": "^0.18.0",
     "bufferutil": "^4.0.1",
