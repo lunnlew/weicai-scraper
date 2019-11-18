@@ -209,11 +209,33 @@ class WsServer extends events.EventEmitter {
         }
       })
       app.all('/setting', async function(req, res) {
-        let action = req.query.act || 'home'
+        console.log(req)
+        let action = req.query.act || 'get'
         switch (action) {
+          case "save":
+            {
+              let list = await recorder.findItems({ 'is_setting': { $exists: true } })
+              if (list && list.length) {
+                let sett = list[0]
+                await recorder.updateItems({ _id: sett._id }, Object.assign(sett, req.body))
+              } else {
+                await recorder.insertItems(Object.assign({
+                  'is_setting': true,
+                  'proxy_ip': "127.0.0.1",
+                  'proxy_port': 6879
+                }, req.body))
+              }
+              res.send({
+                code: 200,
+                msg: 'success',
+                data: ''
+              })
+              break
+            }
           default:
             {
-              res.send({ code: 200, msg: 'success', data: {} })
+              let list = await recorder.findItems({ 'is_setting': { $exists: true } })
+              res.send({ code: 200, msg: 'success', data: list.length ? list[0] : {} })
               break
             }
         }

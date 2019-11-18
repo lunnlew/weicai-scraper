@@ -25,8 +25,43 @@
               </div>
             </div>
           </div>
+          <div class="sidebar-item" v-for="(menu, i) in menus">
+            <a class="sidebar-link link-color-default" @click="changeMainView(menu.view)">
+              <div class="sidebar-link-container">
+                <div class="sidebar-link-icon">
+                  <svg viewBox="0 0 560 560" xmlns="http://www.w3.org/2000/svg" stroke-miterlimit="1.414" stroke-linejoin="round" aria-hidden="true" class="icon-svg">
+                    <path d="m440 120l120 0 0 400-560 0 0-400 120 0 0-80 320 0 0 80m-320 200c0 88.306 71.694 160 160 160 88.306 0 160-71.694 160-160 0-88.306-71.694-160-160-160-88.306 0-160 71.694-160 160m80 0c0 44.153 35.847 80 80 80 44.153 0 80-35.847 80-80 0-44.153-35.847-80-80-80-44.153 0-80 35.847-80 80"></path>
+                  </svg>
+                </div>
+                <div class="sidebar-link-title">{{menu.name}}</div>
+              </div>
+            </a>
+            <button class="sidebar-btn" type="button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 560" aria-hidden="false" class="icon-svg icon-svg-btn">><title>更多操作</title>
+                <path d="M350 280c0 38.634-31.366 70-70 70s-70-31.366-70-70 31.366-70 70-70 70 31.366 70 70m0-210c0 38.634-31.366 70-70 70s-70-31.366-70-70 31.366-70 70-70 70 31.366 70 70m0 420c0 38.634-31.366 70-70 70s-70-31.366-70-70 31.366-70 70-70 70 31.366 70 70"></path>
+              </svg></button>
+          </div>
         </div>
-        <div role="navigation">
+        <div class="lib-navigation" role="navigation">
+          <div class="sidebar-header-container">
+            <div class="sidebar-header">
+              <div class="SidebarLibrariesTitle">设置</div>
+            </div>
+          </div>
+          <div class="sidebar-item" v-for="(menu, i) in menusSetting">
+            <a class="sidebar-link link-color-default" @click="changeMainView(menu.view)">
+              <div class="sidebar-link-container">
+                <div class="sidebar-link-icon">
+                  <svg viewBox="0 0 560 560" xmlns="http://www.w3.org/2000/svg" stroke-miterlimit="1.414" stroke-linejoin="round" aria-hidden="true" class="icon-svg">
+                    <path d="m440 120l120 0 0 400-560 0 0-400 120 0 0-80 320 0 0 80m-320 200c0 88.306 71.694 160 160 160 88.306 0 160-71.694 160-160 0-88.306-71.694-160-160-160-88.306 0-160 71.694-160 160m80 0c0 44.153 35.847 80 80 80 44.153 0 80-35.847 80-80 0-44.153-35.847-80-80-80-44.153 0-80 35.847-80 80"></path>
+                  </svg>
+                </div>
+                <div class="sidebar-link-title">{{menu.name}}</div>
+              </div>
+            </a>
+            <button class="sidebar-btn" type="button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 560" aria-hidden="false" class="icon-svg icon-svg-btn">><title>更多操作</title>
+                <path d="M350 280c0 38.634-31.366 70-70 70s-70-31.366-70-70 31.366-70 70-70 70 31.366 70 70m0-210c0 38.634-31.366 70-70 70s-70-31.366-70-70 31.366-70 70-70 70 31.366 70 70m0 420c0 38.634-31.366 70-70 70s-70-31.366-70-70 31.366-70 70-70 70 31.366 70 70"></path>
+              </svg></button>
+          </div>
         </div>
       </div>
     </div>
@@ -37,21 +72,24 @@ export default {
   name: 'SidebarContainer',
   components: {},
   data: () => {
-    return {}
+    return {
+      menus: [{
+        'name': '文章库',
+        'view': 'ListView'
+      }],
+      menusSetting: [{
+        'name': '采集设置',
+        'view': 'SettingView'
+      }]
+    }
   },
   methods: {
-    changeMediaView(mediaLib) {
+    changeMainView(view) {
       let target = {
-        view: mediaLib.pageView,
-        data: {
-          mediaLib: mediaLib
-        }
+        view: view,
+        data: {}
       }
       this.$store.dispatch('changeMainView', target)
-      this.$store.dispatch('setSelectedSideMediaLib', {
-        mediaLib: mediaLib
-      })
-      // this.$store.dispatch('changeStyle', { 'style': 'background-default' })
     },
     showSideMenu(event, mediaLib) {}
   },

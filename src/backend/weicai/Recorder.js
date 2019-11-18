@@ -79,6 +79,29 @@ class Recorder extends events.EventEmitter {
       })
     })
   }
+
+  async updateItems(conditions, item) {
+    const self = this;
+    return new Promise(function(resolve, reject) {
+      self.db.update(conditions, item).then((res) => {
+        resolve(res)
+      }).catch((err) => {
+        reject(err)
+      })
+    })
+  }
+
+  async insertItems(item) {
+    const self = this;
+    return new Promise(function(resolve, reject) {
+      self.db.insert(item).then((res) => {
+        resolve(res)
+      }).catch((err) => {
+        reject(err)
+      })
+    })
+  }
+
   async count(conditions) {
     const self = this;
     return new Promise(function(resolve, reject) {

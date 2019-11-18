@@ -1,5 +1,5 @@
 <template>
-  <div class="ListView">
+  <div class="ContainerView">
     <div class="pageHeader">
       <div class="pageHeaderLeft">
         <div class="tags">
@@ -17,8 +17,8 @@
       </div>
       <div class="pageHeaderRight"></div>
     </div>
-    <div class="ListPageContent">
-      <div class="ListScroller">
+    <div class="PageContent">
+      <div class="PageScroller">
         <div class="ListContainer">
           <Table stripe :columns="columns" :data="list" @on-row-dblclick="rowDblclick">
             <template slot-scope="{ row, index }" slot="readNum">
@@ -209,7 +209,7 @@ export default {
 
 </script>
 <style lang="less" scoped>
-.ListView {
+.ContainerView {
   font-size: 13px;
   position: relative;
   display: flex;
@@ -256,7 +256,7 @@ export default {
   justify-content: flex-end;
 }
 
-.ListPageContent {
+.PageContent {
   position: relative;
   flex-grow: 1;
 }
@@ -313,7 +313,7 @@ export default {
   }
 }
 
-.ListScroller {
+.PageScroller {
   position: absolute;
   top: 0;
   right: 0;

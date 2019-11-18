@@ -24,6 +24,15 @@ export function fetchSetting(params) {
   })
 }
 
+export function saveSetting(params, data) {
+  return request({
+    url: '/setting',
+    method: 'post',
+    params,
+    data
+  })
+}
+
 export function proxyAct(params) {
   return request({
     url: '/proxy',
