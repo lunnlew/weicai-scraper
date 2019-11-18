@@ -13,7 +13,7 @@
                 {{setting.proxy_ip}}
               </FormItem>
               <FormItem label="代理端口">
-                <Input placeholder="6879" v-model="setting.proxy_port"></Input>
+                {{setting.proxy_port}}
               </FormItem>
               <FormItem>
                 <Button type="primary" @click="handleSubmit()">保存</Button>
