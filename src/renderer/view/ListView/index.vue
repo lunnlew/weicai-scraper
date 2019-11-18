@@ -4,12 +4,12 @@
       <div class="pageHeaderLeft">
         <div class="tags">
           <span class="label">采集代理</span>
-          <i-switch size="large" v-model="switchProxy" @on-change="switchProxyChange">
+          <i-switch size="large" v-model="boolSwitchProxy" @on-change="switchProxyChange">
             <span slot="open">开启</span>
             <span slot="close">关闭</span>
           </i-switch>
           <span class="label">后台文章图片生成任务</span>
-          <i-switch size="large" v-model="switchJob" @on-change="switchJobChange">
+          <i-switch size="large" v-model="boolSwitchJob" @on-change="switchJobChange">
             <span slot="open">开启</span>
             <span slot="close">关闭</span>
           </i-switch>
@@ -104,8 +104,6 @@ export default {
     return {
       showExtraInfo: false,
       showExtraData: {},
-      switchProxy: false,
-      switchJob: false,
       currentPage: 1,
       pageSize: 10,
       total: 0,
@@ -150,10 +148,10 @@ export default {
       })
     },
     switchProxyChange(status) {
-      this.switchProxy = status
+      this.$store.dispatch('switchProxy', status)
     },
     switchJobChange(status) {
-      this.switchJob = status
+      this.$store.dispatch('switchJob', status)
     },
     changePage(page) {
       this.currentPage = page
@@ -176,23 +174,6 @@ export default {
     this.loadData()
   },
   watch: {
-    // 由于Job任务会访问网络,所以proxy与job只能同时启动其中一个
-    switchProxy() {
-      if (this.switchProxy) {
-        this.switchJob = false
-      }
-      proxyAct({
-        'act': this.switchProxy ? 'start' : 'close'
-      }).then(result => {})
-    },
-    switchJob() {
-      if (this.switchJob) {
-        this.switchProxy = false
-      }
-      jobAct({
-        'act': this.switchJob ? 'start' : 'close'
-      }).then(result => {})
-    },
     pageSize() {
       this.loadData()
     },
@@ -201,6 +182,18 @@ export default {
     }
   },
   computed: {
+    boolSwitchProxy: {
+      get: function() {
+        return this.$store.state.ListView.boolSwitchProxy
+      },
+      set: function(v) {}
+    },
+    boolSwitchJob: {
+      get: function() {
+        return this.$store.state.ListView.boolSwitchJob
+      },
+      set: function(v) {}
+    },
     list() {
       return this.$store.state.ListView.list
     }

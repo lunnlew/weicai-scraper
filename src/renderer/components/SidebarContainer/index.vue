@@ -63,6 +63,15 @@
               </svg></button>
           </div>
         </div>
+        <div class="task-status-container" v-if="boolSwitchJob">
+          <i-circle :size="140" :trail-width="4" :stroke-width="5" :percent="jobTaskStatus.percent" stroke-linecap="square" stroke-color="#43a3fb">
+            <div class="task-circle">
+              <h1>{{jobTaskStatus.current}}</h1>
+              <p>处理进度</p>
+              <span>总 <i>{{jobTaskStatus.total}}</i></span>
+            </div>
+          </i-circle>
+        </div>
       </div>
     </div>
   </div>
@@ -94,7 +103,14 @@ export default {
     showSideMenu(event, mediaLib) {}
   },
   watch: {},
-  computed: {},
+  computed: {
+    boolSwitchJob() {
+      return this.$store.state.ListView.boolSwitchJob
+    },
+    jobTaskStatus() {
+      return this.$store.state.JobTask.status
+    }
+  },
   created() {}
 }
 
@@ -342,6 +358,54 @@ export default {
         opacity: 1;
       }
     }
+  }
+}
+
+
+.task-status-container {
+  width: 224px;
+  position: fixed;
+  text-align: center;
+  bottom: 10px;
+}
+
+
+.task-circle {
+  & h1 {
+    color: #fff;
+    font-size: 26px;
+    font-weight: normal;
+  }
+
+  & p {
+    color: #657180;
+    font-size: 14px;
+    margin: 10px 0 15px;
+  }
+
+  & span {
+    display: block;
+    padding-top: 15px;
+    color: #657180;
+    font-size: 14px;
+
+    &:before {
+      content: '';
+      display: block;
+      width: 50px;
+      height: 1px;
+      margin: 0 auto;
+      background: #e0e3e6;
+      position: relative;
+      top: -15px;
+    }
+
+    ;
+  }
+
+  & span i {
+    font-style: normal;
+    color: #fff;
   }
 }
 

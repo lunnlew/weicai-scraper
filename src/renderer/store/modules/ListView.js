@@ -1,5 +1,9 @@
+import { proxyAct, jobAct } from '@/api/source'
+
 const state = {
-  list: []
+  list: [],
+  boolSwitchJob: false,
+  boolSwitchProxy: false
 }
 
 const mutations = {
@@ -18,6 +22,19 @@ const mutations = {
   },
   updateList(state, data) {
     state.list = data
+  },
+  // 由于Job任务会访问网络,所以proxy与job只能同时启动其中一个
+  switchJob(state, enable) {
+    if (enable) {
+      state.boolSwitchProxy = !enable;
+    }
+    state.boolSwitchJob = enable;
+  },
+  switchProxy(state, enable) {
+    if (enable) {
+      state.boolSwitchJob = !enable;
+    }
+    state.boolSwitchProxy = enable;
   }
 }
 
@@ -27,6 +44,18 @@ const actions = {
   },
   updateList({ commit }, data) {
     commit('updateList', data)
+  },
+  switchJob({ commit }, enable) {
+    jobAct({
+      'act': enable ? 'start' : 'close'
+    }).then(result => {})
+    commit('switchJob', enable)
+  },
+  switchProxy({ commit }, enable) {
+    proxyAct({
+      'act': enable ? 'start' : 'close'
+    }).then(result => {})
+    commit('switchProxy', enable)
   }
 }
 
