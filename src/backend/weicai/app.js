@@ -89,13 +89,15 @@ appServer.route(function(self) {
 appServer.route(function(self) {
   self.app.all('/job', async function(req, res) {
     let action = req.query.act || 'start'
+    fs.ensureDirSync(path.join(os.homedir(), '.weicai-scraper/html'))
+    let ChromiumPath = path.join(__dirname, '../.local-chromium/win64-706915/chrome-win/chrome.exe')
+
     switch (action) {
       case "start":
         {
           if (!self.job) {
             const CronJob = require('cron').CronJob
             const job = new CronJob('0 */2 * * * *', async function() {
-              let ChromiumPath = path.join(__dirname, '../.local-chromium/win64-706915/chrome-win/chrome.exe')
               const browser = await puppeteer.launch({
                 args: [
                   '--disable-gpu',
@@ -111,7 +113,6 @@ appServer.route(function(self) {
               });
               let list = await self.recorder.findItems({ 'msg_sn': { $exists: true }, 'html_jpg': { $exists: false } }, 1, 5)
               let queue = new PQueue({ concurrency: 1 });
-              fs.ensureDirSync(path.join(os.homedir(), '.weicai-scraper/html'))
               for (let item of list) {
                 queue.add(() => {
                   return new Promise(async (resolve, reject) => {
@@ -138,7 +139,9 @@ appServer.route(function(self) {
                 })
               }
               await queue.onIdle()
-              await browser.close();
+              await browser.close()
+              queue = null
+              browser = null
             });
             job.start();
             self.job = job
