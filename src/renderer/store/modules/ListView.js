@@ -53,12 +53,22 @@ const actions = {
     commit('updateList', data)
   },
   switchJob({ commit }, enable) {
+    if (enable) {
+      proxyAct({
+        'act': 'close'
+      }).then(result => {})
+    }
     jobAct({
       'act': enable ? 'start' : 'close'
     }).then(result => {})
     commit('switchJob', enable)
   },
   switchProxy({ commit }, enable) {
+    if (enable) {
+      jobAct({
+        'act': 'close'
+      }).then(result => {})
+    }
     proxyAct({
       'act': enable ? 'start' : 'close'
     }).then(result => {})

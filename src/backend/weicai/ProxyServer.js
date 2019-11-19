@@ -127,7 +127,9 @@ class ProxyServer extends events.EventEmitter {
     AnyProxy.utils.systemProxyMgr.disableGlobalProxy()
 
     console.log("closeProxyServer")
-    self.proxyServer.close()
+    if (self.proxyServer) {
+      self.proxyServer.close()
+    }
 
     self.proxyServer = null
   }

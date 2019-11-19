@@ -147,13 +147,12 @@ module.exports = {
       if (responseDetail.response.statusCode == 200 &&
         'Content-Type' in responseDetail.response.header &&
         responseDetail.response.header['Content-Type'].indexOf('/html') >= 0) {
-        console.log('注入辅助脚本')
+        console.log('处于代理模式-注入辅助脚本')
         const newResponse = responseDetail.response;
         let content = newResponse.body.toString()
         let injectJs = '<script src="https://mp.weixin.qq.com/injectJs.js" type="text/javascript" async=""></script>'
         newResponse.body = content.replace("<!--headTrap<body></body><head></head><html></html>-->", "").replace("<!--tailTrap<body></body><head></head><html></html>-->", "")
           .replace("</body>", injectJs + "\n</body>");
-
         return new Promise((resolve, reject) => {
           resolve({ response: newResponse });
         });

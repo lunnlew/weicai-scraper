@@ -164,8 +164,8 @@ appServer.route(function(self) {
           console.log('will start job task')
           if (!self.job) {
             const CronJob = require('cron').CronJob
-            const job = new CronJob('0 */5 * * * *', async function() {
-              const browser = await puppeteer.launch({
+            const job = new CronJob('0 */3 * * * *', async function() {
+              let browser = await puppeteer.launch({
                 args: [
                   '--disable-gpu',
                   '--disable-dev-shm-usage',
@@ -181,6 +181,9 @@ appServer.route(function(self) {
               let list = await self.recorder.findItems({ 'msg_sn': { $exists: true }, 'html_jpg': { $exists: false } }, 1, 5)
               let queue = new PQueue({ concurrency: 1 });
               for (let item of list) {
+                if (!item.content_url) {
+                  continue
+                }
                 queue.add(() => {
                   return new Promise(async (resolve, reject) => {
                     let title = item.title.replace(/[|\\/?*<>:]/g, '')
