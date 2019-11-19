@@ -63,6 +63,7 @@ module.exports = {
         resolve({ response: responseDetail.response });
       });
     }
+    console.log(requestDetail.requestOptions.path)
     if (requestDetail.requestOptions.hostname === 'mp.weixin.qq.com') {
       if (/^\/mp\/profile_ext\?action=home/.test(requestDetail.requestOptions.path)) {
 
@@ -128,6 +129,9 @@ module.exports = {
           let readNum = contentJs.appmsgstat.read_num;
           // 点赞量
           let likeNum = contentJs.appmsgstat.like_num;
+          let comment_count = contentJs.comment_count
+          //contentJs.appmsgticket.ticket
+          //contentJs.base_resp.wxtoken
           // 赞赏量，若没有，赋值0
           let rewardTotalCount = contentJs.reward_total_count || 0;
           let info = {
@@ -138,6 +142,7 @@ module.exports = {
             'title': title,
             'readNum': readNum,
             'likeNum': likeNum,
+            'comment_count': comment_count,
             'rewardTotalCount': rewardTotalCount
           }
           global.recorder.emitSave(info)

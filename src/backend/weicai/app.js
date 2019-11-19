@@ -143,6 +143,11 @@ appServer.route(function(self) {
           }
           break
         }
+      case "saveArticle":
+        {
+          self.recorder.emitSave(req.body)
+          break
+        }
       default:
         {
           res.send({ code: 200, msg: 'success', data: {} })
