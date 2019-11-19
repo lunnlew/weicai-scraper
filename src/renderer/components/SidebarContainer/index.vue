@@ -84,7 +84,10 @@ export default {
     return {
       menus: [{
         'name': '文章库',
-        'view': 'ListView'
+        'view': 'ListView/index'
+      }, {
+        'name': '公众号',
+        'view': 'ListView/accounts'
       }],
       menusSetting: [{
         'name': '采集设置',

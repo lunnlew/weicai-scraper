@@ -48,3 +48,20 @@ export function jobAct(params) {
     params
   })
 }
+
+
+export function fetchUniaccList(params) {
+  return request({
+    url: '/uniacc',
+    method: 'post',
+    params
+  })
+}
+
+export function fetchUniaccDetail(params) {
+  return request({
+    url: '/uniacc',
+    method: 'post',
+    params
+  })
+}

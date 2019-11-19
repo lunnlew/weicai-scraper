@@ -66,16 +66,15 @@ module.exports = {
     if (requestDetail.requestOptions.hostname === 'mp.weixin.qq.com') {
       if (/^\/mp\/profile_ext\?action=home/.test(requestDetail.requestOptions.path)) {
 
-        const newResponse = responseDetail.response;
 
-        var content = newResponse.body.toString()
+        let content = responseDetail.response.body.toString()
         // 正则匹配到JSON
-        var contentJSON = /var msgList = '(.+)';\n/.exec(content)[1];
+        let contentJSON = /var msgList = '(.+)';\n/.exec(content)[1];
         // 转义为正常字符
-        var contentJSON = escape2Html(contentJSON).replace(/\\\//g, "/");
-        var contentJs = JSON.parse(contentJSON);
+        contentJSON = escape2Html(contentJSON).replace(/\\\//g, "/");
+        let contentJs = JSON.parse(contentJSON);
 
-        var list = contentJs.list;
+        let list = contentJs.list;
         for (let msg of list) {
           //1 纯文本 49 富文本
           if (msg.comm_msg_info.type != 49) {
@@ -90,22 +89,13 @@ module.exports = {
             saveMsg(dateTime, msg.app_msg_ext_info)
           }
         }
-
-        console.log('注入辅助脚本')
-        var injectJs = '<script src="https://wei.cai/injectJs.js" type="text/javascript" async=""></script>'
-        newResponse.body = content.replace("<!--headTrap<body></body><head></head><html></html>-->", "").replace("<!--tailTrap<body></body><head></head><html></html>-->", "")
-          .replace("</body>", injectJs + "\n</body>");
-
-        return new Promise((resolve, reject) => {
-          resolve({ response: newResponse });
-        });
       }
       if (/^\/mp\/profile_ext\?action=getmsg/.test(requestDetail.requestOptions.path)) {
         console.log('提取上拉加载的数据')
-        var content = responseDetail.response.body.toString()
-        var contentJs = JSON.parse(content);
-        var generalMsgList = JSON.parse(contentJs.general_msg_list);
-        var list = generalMsgList.list;
+        let content = responseDetail.response.body.toString()
+        let contentJs = JSON.parse(content);
+        let generalMsgList = JSON.parse(contentJs.general_msg_list);
+        let list = generalMsgList.list;
         for (let msg of list) {
           //1 纯文本 49 富文本
           if (msg.comm_msg_info.type != 49) {
@@ -123,9 +113,9 @@ module.exports = {
       }
       if (/^\/mp\/getappmsgext/.test(requestDetail.requestOptions.path)) {
         console.log('提取阅读量数据')
-        var content = responseDetail.response.body.toString()
-        var contentJs = JSON.parse(content);
-        var data = requestStrToMap(requestDetail.requestData.toString())
+        let content = responseDetail.response.body.toString()
+        let contentJs = JSON.parse(content);
+        let data = requestStrToMap(requestDetail.requestData.toString())
 
         let msgBiz = data['__biz'];
         let msgMid = data['mid'];
@@ -153,6 +143,20 @@ module.exports = {
           global.recorder.emitSave(info)
         }
 
+      }
+      if (responseDetail.response.statusCode == 200 &&
+        'Content-Type' in responseDetail.response.header &&
+        responseDetail.response.header['Content-Type'].indexOf('/html') >= 0) {
+        console.log('注入辅助脚本')
+        const newResponse = responseDetail.response;
+        let content = newResponse.body.toString()
+        let injectJs = '<script src="https://mp.weixin.qq.com/injectJs.js" type="text/javascript" async=""></script>'
+        newResponse.body = content.replace("<!--headTrap<body></body><head></head><html></html>-->", "").replace("<!--tailTrap<body></body><head></head><html></html>-->", "")
+          .replace("</body>", injectJs + "\n</body>");
+
+        return new Promise((resolve, reject) => {
+          resolve({ response: newResponse });
+        });
       }
 
       return new Promise((resolve, reject) => {

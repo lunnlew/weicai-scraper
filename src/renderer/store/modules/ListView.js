@@ -3,7 +3,8 @@ import { proxyAct, jobAct } from '@/api/source'
 const state = {
   list: [],
   boolSwitchJob: false,
-  boolSwitchProxy: false
+  boolSwitchProxy: false,
+  uniacclist: []
 }
 
 const mutations = {
@@ -23,6 +24,9 @@ const mutations = {
   updateList(state, data) {
     state.list = data
   },
+  updateUniaccList(state, data) {
+    state.uniacclist = data
+  },
   // 由于Job任务会访问网络,所以proxy与job只能同时启动其中一个
   switchJob(state, enable) {
     if (enable) {
@@ -39,6 +43,9 @@ const mutations = {
 }
 
 const actions = {
+  updateUniaccList({ commit }, data) {
+    commit('updateUniaccList', data)
+  },
   updateListItem({ commit }, data) {
     commit('updateListItem', data)
   },
