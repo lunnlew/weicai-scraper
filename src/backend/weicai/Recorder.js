@@ -10,7 +10,7 @@ class Recorder extends events.EventEmitter {
     this.db = new DB(os.homedir() + '/.weicai-scraper/data.db');
   }
   // 保存记录事件
-  async emitSavee(info) {
+  async emitSave(info) {
     const self = this;
     if (!info.msg_sn) {
       return

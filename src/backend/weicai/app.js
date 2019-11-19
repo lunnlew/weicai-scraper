@@ -14,9 +14,9 @@ const AppServer = require('./AppServer')
 const expressApp = require('./expressApp')
 const Recorder = require('./Recorder')
 const ProxyServer = require('./ProxyServer')
-
+global.recorder = new Recorder()
 let appServer = new AppServer()
-appServer.bindApp(expressApp, new Recorder())
+appServer.bindApp(expressApp, recorder)
 appServer.bindProxy(new ProxyServer())
 
 appServer.route(function(self) {
@@ -95,9 +95,10 @@ appServer.route(function(self) {
     switch (action) {
       case "start":
         {
+          console.log('will start job task')
           if (!self.job) {
             const CronJob = require('cron').CronJob
-            const job = new CronJob('0 */2 * * * *', async function() {
+            const job = new CronJob('0 */5 * * * *', async function() {
               const browser = await puppeteer.launch({
                 args: [
                   '--disable-gpu',
@@ -142,7 +143,7 @@ appServer.route(function(self) {
               await browser.close()
               queue = null
               browser = null
-            });
+            }, null, null, null, null, true);
             job.start();
             self.job = job
           }
@@ -200,6 +201,7 @@ appServer.route(function(self) {
     }
   })
 })
+
 
 appServer.route(function(self) {
   expressWS(self.app)

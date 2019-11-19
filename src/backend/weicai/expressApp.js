@@ -4,6 +4,7 @@ const express = require('express')
 const compress = require('compression')
 const expressWS = require('express-ws')
 const bodyParser = require('body-parser')
+const path = require('path')
 
 var app = express()
 app.use(bodyParser.json())
@@ -24,4 +25,7 @@ app.use(allowCors)
 app.get('/', (req, res) => {
   res.end("welcome!!")
 })
+
+app.use('/statics', express.static(path.join(__dirname, '../', 'resource')))
+
 module.exports = app;

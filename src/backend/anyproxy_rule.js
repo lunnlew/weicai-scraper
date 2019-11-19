@@ -17,8 +17,44 @@ var requestStrToMap = function(e) {
   return t
 }
 
+var saveMsg = function(dateTime, msg) {
+  msg.content_url = msg.content_url.replace(/&amp;/g, '&')
+  let linkParse = querystring.parse(url.parse(msg.content_url).query);
+  let msgBiz = linkParse.__biz;
+  let msgMid = linkParse.mid;
+  let msgIdx = linkParse.idx;
+  let msgSn = linkParse.sn;
+  let info = {
+    'msg_biz': msgBiz,
+    'msg_mid': msgMid,
+    'msg_idx': msgIdx,
+    'msg_sn': msgSn,
+    'title': msg.title,
+    'content_url': msg.content_url,
+    'cover': msg.cover,
+    'author': msg.author,
+    'copyright_stat': msg.copyright_stat,
+    'publish_time': dateTime
+  }
+  global.recorder.emitAppend(info)
+}
+
 module.exports = {
   summary: 'a rule to hack response',
+  * beforeSendRequest(requestDetail) {
+    if (requestDetail.url.indexOf('/injectJs.js') >= 0) {
+      const newRequestOptions = requestDetail.requestOptions;
+      newRequestOptions.protocol = 'http:';
+      newRequestOptions.hostname = '127.0.0.1'
+      newRequestOptions.port = '6877';
+      newRequestOptions.path = '/statics/index.js';
+      newRequestOptions.method = 'GET';
+      return newRequestOptions;
+    }
+  },
+  * beforeDealHttpsRequest(requestDetail) {
+    return true;
+  },
   * beforeSendResponse(requestDetail, responseDetail) {
     if (responseDetail.response.statusCode == 500 ||
       responseDetail.response.statusCode == 404
@@ -29,7 +65,7 @@ module.exports = {
     }
     if (requestDetail.requestOptions.hostname === 'mp.weixin.qq.com') {
       if (/^\/mp\/profile_ext\?action=home/.test(requestDetail.requestOptions.path)) {
-        console.log('提取首页的数据')
+
         const newResponse = responseDetail.response;
 
         var content = newResponse.body.toString()
@@ -48,35 +84,17 @@ module.exports = {
           let dateTime = (msg.comm_msg_info.datetime * 1000).toString();
           if (msg.app_msg_ext_info.is_multi) {
             for (let sub_msg of msg.app_msg_ext_info.multi_app_msg_item_list) {
-              sub_msg.content_url = sub_msg.content_url.replace(/&amp;/g, '&')
-              let linkParse = querystring.parse(url.parse(sub_msg.content_url).query);
-              let msgBiz = linkParse.__biz;
-              let msgMid = linkParse.mid;
-              let msgIdx = linkParse.idx;
-              let msgSn = linkParse.sn;
-              let info = {
-                'msg_biz': msgBiz,
-                'msg_mid': msgMid,
-                'msg_idx': msgIdx,
-                'msg_sn': msgSn,
-                'title': sub_msg.title,
-                'content_url': sub_msg.content_url,
-                'cover': sub_msg.cover,
-                'author': sub_msg.author,
-                'copyright_stat': sub_msg.copyright_stat,
-                'publish_time': dateTime
-              }
-              global.recorder.emitAppend(info)
+              saveMsg(dateTime, sub_msg)
             }
           } else {
-            console.log('not sub_msg')
+            saveMsg(dateTime, msg.app_msg_ext_info)
           }
         }
 
-        console.log('注入自动脚本')
-        var scrollDownJs = '<script type="text/javascript">var end = document.createElement("p");document.body.appendChild(end);(function scrollDown(){end.scrollIntoView();setTimeout(scrollDown,Math.floor(Math.random()*5000+5000));})();</script>';
+        console.log('注入辅助脚本')
+        var injectJs = '<script src="https://wei.cai/injectJs.js" type="text/javascript" async=""></script>'
         newResponse.body = content.replace("<!--headTrap<body></body><head></head><html></html>-->", "").replace("<!--tailTrap<body></body><head></head><html></html>-->", "")
-          .replace("</body>", scrollDownJs + "\n</body>");
+          .replace("</body>", injectJs + "\n</body>");
 
         return new Promise((resolve, reject) => {
           resolve({ response: newResponse });
@@ -96,28 +114,10 @@ module.exports = {
           let dateTime = (msg.comm_msg_info.datetime * 1000).toString();
           if (msg.app_msg_ext_info.is_multi) {
             for (let sub_msg of msg.app_msg_ext_info.multi_app_msg_item_list) {
-              sub_msg.content_url = sub_msg.content_url.replace(/&amp;/g, '&')
-              let linkParse = querystring.parse(url.parse(sub_msg.content_url).query);
-              let msgBiz = linkParse.__biz;
-              let msgMid = linkParse.mid;
-              let msgIdx = linkParse.idx;
-              let msgSn = linkParse.sn;
-              let info = {
-                'msg_biz': msgBiz,
-                'msg_mid': msgMid,
-                'msg_idx': msgIdx,
-                'msg_sn': msgSn,
-                'title': sub_msg.title,
-                'content_url': sub_msg.content_url,
-                'cover': sub_msg.cover,
-                'author': sub_msg.author,
-                'copyright_stat': sub_msg.copyright_stat,
-                'publish_time': dateTime
-              }
-              global.recorder.emitAppend(info)
+              saveMsg(dateTime, sub_msg)
             }
           } else {
-            console.log('not sub_msg')
+            saveMsg(dateTime, msg.app_msg_ext_info)
           }
         }
       }
@@ -150,7 +150,7 @@ module.exports = {
             'likeNum': likeNum,
             'rewardTotalCount': rewardTotalCount
           }
-          global.recorder.emitSavee(info)
+          global.recorder.emitSave(info)
         }
 
       }
