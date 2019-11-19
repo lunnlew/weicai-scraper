@@ -87,6 +87,72 @@ appServer.route(function(self) {
 })
 
 appServer.route(function(self) {
+  self.app.all('/uniacc', async function(req, res) {
+    let action = req.query.act || 'list'
+    switch (action) {
+      case "list":
+        {
+          let page = req.query.page || 1
+          let size = req.query.size || 10
+          let list = await self.recorder.findItems({ 'is_uniacc': { $exists: true } }, page, size)
+          let total = await self.recorder.count({ 'is_uniacc': { $exists: true } })
+          res.send({
+            code: 200,
+            msg: 'success',
+            data: {
+              'total': total,
+              'list': list
+            }
+          })
+          break
+        }
+      case "detail":
+        {
+          let _id = req.query._id
+          let list = await self.recorder.findItems({ '_id': _id })
+          res.send({
+            code: 200,
+            msg: 'success',
+            data: list.shift()
+          })
+          break
+        }
+      default:
+        {
+          res.send({ code: 200, msg: 'success', data: {} })
+          break
+        }
+    }
+  })
+})
+
+appServer.route(function(self) {
+  self.app.all('/scraper', async function(req, res) {
+    let action = req.query.act || ''
+    switch (action) {
+      case "saveAccount":
+        {
+          let list = await self.recorder.findItems({ 'is_uniacc': { $exists: true }, 'username': req.body.username })
+          if (list && list.length) {
+            let uniacc = list[0]
+            await self.recorder.updateItems({ _id: uniacc._id }, Object.assign(uniacc, req.body))
+          } else {
+            await self.recorder.insertItems(Object.assign({
+              'is_uniacc': true
+            }, req.body))
+          }
+          break
+        }
+      default:
+        {
+          res.send({ code: 200, msg: 'success', data: {} })
+          break
+        }
+    }
+  })
+})
+
+appServer.route(function(self) {
   self.app.all('/job', async function(req, res) {
     let action = req.query.act || 'start'
     fs.ensureDirSync(path.join(os.homedir(), '.weicai-scraper/html'))
