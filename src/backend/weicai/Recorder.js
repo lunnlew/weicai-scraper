@@ -22,6 +22,9 @@ class Recorder extends events.EventEmitter {
           self.emit('update', info)
         })
       } else {
+        info = Object.assign({
+          'create_time': Math.round(new Date() / 1000)
+        }, info)
         self.db.insert(info || {}).then(() => {
           self.emit('append', info)
         })
@@ -40,6 +43,9 @@ class Recorder extends events.EventEmitter {
           self.emit('update', info)
         })
       } else {
+        info = Object.assign({
+          'create_time': Math.round(new Date() / 1000)
+        }, info)
         self.db.insert(info || {}).then(() => {
           self.emit('append', info)
         })
@@ -58,6 +64,9 @@ class Recorder extends events.EventEmitter {
           self.emit('update', info)
         })
       } else {
+        info = Object.assign({
+          'create_time': Math.round(new Date() / 1000)
+        }, info)
         self.db.insert(info || {}).then(() => {
           self.emit('append', info)
         })

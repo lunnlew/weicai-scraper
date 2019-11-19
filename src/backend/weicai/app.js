@@ -132,14 +132,17 @@ appServer.route(function(self) {
     switch (action) {
       case "saveAccount":
         {
-          let list = await self.recorder.findItems({ 'is_uniacc': { $exists: true }, 'username': req.body.username })
-          if (list && list.length) {
-            let uniacc = list[0]
-            await self.recorder.updateItems({ _id: uniacc._id }, Object.assign(uniacc, req.body))
-          } else {
-            await self.recorder.insertItems(Object.assign({
-              'is_uniacc': true
-            }, req.body))
+          if (req.body.username) {
+            let list = await self.recorder.findItems({ 'is_uniacc': { $exists: true }, 'username': req.body.username })
+            if (list && list.length) {
+              let uniacc = list[0]
+              await self.recorder.updateItems({ _id: uniacc._id }, Object.assign(uniacc, req.body))
+            } else {
+              await self.recorder.insertItems(Object.assign({
+                'is_uniacc': true,
+                'create_time': Math.round(new Date() / 1000)
+              }, req.body))
+            }
           }
           break
         }

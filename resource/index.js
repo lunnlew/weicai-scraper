@@ -111,7 +111,7 @@ if (/^\/mp\/profile_ext\?action=home/.test(url)) {
 }
 
 // 文章详情页
-if (/^\/s\//.test(url)) {
+if (/^\/s[/?]/.test(url)) {
 
   var uniacc = {
     // 公众号名称
@@ -121,14 +121,14 @@ if (/^\/s\//.test(url)) {
     // 公众号id
     username: user_name,
     // 公众号头像
-    headimg: ori_head_img_url,
-    lang: LANG,
-    key: window.key,
-    wxtoken: window.wxtoken,
-    pass_ticket: window.pass_ticket,
-    appmsg_token: window.appmsg_token,
-    a8scene: window.a8scene,
-    scene: window.scene,
+    headimg: ori_head_img_url || '',
+    lang: LANG || '',
+    key: window.key || '',
+    wxtoken: window.wxtoken || '',
+    pass_ticket: window.pass_ticket || '',
+    appmsg_token: window.appmsg_token || '',
+    a8scene: window.a8scene || '',
+    scene: window.scene || '',
     expiry_time: Math.round(new Date() / 1000) + 30 * 60 - 2 * 60
   }
 
@@ -139,7 +139,9 @@ if (/^\/s\//.test(url)) {
       url: 'http://127.0.0.1:6877/scraper?act=saveAccount',
       data: uniacc
     });
-  } catch (err) {}
+  } catch (err) {
+    alert('ss')
+  }
 
   //
   var article = {
