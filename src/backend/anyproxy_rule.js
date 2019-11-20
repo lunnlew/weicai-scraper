@@ -36,7 +36,7 @@ var saveMsg = function(dateTime, msg) {
     'copyright_stat': msg.copyright_stat,
     'publish_time': dateTime
   }
-  global.recorder.emitAppend(info)
+  global.recorder.emitHistorySave(info)
 }
 
 module.exports = {

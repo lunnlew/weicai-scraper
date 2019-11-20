@@ -9,7 +9,7 @@ if (process.env.IS_ELECTRON) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = axios
 Vue.config.productionTip = false
 
-var socket = new WebSocket('ws://localhost:6877/weicai');
+var socket = new WebSocket('ws://localhost:6877/weicai/wcclient');
 socket.addEventListener('open', function(event) {
   console.log('socket is open')
 });

@@ -4,7 +4,7 @@ class AppServer {
   constructor() {
     const self = this
     self.app = null
-    self.ws = null
+    self.ws = []
     self.recorder = null
     self.proxyServer = null
   }
@@ -17,9 +17,9 @@ class AppServer {
     const self = this
     self.proxyServer = proxyServer
   }
-  bindWs(ws) {
+  bindWs(clientid, ws) {
     const self = this
-    self.ws = ws
+    self.ws[clientid] = ws
   }
   route(callback) {
     callback(this)
@@ -27,19 +27,23 @@ class AppServer {
   start() {
     const self = this
     return new Promise((resolve, reject) => {
-      self.recorder.on('update', (data) => {
-        console.log('recorder update')
-        self.ws.send(JSON.stringify({
+      self.recorder.on('client_update_article_list', (data) => {
+        console.log('client_update_article_list')
+        self.ws['wcclient'].send(JSON.stringify({
           'type': 'update',
           'data': data
         }))
       })
-      self.recorder.on('append', (data) => {
-        console.log('recorder append')
-        self.ws.send(JSON.stringify({
+      self.recorder.on('client_append_article_list', (data) => {
+        console.log('client_append_article_list')
+        self.ws['wcclient'].send(JSON.stringify({
           'type': 'append',
           'data': data
         }))
+      })
+      self.recorder.on('wechat_history', (data) => {
+        console.log('wechat_history')
+        self.ws['wechat_history'].send(JSON.stringify(data))
       })
       self.app.listen(6877, () => {
         console.log('Backend service listing on port 6877')

@@ -129,6 +129,7 @@ appServer.route(function(self) {
 appServer.route(function(self) {
   self.app.all('/scraper', async function(req, res) {
     let action = req.query.act || ''
+    console.log(req.body)
     switch (action) {
       case "saveAccount":
         {
@@ -282,7 +283,8 @@ appServer.route(function(self) {
 
 appServer.route(function(self) {
   expressWS(self.app)
-  self.app.ws('/weicai', function(ws, req) {
+  self.app.ws('/weicai/:clientid', function(ws, req) {
+    console.log('client [' + req.params.clientid + '] connected')
     ws.send(JSON.stringify({
       'type': 'connect',
       'data': 'success'
@@ -290,7 +292,7 @@ appServer.route(function(self) {
     ws.on('message', function(msg) {
       // 业务代码
     })
-    appServer.bindWs(ws)
+    appServer.bindWs(req.params.clientid, ws)
   })
 })
 
