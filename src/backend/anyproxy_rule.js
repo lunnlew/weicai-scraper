@@ -65,10 +65,16 @@ module.exports = {
     }
     console.log(requestDetail.requestOptions.path)
     if (requestDetail.requestOptions.hostname === 'mp.weixin.qq.com') {
+      let content = responseDetail.response.body.toString()
+      // 异常结果
+      let error_msg = "操作频繁，请稍后再试";
+      if (content.indexOf(error_msg) >= 0) {
+        console.log('微信提示: ' + error_msg)
+        return new Promise((resolve, reject) => {
+          resolve({ response: responseDetail.response });
+        }); 
+      }
       if (/^\/mp\/profile_ext\?action=home/.test(requestDetail.requestOptions.path)) {
-
-
-        let content = responseDetail.response.body.toString()
         // 正则匹配到JSON
         let contentJSON = /var msgList = '(.+)';\n/.exec(content)[1];
         // 转义为正常字符
@@ -93,7 +99,6 @@ module.exports = {
       }
       if (/^\/mp\/profile_ext\?action=getmsg/.test(requestDetail.requestOptions.path)) {
         console.log('提取上拉加载的数据')
-        let content = responseDetail.response.body.toString()
         let contentJs = JSON.parse(content);
         let generalMsgList = JSON.parse(contentJs.general_msg_list);
         let list = generalMsgList.list;
@@ -114,7 +119,6 @@ module.exports = {
       }
       if (/^\/mp\/getappmsgext/.test(requestDetail.requestOptions.path)) {
         console.log('提取阅读量数据')
-        let content = responseDetail.response.body.toString()
         let contentJs = JSON.parse(content);
         let data = requestStrToMap(requestDetail.requestData.toString())
 
@@ -177,9 +181,9 @@ module.exports = {
         responseDetail.response.header['Content-Type'].indexOf('/html') >= 0) {
         console.log('处于代理模式-注入辅助脚本')
         const newResponse = responseDetail.response;
-        let content = newResponse.body.toString()
+        let newContent = newResponse.body.toString()
         let injectJs = '<script src="https://mp.weixin.qq.com/injectJs.js" type="text/javascript" async=""></script>'
-        newResponse.body = content.replace("<!--headTrap<body></body><head></head><html></html>-->", "").replace("<!--tailTrap<body></body><head></head><html></html>-->", "")
+        newResponse.body = newContent.replace("<!--headTrap<body></body><head></head><html></html>-->", "").replace("<!--tailTrap<body></body><head></head><html></html>-->", "")
           .replace("</body>", injectJs + "\n</body>");
         return new Promise((resolve, reject) => {
           resolve({ response: newResponse });
