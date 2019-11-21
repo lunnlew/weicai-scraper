@@ -94,6 +94,61 @@ var removeRootCA = function() {
   })
 }
 
+var enableGlobalProxy = function(ProxyAdd,ProxyPort) {
+  return new Promise(async (resolve, reject) => {
+    let spawn = require("child_process").spawn,
+      child;
+    const isWin = /^win/.test(process.platform);
+    if (isWin) {
+      ProxyAdd = ProxyAdd+':'+ProxyPort
+      console.log("platform:window");
+      console.log("enableGlobalProxy with cmd: ", "powershell.exe", "-WindowStyle", "Hidden", "-file", path.join(__dirname, '../tools/winset.ps1'), '-Act', 'SetSystemProxy', '-Proxy', ProxyAdd);
+      child = spawn("powershell.exe", ["-WindowStyle", "Hidden", "-file", path.join(__dirname, '../tools/winset.ps1'), '-Act', 'SetSystemProxy', '-Proxy', ProxyAdd]);
+      child.stdout.on("data", function(data) {
+        console.log("Powershell Data: " + data);
+      });
+      child.stderr.on("data", function(data) {
+        console.log("Powershell Errors: " + data);
+      });
+      child.on("exit", function() {
+        resolve()
+        console.log("Powershell Script finished");
+      });
+      child.stdin.end();
+    } else {
+      AnyProxy.utils.systemProxyMgr.enableGlobalProxy(ProxyAdd, ProxyPort);
+      resolve()
+    }
+  })
+}
+
+var disableGlobalProxy = function() {
+  return new Promise(async (resolve, reject) => {
+    let spawn = require("child_process").spawn,
+      child;
+    const isWin = /^win/.test(process.platform);
+    if (isWin) {
+      console.log("platform:window");
+      console.log("disableGlobalProxy with cmd: ", "powershell.exe", "-WindowStyle", "Hidden", "-file", path.join(__dirname, '../tools/winset.ps1'), '-Act', 'SetSystemProxy');
+      child = spawn("powershell.exe", ["-WindowStyle", "Hidden", "-file", path.join(__dirname, '../tools/winset.ps1'), '-Act', 'SetSystemProxy']);
+      child.stdout.on("data", function(data) {
+        console.log("Powershell Data: " + data);
+      });
+      child.stderr.on("data", function(data) {
+        console.log("Powershell Errors: " + data);
+      });
+      child.on("exit", function() {
+        resolve()
+        console.log("Powershell Script finished");
+      });
+      child.stdin.end();
+    } else {
+      AnyProxy.utils.systemProxyMgr.disableGlobalProxy()
+      resolve()
+    }
+  })
+}
+
 class ProxyServer extends events.EventEmitter {
   constructor() {
     super();
@@ -105,7 +160,7 @@ class ProxyServer extends events.EventEmitter {
 
     await trustRootCA()
     console.log("enableGlobalProxy:", '127.0.0.1:6879');
-    AnyProxy.utils.systemProxyMgr.enableGlobalProxy('127.0.0.1', '6879');
+    await enableGlobalProxy('127.0.0.1', '6879');
 
     console.log("enableProxyServer");
     const proxyServer = new AnyProxy.ProxyServer(options);
@@ -124,7 +179,7 @@ class ProxyServer extends events.EventEmitter {
 
     await removeRootCA()
     console.log("disableGlobalProxy");
-    AnyProxy.utils.systemProxyMgr.disableGlobalProxy()
+    await disableGlobalProxy()
 
     console.log("closeProxyServer")
     if (self.proxyServer) {
