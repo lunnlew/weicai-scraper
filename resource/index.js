@@ -68,6 +68,24 @@ wecai.__Ajax__ = function(obj) {
   }
 }
 
+
+var aJaxData = function(act,data) {
+    return new Promise(function(resolve, reject) {
+      wecai.__Ajax__({
+        type: 'POST',
+        dataType: 'json',
+        url: 'http://127.0.0.1:6877/scraper?act='+act,
+        data: data,
+        success:(result)=>{
+          resolve(result)
+        },
+        error:(err)=>{
+          reject(err)
+        }
+      })
+    })
+  }
+
 var url = location.pathname + location.search
 
 // 历史文章列表页
@@ -95,12 +113,7 @@ if (/^\/mp\/profile_ext\?action=home/.test(url)) {
     expiry_time: Math.round(new Date() / 1000) + 30 * 60 - 2 * 60
   }
   try {
-    wecai.__Ajax__({
-      type: 'POST',
-      dataType: 'json',
-      url: 'http://127.0.0.1:6877/scraper?act=saveAccount',
-      data: uniacc
-    });
+    aJaxData('saveAccount',uniacc)
   } catch (err) {}
 
   var socket = new WebSocket('ws://localhost:6877/weicai/wechat_history');
@@ -137,12 +150,7 @@ if (/^\/s[/?]/.test(url)) {
   }
 
   try {
-    wecai.__Ajax__({
-      type: 'POST',
-      dataType: 'json',
-      url: 'http://127.0.0.1:6877/scraper?act=saveAccount',
-      data: uniacc
-    });
+    aJaxData('saveAccount',uniacc)
   } catch (err) {
     alert('ss')
   }
@@ -157,7 +165,7 @@ if (/^\/s[/?]/.test(url)) {
     title: msg_title,
     msg_desc: msg_desc,
     cover: msg_cdn_url,
-    content_url: msg_link,
+    content_url: msg_link || location.href,
     comment_id: comment_id,
     copyright_stat: copyright_stat,
     author: document.getElementsByTagName('meta')['author'].getAttribute('content'),
@@ -165,11 +173,18 @@ if (/^\/s[/?]/.test(url)) {
   }
 
   try {
-    wecai.__Ajax__({
-      type: 'POST',
-      dataType: 'json',
-      url: 'http://127.0.0.1:6877/scraper?act=saveArticle',
-      data: article
-    });
+    aJaxData('saveArticle',article).then(function(result){
+      // 请求下一篇文章
+      aJaxData('getNextArticle',{
+        'currentMsgSn':article.msg_sn
+      }).then(function(result){
+        let art = result.data.art
+        if(art.content_url){
+          setTimeout(()=>{
+            //location.href = result.data.art.content_url
+          }, Math.floor(Math.random() * 5000 + 5000))
+        }
+      })
+    })
   } catch (err) {}
 }

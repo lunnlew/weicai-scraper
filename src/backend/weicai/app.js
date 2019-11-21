@@ -152,12 +152,25 @@ appServer.route(function(self) {
           self.recorder.emitSave(req.body)
           break
         }
+      case "getNextArticle":
+        {
+          let list = await self.recorder.findItems({ 'msg_sn': { $exists: true },'content_url': { $exists: true }, 'msg_sn': { $ne: req.body.currentMsgSn }}, 1, 1)
+          let art = {}
+          if(list.length){
+            art = list[0]
+          }
+          res.send({ code: 200, msg: 'success', data: {
+            'art':art
+          } })
+          break
+        }
       default:
         {
-          res.send({ code: 200, msg: 'success', data: {} })
+          
           break
         }
     }
+    res.send({ code: 200, msg: 'success', data: {} })
   })
 })
 
