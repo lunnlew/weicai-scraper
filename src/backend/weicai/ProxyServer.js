@@ -24,9 +24,9 @@ const options = {
 var generateRootCA = function() {
   return new Promise(async (resolve, reject) => {
     if (!AnyProxy.utils.certMgr.ifRootCAFileExists()) {
-      AnyProxy.utils.certMgr.generateRootCA((error, keyPath) => {
+      AnyProxy.utils.certMgr.generateRootCA((error, keyPath, crtPath) => {
         if (!error) {
-          resolve(keyPath)
+          resolve(crtPath)
         } else {
           reject()
         }
