@@ -5026,6 +5026,11 @@ gaze@~1.1.2:
   dependencies:
     globule "^1.0.0"
 
+generic-pool@^3.7.1:
+  version "3.7.1"
+  resolved "http://r.cnpmjs.org/generic-pool/download/generic-pool-3.7.1.tgz#36fe5bb83e7e0e032e5d32cd05dc00f5ff119aa8"
+  integrity sha1-Nv5buD5+DgMuXTLNBdwA9f8Rmqg=
+
 get-caller-file@^1.0.1:
   version "1.0.3"
   resolved "https://registry.npmjs.org/get-caller-file/-/get-caller-file-1.0.3.tgz#f978fa4c90d1dfe7ff2d6beda2a515e713bdcf4a"

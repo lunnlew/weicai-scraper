@@ -12,6 +12,27 @@ const ChromiumPath = path.join(__dirname, '../.local-chromium/win64-706915/chrom
 
 const { autoScroll } = require('./utils')
 
+const PuppeteerPool = require('./puppeteer-pool')
+// 全局只应该被初始化一次
+const puppeteerPool = PuppeteerPool({
+  puppeteerArgs: {
+    args: [
+      '--disable-gpu',
+      '--disable-dev-shm-usage',
+      '--disable-setuid-sandbox',
+      '--no-first-run',
+      '--no-sandbox',
+      '--no-zygote'
+    ],
+    timeout: 0,
+    pipe: true, // 不使用 websocket 
+    headless: true,
+    ignoreHTTPSErrors: true,
+    executablePath: ChromiumPath
+  }
+})
+
+
 const AppServer = require('./AppServer')
 const expressApp = require('./expressApp')
 const Recorder = require('./Recorder')
@@ -55,43 +76,36 @@ appServer.route(function(self) {
         }
       case "makeimg":
         {
-          let browser = await puppeteer.launch({
-            args: [
-              '--disable-gpu',
-              '--disable-dev-shm-usage',
-              '--disable-setuid-sandbox',
-              '--no-first-run',
-              '--no-sandbox',
-              '--no-zygote'
-            ],
-            headless: true,
-            ignoreHTTPSErrors: true,
-            executablePath: ChromiumPath
-          });
-          let _id = req.query._id
-          let list = await self.recorder.findItems({ '_id': _id }, 1, 1)
-          let item = list[0]
 
-          let title = item.title.replace(/[|\\/?*<>:]/g, '')
-          try {
-            console.log('处理[' + item.title + ']')
-            let page = await browser.newPage();
-            await page.goto(item.content_url, {
-              timeout: 30000,
-              waitUntil: ['networkidle0']
-            });
-            await autoScroll(page);
-            await page.waitFor(3000);
-            await page.screenshot({
-              path: path.join(os.homedir(), '.weicai-scraper/html/' + title + '.jpg'),
-              fullPage: true
-            });
-            self.recorder.emitUpdate(item.msg_sn, { "html_jpg": 'html/' + title + '.jpg' })
-          } catch (err) {
-            console.log(err)
-          }
-          await browser.close()
-          browser = null
+          let page = await puppeteerPool.use(async (browser) => {
+            const page = await browser.newPage()
+            let _id = req.query._id
+            let list = await self.recorder.findItems({ '_id': _id }, 1, 1)
+            let item = list[0]
+            let title = item.title.replace(/[|\\/?*<>:]/g, '')
+            try {
+              console.log('处理[' + item.title + ']')
+              let page = await browser.newPage();
+              await page.goto(item.content_url, {
+                timeout: 30000,
+                waitUntil: ['networkidle0']
+              });
+              await autoScroll(page);
+              await page.waitFor(3000);
+              await page.screenshot({
+                path: path.join(os.homedir(), '.weicai-scraper/html/' + title + '.png'),
+                type: 'png',
+                quality: 100,
+                fullPage: true
+              });
+              self.recorder.emitUpdate(item.msg_sn, { "html_jpg": 'html/' + title + '.png' })
+            } catch (err) {
+              console.log(err)
+            }
+
+            return page
+          })
+          await page.close()
 
           res.send({
             code: 200,
@@ -277,53 +291,44 @@ appServer.route(function(self) {
           if (!self.job) {
             const CronJob = require('cron').CronJob
             const job = new CronJob('0 */3 * * * *', async function() {
-              let browser = await puppeteer.launch({
-                args: [
-                  '--disable-gpu',
-                  '--disable-dev-shm-usage',
-                  '--disable-setuid-sandbox',
-                  '--no-first-run',
-                  '--no-sandbox',
-                  '--no-zygote'
-                ],
-                headless: true,
-                ignoreHTTPSErrors: true,
-                executablePath: ChromiumPath
-              });
-              let list = await self.recorder.findItems({ 'msg_sn': { $exists: true }, 'html_jpg': { $exists: false } }, 1, 5)
-              let queue = new PQueue({ concurrency: 1 });
-              for (let item of list) {
-                if (!item.content_url) {
-                  continue
-                }
-                queue.add(() => {
-                  return new Promise(async (resolve, reject) => {
-                    let title = item.title.replace(/[|\\/?*<>:]/g, '')
-                    try {
-                      console.log('处理[' + item.title + ']')
-                      let page = await browser.newPage();
-                      await page.goto(item.content_url, {
-                        timeout: 30000,
-                        waitUntil: ['networkidle0']
-                      });
-                      await autoScroll(page);
-                      await page.waitFor(3000);
-                      await page.screenshot({
-                        path: path.join(os.homedir(), '.weicai-scraper/html/' + title + '.jpg'),
-                        fullPage: true
-                      });
-                      self.recorder.emitUpdate(item.msg_sn, { "html_jpg": 'html/' + title + '.jpg' })
-                    } catch (err) {
-                      console.log(err)
-                    }
-                    resolve()
+              let page = await puppeteerPool.use(async (browser) => {
+                let list = await self.recorder.findItems({ 'msg_sn': { $exists: true }, 'html_jpg': { $exists: false } }, 1, 5)
+                let queue = new PQueue({ concurrency: 1 });
+                for (let item of list) {
+                  if (!item.content_url) {
+                    continue
+                  }
+                  queue.add(() => {
+                    return new Promise(async (resolve, reject) => {
+                      let title = item.title.replace(/[|\\/?*<>:]/g, '')
+                      try {
+                        console.log('处理[' + item.title + ']')
+                        let page = await browser.newPage();
+                        await page.goto(item.content_url, {
+                          timeout: 30000,
+                          waitUntil: ['networkidle0']
+                        });
+                        await autoScroll(page);
+                        await page.waitFor(3000);
+                        await page.screenshot({
+                          path: path.join(os.homedir(), '.weicai-scraper/html/' + title + '.png'),
+                          type: 'png',
+                          quality: 100,
+                          fullPage: true
+                        });
+                        self.recorder.emitUpdate(item.msg_sn, { "html_jpg": 'html/' + title + '.png' })
+                      } catch (err) {
+                        console.log(err)
+                      }
+                      resolve()
+                    })
                   })
-                })
-              }
+                }
+                return page
+              })
               await queue.onIdle()
-              await browser.close()
+              await page.close()
               queue = null
-              browser = null
             }, null, null, null, null, true);
             job.start();
             self.job = job
