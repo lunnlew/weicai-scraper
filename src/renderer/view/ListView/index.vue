@@ -41,6 +41,11 @@
             <template slot-scope="{ row, index }" slot="publish_time">
               {{ row.publish_time | fmtDate('yyyy-MM-dd hh:mm') }}
             </template>
+            <template slot-scope="{ row, index }" slot="action">
+              <Button type="primary" size="small" style="margin-right: 5px" @click="show(row, index)">查看</Button>
+              <Button type="info" size="small" @click="makeimg(row, index)">生成</Button>
+              <Button type="error" size="small" @click="remove(row, index)">删除</Button>
+            </template>
           </Table>
           <div style="text-align: left;margin-top: 30px;">
             <Page :total="total" show-total show-sizer show-elevator :page-size="pageSize" :current="currentPage" @on-change="changePage" @on-page-size-change="changeSizePage"></Page>
@@ -92,6 +97,18 @@
         </div>
       </div>
     </div>
+    <Modal fullscreen v-model="previewModel">
+      <p slot="header" style="color:#f60;text-align:center">
+        <Icon type="ios-information-circle"></Icon>
+        <span>文章查看(图片)</span>
+      </p>
+      <div style="text-align:center">
+        <img style="max-width: 100%" v-if="preview._id" :src="'http://localhost:6877/article?act=preview&_id='+preview._id" />
+      </div>
+      <div slot="footer">
+        <Button type="primary" size="large" long @click="previewModel=false">关闭</Button>
+      </div>
+    </Modal>
   </div>
 </template>
 <script>
@@ -102,41 +119,66 @@ export default {
   props: [],
   data: () => {
     return {
+      previewModel: false,
+      preview: {},
       showExtraInfo: false,
       showExtraData: {},
       currentPage: 1,
       pageSize: 10,
       total: 0,
       columns: [{
-        title: '标题',
-        key: 'title'
-      }, {
-        title: '作者',
-        key: 'author'
-      }, {
-        title: '阅读量',
-        key: 'readNum',
-        slot: 'readNum'
-      }, {
-        title: '点赞量',
-        key: 'likeNum',
-        slot: 'likeNum'
-      }, {
-        title: '打赏量',
-        key: 'rewardTotalCount',
-        slot: 'rewardTotalCount'
-      }, {
-        title: '图片',
-        key: 'html_jpg',
-        slot: 'html_jpg'
-      }, {
-        title: '发布时间',
-        key: 'publish_time',
-        slot: 'publish_time'
-      }]
+          title: '标题',
+          key: 'title'
+        }, {
+          title: '作者',
+          key: 'author'
+        }, {
+          title: '阅读量',
+          key: 'readNum',
+          slot: 'readNum'
+        }, {
+          title: '点赞量',
+          key: 'likeNum',
+          slot: 'likeNum'
+        }, {
+          title: '打赏量',
+          key: 'rewardTotalCount',
+          slot: 'rewardTotalCount'
+        }, {
+          title: '图片',
+          key: 'html_jpg',
+          slot: 'html_jpg'
+        }, {
+          title: '发布时间',
+          key: 'publish_time',
+          slot: 'publish_time'
+        },
+        {
+          title: '操作',
+          slot: 'action',
+          width: 150,
+          align: 'center'
+        }
+      ]
     }
   },
   methods: {
+    show(row, index) {
+      this.previewModel = true
+      this.preview = row
+    },
+    makeimg(row, index) {
+      fetchDetail({
+        act: 'makeimg',
+        '_id': row._id
+      }).then(result => {})
+    },
+    remove(row, index) {
+      this.$store.dispatch('deleteArticle', {
+        'row': row,
+        'index': index
+      })
+    },
     loadData() {
       fetchList({
         act: 'list',
@@ -201,6 +243,42 @@ export default {
 }
 
 </script>
+<style lang="less">
+.ivu-modal-body {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  scrollbar-color: hsla(0, 0%, 100%, .2) transparent;
+}
+
+.ivu-modal-body::-webkit-scrollbar {
+  width: 14px;
+}
+
+.ivu-modal-body::-webkit-scrollbar-track {
+  background-color: #17233d;
+}
+
+.ivu-modal-body::-webkit-scrollbar-thumb {
+  min-height: 50px;
+  border: 3px solid transparent;
+  border-radius: 8px;
+  background-color: hsla(0, 0%, 100%, .2);
+  background-clip: padding-box;
+}
+
+.ivu-modal-body::-webkit-scrollbar-thumb:hover {
+  background-color: hsla(0, 0%, 100%, .3);
+}
+
+.ivu-modal-body::-webkit-scrollbar-thumb:window-inactive {
+  background-color: hsla(0, 0%, 100%, .05);
+}
+
+.ivu-modal-footer {
+  padding: 9px 18px 12px 18px;
+}
+
+</style>
 <style lang="less" scoped>
 .ContainerView {
   font-size: 13px;
@@ -340,6 +418,7 @@ export default {
     }
   }
 }
+
 
 .ListContainer {
   perspective: 500px;

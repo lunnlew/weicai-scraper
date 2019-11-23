@@ -1,4 +1,4 @@
-import { proxyAct, jobAct } from '@/api/source'
+import { articleDelete, proxyAct, jobAct } from '@/api/source'
 
 const state = {
   list: [],
@@ -10,19 +10,18 @@ const state = {
 const mutations = {
   updateListItem(state, data) {
     if (data.type == 'update' || data.type == 'append') {
-      let e = state.list.filter((item) => item.msg_sn == data.data.msg_sn)
-      console.log(e)
-      if (!e || !e.length) {
-        console.log('data append')
-        state.list.unshift(data.data)
-      } else {
-        console.log('data update')
-      }
+      state.list = [
+        data.data,
+        ...state.list.filter(element => element._id !== data.data._id)
+      ]
     }
     console.log(data)
   },
   updateList(state, data) {
     state.list = data
+  },
+  deleteArticle(state, data) {
+    state.list.splice(data.index, 1);
   },
   updateUniaccList(state, data) {
     state.uniacclist = data
@@ -51,6 +50,13 @@ const actions = {
   },
   updateList({ commit }, data) {
     commit('updateList', data)
+  },
+  deleteArticle({ commit }, data) {
+    articleDelete({
+      act: 'delete',
+      '_id': data.row._id
+    }).then(result => {})
+    commit('deleteArticle', data)
   },
   switchJob({ commit }, enable) {
     if (enable) {

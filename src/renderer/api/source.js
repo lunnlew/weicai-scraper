@@ -16,6 +16,14 @@ export function fetchDetail(params) {
   })
 }
 
+export function articleDelete(params) {
+  return request({
+    url: '/article',
+    method: 'post',
+    params
+  })
+}
+
 export function fetchSetting(params) {
   return request({
     url: '/setting',

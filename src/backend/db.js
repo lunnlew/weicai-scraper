@@ -66,12 +66,12 @@ DB.MediaDB.prototype.update = function(conditions, item) {
 
 DB.MediaDB.prototype.remove = function(conditions, options) {
   return new Promise(function(resolve, reject) {
-    DB.db.remove(conditions, options, function(err, docs) {
+    DB.db.remove(conditions, options, function(err, numRemoved) {
       if (err) {
         DB.printErrorInfo(err)
         reject(err)
       } else {
-        resolve(docs)
+        resolve(numRemoved)
       }
     })
   })

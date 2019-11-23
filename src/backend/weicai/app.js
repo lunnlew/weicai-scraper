@@ -8,6 +8,8 @@ const path = require('path')
 const os = require('os')
 const fs = require('fs-extra')
 
+const ChromiumPath = path.join(__dirname, '../.local-chromium/win64-706915/chrome-win/chrome.exe')
+
 const { autoScroll } = require('./utils')
 
 const AppServer = require('./AppServer')
@@ -19,8 +21,10 @@ let appServer = new AppServer()
 appServer.bindApp(expressApp, recorder)
 appServer.bindProxy(new ProxyServer())
 
+
+
 appServer.route(function(self) {
-  self.app.post('/article', async (req, res) => {
+  self.app.all('/article', async (req, res) => {
     let action = req.query.act || ''
     switch (action) {
       case "list":
@@ -39,6 +43,62 @@ appServer.route(function(self) {
           })
           break
         }
+      case "delete":
+        {
+          let _id = req.query._id
+          await self.recorder.deleteItems({ '_id': _id }, {})
+          res.send({
+            code: 200,
+            msg: 'success'
+          })
+          break
+        }
+      case "makeimg":
+        {
+          let browser = await puppeteer.launch({
+            args: [
+              '--disable-gpu',
+              '--disable-dev-shm-usage',
+              '--disable-setuid-sandbox',
+              '--no-first-run',
+              '--no-sandbox',
+              '--no-zygote'
+            ],
+            headless: true,
+            ignoreHTTPSErrors: true,
+            executablePath: ChromiumPath
+          });
+          let _id = req.query._id
+          let list = await self.recorder.findItems({ '_id': _id }, 1, 1)
+          let item = list[0]
+
+          let title = item.title.replace(/[|\\/?*<>:]/g, '')
+          try {
+            console.log('处理[' + item.title + ']')
+            let page = await browser.newPage();
+            await page.goto(item.content_url, {
+              timeout: 30000,
+              waitUntil: ['networkidle0']
+            });
+            await autoScroll(page);
+            await page.waitFor(3000);
+            await page.screenshot({
+              path: path.join(os.homedir(), '.weicai-scraper/html/' + title + '.jpg'),
+              fullPage: true
+            });
+            self.recorder.emitUpdate(item.msg_sn, { "html_jpg": 'html/' + title + '.jpg' })
+          } catch (err) {
+            console.log(err)
+          }
+          await browser.close()
+          browser = null
+
+          res.send({
+            code: 200,
+            msg: 'success'
+          })
+          break
+        }
       case "detail":
         {
           let msg_sn = req.query.msg_sn
@@ -48,6 +108,33 @@ appServer.route(function(self) {
             msg: 'success',
             data: list.shift()
           })
+          break
+        }
+      case 'preview':
+        {
+          let _id = req.query._id
+          let list = await self.recorder.findItems({ _id: _id })
+          let preview_path = list[0].html_jpg
+          preview_path = path.join(os.homedir(), '.weicai-scraper/' + preview_path)
+          console.log('preview_path ' + preview_path)
+          if (preview_path && preview_path.indexOf('http') === 0) {
+            res.status(404).end()
+          } else {
+            let isExistFile = false
+            try {
+              isExistFile = fs.statSync(preview_path).isFile()
+            } catch (err) {
+              console.log(err)
+            }
+            if (isExistFile) {
+              fs.createReadStream(preview_path)
+                .on('error', function(err) {
+                  console.log(err.stack)
+                }).pipe(res)
+            } else {
+              res.status(404).end('Not found')
+            }
+          }
           break
         }
       default:
@@ -154,19 +241,23 @@ appServer.route(function(self) {
         }
       case "getNextArticle":
         {
-          let list = await self.recorder.findItems({ 'msg_sn': { $exists: true },'content_url': { $exists: true }, 'msg_sn': { $ne: req.body.currentMsgSn }}, 1, 1)
+          let list = await self.recorder.findItems({ 'msg_sn': { $exists: true }, 'content_url': { $exists: true }, 'msg_sn': { $ne: req.body.currentMsgSn } }, 1, 1)
           let art = {}
-          if(list.length){
+          if (list.length) {
             art = list[0]
           }
-          res.send({ code: 200, msg: 'success', data: {
-            'art':art
-          } })
+          res.send({
+            code: 200,
+            msg: 'success',
+            data: {
+              'art': art
+            }
+          })
           break
         }
       default:
         {
-          
+
           break
         }
     }
@@ -178,7 +269,6 @@ appServer.route(function(self) {
   self.app.all('/job', async function(req, res) {
     let action = req.query.act || 'start'
     fs.ensureDirSync(path.join(os.homedir(), '.weicai-scraper/html'))
-    let ChromiumPath = path.join(__dirname, '../.local-chromium/win64-706915/chrome-win/chrome.exe')
 
     switch (action) {
       case "start":

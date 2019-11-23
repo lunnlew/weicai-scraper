@@ -181,6 +181,17 @@ class Recorder extends events.EventEmitter {
     })
   }
 
+  async deleteItems(conditions, options) {
+    const self = this;
+    return new Promise(function(resolve, reject) {
+      self.db.remove(conditions, options).then((res) => {
+        resolve(res)
+      }).catch((err) => {
+        reject(err)
+      })
+    })
+  }
+
   async count(conditions) {
     const self = this;
     return new Promise(function(resolve, reject) {
