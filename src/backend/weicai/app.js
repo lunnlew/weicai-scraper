@@ -4,6 +4,7 @@ const expressWS = require('express-ws')
 
 const { default: PQueue } = require('p-queue')
 const puppeteer = require('puppeteer')
+const devices = require('puppeteer/DeviceDescriptors');
 const path = require('path')
 const os = require('os')
 const fs = require('fs-extra')
@@ -86,6 +87,7 @@ appServer.route(function(self) {
             try {
               console.log('处理[' + item.title + ']')
               let page = await browser.newPage();
+              await page.emulate(devices['iPad Pro landscape']);
               await page.goto(item.content_url, {
                 timeout: 30000,
                 waitUntil: ['networkidle0']
@@ -95,7 +97,6 @@ appServer.route(function(self) {
               await page.screenshot({
                 path: path.join(os.homedir(), '.weicai-scraper/html/' + title + '.png'),
                 type: 'png',
-                quality: 100,
                 fullPage: true
               });
               self.recorder.emitUpdate(item.msg_sn, { "html_jpg": 'html/' + title + '.png' })
@@ -304,6 +305,7 @@ appServer.route(function(self) {
                       try {
                         console.log('处理[' + item.title + ']')
                         let page = await browser.newPage();
+                        await page.emulate(devices['iPad Pro landscape']);
                         await page.goto(item.content_url, {
                           timeout: 30000,
                           waitUntil: ['networkidle0']
@@ -313,7 +315,6 @@ appServer.route(function(self) {
                         await page.screenshot({
                           path: path.join(os.homedir(), '.weicai-scraper/html/' + title + '.png'),
                           type: 'png',
-                          quality: 100,
                           fullPage: true
                         });
                         self.recorder.emitUpdate(item.msg_sn, { "html_jpg": 'html/' + title + '.png' })
