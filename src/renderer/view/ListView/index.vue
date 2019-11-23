@@ -103,7 +103,8 @@
         <span>文章查看(图片)</span>
       </p>
       <div style="text-align:center">
-        <img style="max-width: 100%" v-if="preview._id" :src="'http://localhost:6877/article?act=preview&_id='+preview._id" />
+        <img style="max-width: 100%" v-if="preview.html_jpg" :src="'http://localhost:6877/article?act=preview&_id='+preview._id" />
+        <p v-else>还未生成文章图片</p>
       </div>
       <div slot="footer">
         <Button type="primary" size="large" long @click="previewModel=false">关闭</Button>
