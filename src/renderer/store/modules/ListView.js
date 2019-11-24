@@ -1,4 +1,4 @@
-import { articleDelete, proxyAct, jobAct } from '@/api/source'
+import { articleDelete, uniaccDelete, proxyAct, jobAct } from '@/api/source'
 
 const state = {
   list: [],
@@ -22,6 +22,9 @@ const mutations = {
   },
   deleteArticle(state, data) {
     state.list.splice(data.index, 1);
+  },
+  deleteUniacc(state, data) {
+    state.uniacclist.splice(data.index, 1);
   },
   updateUniaccList(state, data) {
     state.uniacclist = data
@@ -50,6 +53,13 @@ const actions = {
   },
   updateList({ commit }, data) {
     commit('updateList', data)
+  },
+  deleteUniacc({ commit }, data) {
+    uniaccDelete({
+      act: 'delete',
+      '_id': data.row._id
+    }).then(result => {})
+    commit('deleteUniacc', data)
   },
   deleteArticle({ commit }, data) {
     articleDelete({

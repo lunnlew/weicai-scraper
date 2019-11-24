@@ -208,6 +208,16 @@ appServer.route(function(self) {
           })
           break
         }
+      case "delete":
+        {
+          let _id = req.query._id
+          await self.recorder.deleteItems({ '_id': _id }, {})
+          res.send({
+            code: 200,
+            msg: 'success'
+          })
+          break
+        }
       case "detail":
         {
           let _id = req.query._id

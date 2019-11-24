@@ -24,6 +24,14 @@ export function articleDelete(params) {
   })
 }
 
+export function uniaccDelete(params) {
+  return request({
+    url: '/uniacc',
+    method: 'post',
+    params
+  })
+}
+
 export function fetchSetting(params) {
   return request({
     url: '/setting',

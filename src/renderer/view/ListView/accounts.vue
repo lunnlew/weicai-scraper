@@ -8,6 +8,9 @@
       <div class="PageScroller">
         <div class="ListContainer">
           <Table stripe :columns="columns" :data="list" @on-row-dblclick="rowDblclick">
+            <template slot-scope="{ row, index }" slot="action">
+              <Button type="error" size="small" @click="remove(row, index)">删除</Button>
+            </template>
           </Table>
           <div style="text-align: left;margin-top: 30px;">
             <Page :total="total" show-total show-sizer show-elevator :page-size="pageSize" :current="currentPage" @on-change="changePage" @on-page-size-change="changeSizePage"></Page>
@@ -58,15 +61,28 @@ export default {
       pageSize: 10,
       total: 0,
       columns: [{
-        title: '名称',
-        key: 'nickname'
-      }, {
-        title: '原始ID',
-        key: 'username'
-      }]
+          title: '名称',
+          key: 'nickname'
+        }, {
+          title: '原始ID',
+          key: 'username'
+        },
+        {
+          title: '操作',
+          slot: 'action',
+          width: 150,
+          align: 'center'
+        }
+      ]
     }
   },
   methods: {
+    remove(row, index) {
+      this.$store.dispatch('deleteUniacc', {
+        'row': row,
+        'index': index
+      })
+    },
     loadData() {
       fetchUniaccList({
         act: 'list',
