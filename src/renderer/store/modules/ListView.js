@@ -12,7 +12,7 @@ const mutations = {
     if (data.type == 'update' || data.type == 'append') {
       state.list = [
         data.data,
-        ...state.list.filter(element => element._id !== data.data._id)
+        ...state.list.filter(element => element.msg_sn !== data.data.msg_sn)
       ]
     }
     console.log(data)
