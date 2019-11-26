@@ -264,6 +264,22 @@ appServer.route(function(self) {
           self.recorder.emitSave(req.body)
           break
         }
+      case "getNextUniaccHis":
+        {
+          let list = await self.recorder.findItems({ 'is_uniacc': { $exists: true } }, 1, 1)
+          let uniacc = {}
+          if (list.length) {
+            uniacc = list[0]
+          }
+          res.send({
+            code: 200,
+            msg: 'success',
+            data: {
+              'uniacc': uniacc
+            }
+          })
+          break
+        }
       case "getNextArticle":
         {
           let list = await self.recorder.findItems({ 'msg_sn': { $exists: true }, 'content_url': { $exists: true }, 'msg_sn': { $ne: req.body.currentMsgSn } }, 1, 1)

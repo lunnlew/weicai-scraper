@@ -72,7 +72,7 @@ module.exports = {
         console.log('微信提示: ' + error_msg)
         return new Promise((resolve, reject) => {
           resolve({ response: responseDetail.response });
-        }); 
+        });
       }
       if (/^\/mp\/profile_ext\?action=home/.test(requestDetail.requestOptions.path)) {
         // 正则匹配到JSON
@@ -175,6 +175,13 @@ module.exports = {
         // }
         //https://mp.weixin.qq.com/mp/appmsg_comment?
 
+      }
+      // 提取评论数据
+      if (/^\/mp\/appmsg_comment/.test(requestDetail.requestOptions.path)) {
+        console.log('提取评论数据')
+        let contentJs = JSON.parse(content);
+        let data = requestStrToMap(requestDetail.requestData.toString())
+        console.log(contentJs)
       }
       if (responseDetail.response.statusCode == 200 &&
         'Content-Type' in responseDetail.response.header &&
