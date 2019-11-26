@@ -25,9 +25,9 @@ DB.MediaDB.prototype.count = function(conditions) {
   })
 }
 
-DB.MediaDB.prototype.find = function(conditions, page, size) {
+DB.MediaDB.prototype.find = function(conditions, page, size, sorts) {
   return new Promise(function(resolve, reject) {
-    DB.db.find(conditions).skip((page - 1) * size).limit(size).exec(function(err, docs) {
+    DB.db.find(conditions).sort(Object.assign({ create_time: -1 }, sorts)).skip((page - 1) * size).limit(size).exec(function(err, docs) {
       if (err) {
         DB.printErrorInfo(err)
         reject(err)

@@ -71,7 +71,7 @@
                       <ListItemMeta title="作者" :description="showExtraData.author" />
                     </ListItem>
                     <ListItem>
-                      <ListItemMeta title="摘要" :description="showExtraData.desc" />
+                      <ListItemMeta title="摘要" :description="showExtraData.msg_desc" />
                     </ListItem>
                     <ListItem>
                       <ListItemMeta title="链接" :description="showExtraData.content_url" />
