@@ -78,16 +78,26 @@
                     </ListItem>
                   </List>
                 </TabPane>
+                <TabPane label="评论">
+                  <List>
+                    <ListItem v-for="(item,i) in showExtraData.elected_comment">
+                      <ListItemMeta :title="item.nick_name" :description="item.content" />
+                    </ListItem>
+                  </List>
+                </TabPane>
                 <TabPane label="数据">
                   <List>
                     <ListItem>
-                      <ListItemMeta title="阅读量" :description="showExtraData.readNum" />
+                      <ListItemMeta title="阅读数" :description="showExtraData.readNum+''" />
                     </ListItem>
                     <ListItem>
-                      <ListItemMeta title="点赞量" :description="showExtraData.likeNum" />
+                      <ListItemMeta title="点赞数" :description="showExtraData.likeNum+''" />
                     </ListItem>
                     <ListItem>
-                      <ListItemMeta title="打赏量" :description="showExtraData.rewardTotalCount" />
+                      <ListItemMeta title="打赏量" :description="showExtraData.rewardTotalCount+''" />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemMeta title="评论数" :description="showExtraData.elected_comment_total_cnt+''" />
                     </ListItem>
                   </List>
                 </TabPane>
