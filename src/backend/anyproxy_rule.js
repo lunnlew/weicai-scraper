@@ -17,7 +17,16 @@ var requestStrToMap = function(e) {
   return t
 }
 
-var saveMsg = function(dateTime, msg) {
+var saveMutiMsg = async function(dateTime, msgList) {
+  for (let sub_msg of msgList) {
+    let result = await saveMsg(dateTime, sub_msg)
+    if (result == 'limit') {
+      break
+    }
+  }
+}
+
+var saveMsg = async function(dateTime, msg) {
   msg.content_url = msg.content_url.replace(/&amp;/g, '&')
   let linkParse = querystring.parse(url.parse(msg.content_url).query);
   let msgBiz = linkParse.__biz;
@@ -36,7 +45,10 @@ var saveMsg = function(dateTime, msg) {
     'copyright_stat': msg.copyright_stat,
     'publish_time': dateTime
   }
-  global.recorder.emitHistorySave(info)
+  return new Promise(async (resolve, reject) => {
+    let result = await global.recorder.emitHistorySave(info)
+    resolve(result)
+  })
 }
 
 module.exports = {
@@ -89,9 +101,7 @@ module.exports = {
           }
           let dateTime = (msg.comm_msg_info.datetime * 1000).toString();
           if (msg.app_msg_ext_info.is_multi) {
-            for (let sub_msg of msg.app_msg_ext_info.multi_app_msg_item_list) {
-              saveMsg(dateTime, sub_msg)
-            }
+            saveMutiMsg(dateTime, msg.app_msg_ext_info.multi_app_msg_item_list)
           } else {
             saveMsg(dateTime, msg.app_msg_ext_info)
           }
@@ -109,9 +119,7 @@ module.exports = {
           }
           let dateTime = (msg.comm_msg_info.datetime * 1000).toString();
           if (msg.app_msg_ext_info.is_multi) {
-            for (let sub_msg of msg.app_msg_ext_info.multi_app_msg_item_list) {
-              saveMsg(dateTime, sub_msg)
-            }
+            saveMutiMsg(dateTime, msg.app_msg_ext_info.multi_app_msg_item_list)
           } else {
             saveMsg(dateTime, msg.app_msg_ext_info)
           }

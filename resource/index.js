@@ -123,7 +123,7 @@ if (/^\/mp\/profile_ext\?action=home/.test(url)) {
   } catch (err) {}
 
 
-  var dialog = '<div style="position: fixed;left: 0px;top: 0px;z-index:100;right: 0;bottom: 0;padding: 150px;"><div style="background-color: #666;filter:alpha(Opacity=20);-moz-opacity:0.2;opacity: 0.4;position:absolute;top:0px;left:0px;z-index: 101;right: 0;bottom: 0;"></div><div style="position: relative;background: #fff;z-index: 102;padding: 10px;"><p style="text-align: center;">采集操作界面</p><div><div>任务选项切换</div><ul style="list-style: none;"><li><input type="radio" name="tasktype" value="1">采集下一个公众号</li><li><input type="radio" name="tasktype" value="2">开始当前公众号文章图片生成</li></ul><button id="smttask">提交</button></div></div></div>'
+  var dialog = '<div style="position: fixed;left: 0px;top: 0px;z-index:100;right: 0;bottom: 0;padding: 150px;"><div style="background-color: #666;filter:alpha(Opacity=20);-moz-opacity:0.2;opacity: 0.4;position:absolute;top:0px;left:0px;z-index: 101;right: 0;bottom: 0;"></div><div style="position: relative;background: #fff;z-index: 102;padding: 10px;"><p style="text-align: center;">采集操作界面</p><div><div>任务选项切换</div><ul style="list-style: none;"><li><input type="radio" name="tasktype" value="1">采集下一个公众号</li><li style="display:none"><input type="radio" name="tasktype" value="2">开始当前公众号文章图片生成</li></ul><button id="smttask">提交</button></div></div></div>'
   $('body').append($(dialog))
 
   var socket = new WebSocket('ws://localhost:6877/weicai/wechat_history');
