@@ -81,7 +81,14 @@
                 <TabPane label="评论">
                   <List>
                     <ListItem v-for="(item,i) in showExtraData.elected_comment">
-                      <ListItemMeta :title="item.nick_name" :description="item.content" />
+                      <ListItemMeta :avatar="item.logo_url" :title="item.nick_name" :description="item.content" />
+                      <div class="list-c" v-if='item.reply.reply_list.length'>
+                        <List>
+                          <ListItem v-for="(rp,j) in item.reply.reply_list">
+                            <ListItemMeta title="作者" :description="rp.content" />
+                          </ListItem>
+                        </List>
+                      </div>
                     </ListItem>
                   </List>
                 </TabPane>
@@ -287,6 +294,16 @@ export default {
 
 .ivu-modal-footer {
   padding: 9px 18px 12px 18px;
+}
+
+
+.ivu-list-split .ivu-list-items .ivu-list-item {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.ivu-list-split .ivu-list-items .list-c {
+  padding-left: 20px;
 }
 
 </style>
