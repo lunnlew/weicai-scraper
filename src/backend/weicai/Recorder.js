@@ -80,6 +80,29 @@ class Recorder extends events.EventEmitter {
 
   }
   // 保存记录事件
+  async emitCommentsSave(info) {
+    const self = this;
+    if (!info.comment_id) {
+      return
+    }
+    self.db.find({ 'msg_sn': { $exists: true }, 'comment_id': info.comment_id }).then((res) => {
+      if (res && res.length) {
+        info = Object.assign(res[0], info)
+        self.db.update({ 'msg_sn': { $exists: true }, 'comment_id': info.comment_id }, info).then(() => {})
+      } else {
+        // info = Object.assign({
+        //   'is_comment': true,
+        //   'create_time': Math.round(new Date() / 1000)
+        // }, info)
+        // self.db.insert(info || {}).then(() => {
+        // })
+      }
+    }).catch((err) => {
+      console.log(err)
+    })
+  }
+
+  // 保存记录事件
   async emitSave(info) {
     const self = this;
     if (!info.msg_sn) {

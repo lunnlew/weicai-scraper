@@ -151,37 +151,20 @@ module.exports = {
           }
           global.recorder.emitSave(info)
         }
-
-        // 评论数据参数格式
-        // let req_params = {
-        //   'action': 'getcomment',
-        //   'scene': '0',
-        //   'appmsgid': '2650531172',
-        //   'idx': '1',
-        //   'comment_id': '1081233331964051456',
-        //   'offset': '0',
-        //   'limit': '100',
-        //   'send_time': '',
-        //   'uin': 'MjA1ODEzNTYxMQ%253D%253D',
-        //   'key': '3b746db36a28e164a7e1db772d20b947f78b4983ff4386f0da1b314370f92ab0348a2081a6da859d569a14b9c292aafb429324eacd93d4a777727be0346b3ed9158f8ad791eb8cb1f1ffa2d63b0c2dfd',
-        //   'pass_ticket': 'Ll0bVX1E%25252B9lPZ0omXgRNl3FUoaeYTv6SEaMwlHuutAyksYFHcDG58EiYJGLFwD64',
-        //   'wxtoken': '777',
-        //   'devicetype': 'Windows%26nbsp%3B10',
-        //   'clientversion': '62070158',
-        //   '__biz': 'MjM5MjAyNDUyMA%3D%3D',
-        //   'appmsg_token': '1035_WOk35%252Flx2%252B7R3KyDZ_ZHOrhtHKctjazazH2eaf-8L207_s5fYfLDJ1eVZob0VdsijLoPP6_YD6hxFda9',
-        //   'x5': '0',
-        //   'f': 'json'
-        // }
-        //https://mp.weixin.qq.com/mp/appmsg_comment?
-
       }
       // 提取评论数据
-      if (/^\/mp\/appmsg_comment/.test(requestDetail.requestOptions.path)) {
+      if (/^\/mp\/appmsg_comment\?action=getcomment/.test(requestDetail.requestOptions.path)) {
         console.log('提取评论数据')
         let contentJs = JSON.parse(content);
-        let data = requestStrToMap(requestDetail.requestData.toString())
-        console.log(contentJs)
+        let data = requestStrToMap(requestDetail.requestOptions.path.toString())
+        if (contentJs.base_resp.ret == 0) {
+          let info = {
+            'comment_id': data.comment_id,
+            'elected_comment': contentJs.elected_comment,
+            'elected_comment_total_cnt': contentJs.elected_comment_total_cnt
+          }
+          global.recorder.emitCommentsSave(info)
+        }
       }
       if (responseDetail.response.statusCode == 200 &&
         'Content-Type' in responseDetail.response.header &&
