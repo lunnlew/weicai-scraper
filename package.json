@@ -46,7 +46,6 @@
     "fast-json-stringify": "^1.15.6",
     "fs-extra": "^8.1.0",
     "generic-pool": "^3.7.1",
-    "gm": "^1.23.1",
     "iconv-lite": "^0.5.0",
     "inquirer": "^7.0.0",
     "juicer": "^0.6.15",

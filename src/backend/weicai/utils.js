@@ -1,8 +1,7 @@
 const path = require('path')
 const os = require('os')
 const fs = require('fs-extra')
-const gm = require('gm')
-const Jimp = require('jimp');
+const Jimp = require('jimp')
 const mergeImg = require('merge-img')
 
 // 大小转换
@@ -88,7 +87,7 @@ var pageScreenshot = async function(page, filename) {
         x: 0,
         y: 0,
         width: viewWidth,
-        height: i !== splitCount ? maxHeight : lastViewHeight
+        height: ph
       }
     })
     images.push(image)
