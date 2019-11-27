@@ -99,7 +99,7 @@ appServer.route(function(self) {
               await page.waitFor(1000)
               await pageScreenshot(page, path.join(os.homedir(), '.weicai-scraper/html/' + title + '.png')).catch(err => console.log(err))
               self.recorder.emitUpdate(item.msg_sn, { "html_jpg": 'html/' + title + '.png' })
-              // await page.close()
+              await page.close()
             } catch (err) {
               console.log(err)
             }
