@@ -1,3 +1,10 @@
+const path = require('path')
+const os = require('os')
+const fs = require('fs-extra')
+const gm = require('gm')
+const Jimp = require('jimp');
+const mergeImg = require('merge-img')
+
 // 大小转换
 var renderSize = function(filesize) {
   if (null == filesize || filesize == '' || !filesize) {
@@ -41,15 +48,80 @@ var autoScroll = function(page) {
         totalHeight += distance;
         if (totalHeight >= scrollHeight) {
           clearInterval(timer);
-          resolve();
+          resolve(totalHeight);
         }
       }, 100);
     })
   });
 }
 
+var pageScreenshot = async function(page, filename) {
+  let {
+    pageHeight,
+    viewport
+  } = await page.evaluate(() => {
+    window.scrollTo(0, 0);
+    return {
+      pageHeight: document.body.scrollHeight,
+      viewport: {
+        height: document.body.clientHeight,
+        width: document.body.clientWidth
+      }
+    };
+  });
+  let viewHeight = viewport.height
+  let viewWidth = viewport.width
+
+  console.log('pageHeight:' + pageHeight)
+  let maxHeight = viewHeight;
+  let splitCount = Math.ceil(pageHeight / maxHeight);
+  let lastViewHeight = pageHeight - ((splitCount - 1) * maxHeight);
+
+  console.log('splitCount:' + splitCount)
+  let th = 0
+  let images = []
+  for (let i = 1; i <= splitCount; i++) {
+    let ph = i !== splitCount ? maxHeight : lastViewHeight
+    let image = await page.screenshot({
+      fullPage: false,
+      clip: {
+        x: 0,
+        y: 0,
+        width: viewWidth,
+        height: i !== splitCount ? maxHeight : lastViewHeight
+      }
+    })
+    images.push(image)
+    // 滚动距离
+    th += ph
+    await page.evaluate((th) => {
+      return new Promise((resolve, reject) => {
+        $('body').css('margin-top', '-' + th + 'px')
+        var timer = setTimeout(() => {
+          clearTimeout(timer);
+          resolve();
+        }, 1000);
+      })
+    }, th)
+  }
+
+  return new Promise(async (resolve, reject) => {
+    if (splitCount == 1) {
+      let img = await Jimp.read(images[0])
+      img.write(filename)
+    } else {
+      let img = await mergeImg(images, {
+        direction: true
+      })
+      img.write(filename)
+    }
+    resolve()
+  })
+}
+
 module.exports = {
   renderSize,
   getFreePort,
-  autoScroll
+  autoScroll,
+  pageScreenshot
 }
