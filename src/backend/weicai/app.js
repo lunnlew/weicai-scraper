@@ -77,7 +77,7 @@ appServer.route(function(self) {
       case "makeimg":
         {
 
-          await puppeteerPool.use(async (browser) => {
+          puppeteerPool.use(async (browser) => {
             let _id = req.query._id
             let list = await self.recorder.findItems({ '_id': _id }, 1, 1)
             let item = list[0]
@@ -99,6 +99,9 @@ appServer.route(function(self) {
               await page.waitFor(1000)
               await pageScreenshot(page, path.join(os.homedir(), '.weicai-scraper/html/' + title + '.png')).catch(err => console.log(err))
               self.recorder.emitUpdate(item.msg_sn, { "html_jpg": 'html/' + title + '.png' })
+              self.recorder.emit('toggleMakeImg', {
+                'row': item
+              })
               await page.close()
             } catch (err) {
               console.log(err)

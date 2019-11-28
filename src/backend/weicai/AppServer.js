@@ -27,6 +27,13 @@ class AppServer {
   start() {
     const self = this
     return new Promise((resolve, reject) => {
+      self.recorder.on('toggleMakeImg', (data) => {
+        console.log('toggleMakeImg')
+        self.ws['wcclient'].send(JSON.stringify({
+          'type': 'toggleMakeImg',
+          'data': data
+        }))
+      })
       self.recorder.on('client_update_article_list', (data) => {
         console.log('client_update_article_list')
         self.ws['wcclient'].send(JSON.stringify({

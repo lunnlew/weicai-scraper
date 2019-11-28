@@ -4,7 +4,8 @@ const state = {
   list: [],
   boolSwitchJob: false,
   boolSwitchProxy: false,
-  uniacclist: []
+  uniacclist: [],
+  loadingMakeimgs: []
 }
 
 const mutations = {
@@ -19,6 +20,13 @@ const mutations = {
   },
   updateList(state, data) {
     state.list = data
+  },
+  toggleMakeImg(state, data) {
+    console.log(data)
+    state.loadingMakeimgs = Object.assign({}, state.loadingMakeimgs, {
+      [data.row._id]: !state.loadingMakeimgs[data.row._id]
+    })
+    console.log(state.loadingMakeimgs)
   },
   deleteArticle(state, data) {
     state.list.splice(data.index, 1);
@@ -47,6 +55,9 @@ const mutations = {
 const actions = {
   updateUniaccList({ commit }, data) {
     commit('updateUniaccList', data)
+  },
+  toggleMakeImg({ commit }, data) {
+    commit('toggleMakeImg', data)
   },
   updateListItem({ commit }, data) {
     commit('updateListItem', data)

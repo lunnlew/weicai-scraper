@@ -19,6 +19,9 @@ socket.addEventListener('message', function(event) {
   if (data.type == 'update' || data.type == 'append') {
     store.dispatch('updateListItem', data)
   }
+  if (data.type == 'toggleMakeImg') {
+    store.dispatch('toggleMakeImg', data.data)
+  }
 });
 
 

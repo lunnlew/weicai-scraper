@@ -139,7 +139,6 @@ export default {
   props: [],
   data: () => {
     return {
-      loadingMakeimgs: [],
       previewModel: false,
       preview: {},
       showExtraInfo: false,
@@ -195,16 +194,19 @@ export default {
       this.preview = row
     },
     makeimg(row, index) {
-      if (this.loadingMakeimgs[row._id]) {
+      let self = this
+      if (self.loadingMakeimgs[row._id]) {
         return
       }
-      this.$set(this.loadingMakeimgs, row._id, true)
+
+      this.$store.dispatch('toggleMakeImg', {
+        'row': row
+      })
+
       fetchDetail({
         act: 'makeimg',
         '_id': row._id
-      }).then(result => {
-        this.$set(this.loadingMakeimgs, row._id, false)
-      })
+      }).then(result => {})
     },
     remove(row, index) {
       this.$store.dispatch('deleteArticle', {
@@ -257,6 +259,9 @@ export default {
     }
   },
   computed: {
+    loadingMakeimgs() {
+      return this.$store.state.ListView.loadingMakeimgs
+    },
     boolSwitchProxy: {
       get: function() {
         return this.$store.state.ListView.boolSwitchProxy
