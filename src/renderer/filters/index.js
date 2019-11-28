@@ -12,6 +12,10 @@ function padLeftZero(str) {
   return ('00' + str).substr(str.length)
 }
 
+function padRightZero(str) {
+  return (str + '000').substr(str.length)
+}
+
 export function fmtNum(t) {
   return t || 0
 }
@@ -21,6 +25,11 @@ export function fmtDate(t, fmt) {
   if (t == null) {
     return ''
   }
+
+  if ((t + '').length < 13) {
+    t = (t + '0000').substr(0, 13)
+  }
+
   var date = new Date(parseInt(t))
   if (/(y+)/.test(fmt)) {
     fmt = fmt.replace(
