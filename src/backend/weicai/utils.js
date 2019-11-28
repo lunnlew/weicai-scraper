@@ -71,41 +71,39 @@ var pageScreenshot = async function(page, filename) {
   let viewHeight = viewport.height
   let viewWidth = viewport.width
 
-  console.log('pageHeight:' + pageHeight)
-  let maxHeight = viewHeight;
-  let splitCount = Math.ceil(pageHeight / maxHeight);
-  let lastViewHeight = pageHeight - ((splitCount - 1) * maxHeight);
+  let maxViewHeight = viewHeight;
+  let partViewCount = Math.ceil(pageHeight / maxViewHeight);
+  let lastViewHeight = pageHeight - ((partViewCount - 1) * maxViewHeight);
 
-  console.log('splitCount:' + splitCount)
-  let th = 0
+  let totalMarignTop = 0
   let images = []
-  for (let i = 1; i <= splitCount; i++) {
-    let ph = i !== splitCount ? maxHeight : lastViewHeight
+  for (let i = 1; i <= partViewCount; i++) {
+    let currentViewHeight = i !== partViewCount ? maxViewHeight : lastViewHeight
     let image = await page.screenshot({
       fullPage: false,
       clip: {
         x: 0,
         y: 0,
         width: viewWidth,
-        height: ph
+        height: currentViewHeight
       }
     })
     images.push(image)
     // 滚动距离
-    th += ph
-    await page.evaluate((th) => {
+    totalMarignTop += currentViewHeight
+    await page.evaluate((totalMarignTop) => {
       return new Promise((resolve, reject) => {
-        $('body').css('margin-top', '-' + th + 'px')
+        $('body').css('margin-top', '-' + totalMarignTop + 'px')
         var timer = setTimeout(() => {
           clearTimeout(timer);
           resolve();
         }, 1000);
       })
-    }, th)
+    }, totalMarignTop)
   }
 
   return new Promise(async (resolve, reject) => {
-    if (splitCount == 1) {
+    if (partViewCount == 1) {
       let img = await Jimp.read(images[0])
       img.write(filename)
     } else {
