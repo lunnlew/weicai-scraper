@@ -152,37 +152,37 @@ export default {
         }, {
           title: '作者',
           key: 'author',
-          width: 160
+          maxWidth: 160
         }, {
           title: '阅读量',
           key: 'readNum',
           slot: 'readNum',
-          width: 100
+          maxWidth: 100
         }, {
           title: '点赞量',
           key: 'likeNum',
           slot: 'likeNum',
-          width: 80
+          maxWidth: 80
         }, {
           title: '打赏量',
           key: 'rewardTotalCount',
           slot: 'rewardTotalCount',
-          width: 80
+          maxWidth: 80
         }, {
           title: '图片',
           key: 'html_jpg',
           slot: 'html_jpg',
-          width: 80
+          maxWidth: 80
         }, {
           title: '发布时间',
           key: 'publish_time',
           slot: 'publish_time',
-          width: 160
+          maxWidth: 160
         },
         {
           title: '操作',
           slot: 'action',
-          width: 250,
+          maxWidth: 250,
           align: 'center'
         }
       ]
