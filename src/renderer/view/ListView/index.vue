@@ -44,7 +44,7 @@
             <template slot-scope="{ row, index }" slot="action">
               <ButtonGroup size="small">
                 <Button type="primary" size="small" @click="show(row, index)">查看</Button>
-                <Button type="info" size="small" :loading="loadingMakeimgs[index]" @click="makeimg(row, index)">生成</Button>
+                <Button type="info" size="small" :loading="loadingMakeimgs[row._id]" @click="makeimg(row, index)">生成</Button>
                 <Button type="error" size="small" @click="remove(row, index)">删除</Button>
               </ButtonGroup>
             </template>
@@ -195,15 +195,15 @@ export default {
       this.preview = row
     },
     makeimg(row, index) {
-      if (this.loadingMakeimgs[index]) {
+      if (this.loadingMakeimgs[row._id]) {
         return
       }
-      this.$set(this.loadingMakeimgs, index, true)
+      this.$set(this.loadingMakeimgs, row._id, true)
       fetchDetail({
         act: 'makeimg',
         '_id': row._id
       }).then(result => {
-        this.$set(this.loadingMakeimgs, index, false)
+        this.$set(this.loadingMakeimgs, row._id, false)
       })
     },
     remove(row, index) {
