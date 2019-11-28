@@ -7,11 +7,10 @@ const { autoScroll, pageScreenshot } = require('./utils')
 const empty = () => {};
 
 class ScreenshotQueue extends events.EventEmitter {
-  constructor(recorder, puppeteerPool) {
+  constructor(recorder) {
     super()
     const self = this
     self.recorder = recorder
-    self.puppeteerPool = puppeteerPool
     self.list = []
     self.fstop = false
     self.complete = false

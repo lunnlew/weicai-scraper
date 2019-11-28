@@ -2,39 +2,10 @@
 
 const expressWS = require('express-ws')
 
-const { default: PQueue } = require('p-queue')
-const puppeteer = require('puppeteer')
-const devices = require('puppeteer/DeviceDescriptors');
 const path = require('path')
 const os = require('os')
 const child_process = require('child_process')
 const fs = require('fs-extra')
-
-const ChromiumPath = path.join(__dirname, '../.local-chromium/win64-706915/chrome-win/chrome.exe')
-
-const { autoScroll, pageScreenshot } = require('./utils')
-
-const PuppeteerPool = require('./puppeteer-pool')
-// 全局只应该被初始化一次
-const puppeteerPool = PuppeteerPool({
-  puppeteerArgs: {
-    args: [
-      '--disable-gpu',
-      '--disable-dev-shm-usage',
-      '--disable-setuid-sandbox',
-      '--no-first-run',
-      '--no-zygote',
-      '--no-sandbox'
-    ],
-    timeout: 0,
-    pipe: true,
-    headless: true,
-    ignoreHTTPSErrors: true,
-    executablePath: ChromiumPath,
-    defaultViewport: null
-  }
-})
-
 
 const AppServer = require('./AppServer')
 const expressApp = require('./expressApp')
@@ -44,8 +15,6 @@ global.recorder = new Recorder()
 let appServer = new AppServer()
 appServer.bindApp(expressApp, recorder)
 appServer.bindProxy(new ProxyServer())
-
-
 
 appServer.route(function(self) {
   self.app.all('/article', async (req, res) => {
@@ -325,7 +294,7 @@ appServer.route(function(self) {
           console.log('will start job task')
           if (!self.job) {
             let ScreenshotQueue = require('./ScreenshotQueue')
-            let screenshotQueue = new ScreenshotQueue(self.recorder, puppeteerPool)
+            let screenshotQueue = new ScreenshotQueue(self.recorder)
             screenshotQueue.start()
             self.job = screenshotQueue
           }
