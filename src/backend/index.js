@@ -2,7 +2,6 @@
 
 ;
 (async () => {
-
   await require('./weicai/app').start()
 
 })();

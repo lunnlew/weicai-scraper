@@ -7,6 +7,7 @@ const puppeteer = require('puppeteer')
 const devices = require('puppeteer/DeviceDescriptors');
 const path = require('path')
 const os = require('os')
+const child_process = require('child_process')
 const fs = require('fs-extra')
 
 const ChromiumPath = path.join(__dirname, '../.local-chromium/win64-706915/chrome-win/chrome.exe')
@@ -44,6 +45,8 @@ let appServer = new AppServer()
 appServer.bindApp(expressApp, recorder)
 appServer.bindProxy(new ProxyServer())
 
+
+
 appServer.route(function(self) {
   self.app.all('/article', async (req, res) => {
     let action = req.query.act || ''
@@ -77,34 +80,40 @@ appServer.route(function(self) {
       case "makeimg":
         {
 
-          puppeteerPool.use(async (browser) => {
-            let _id = req.query._id
-            let list = await self.recorder.findItems({ '_id': _id }, 1, 1)
-            let item = list[0]
-            let title = item.title.replace(/[|\\/?*<>:]/g, '')
-            try {
-              console.log('处理[' + item.title + ']')
-              let page = await browser.newPage();
-              await page.setViewport({
-                width: 1000,
-                height: 1920,
-                deviceScaleFactor: 1
-              })
-              await page.goto(item.content_url, {
-                timeout: 30000,
-                waitUntil: ['networkidle0']
-              });
-              await autoScroll(page)
-              await page.evaluate(() => { window.scrollTo(0, 0) })
-              await page.waitFor(1000)
-              await pageScreenshot(page, path.join(os.homedir(), '.weicai-scraper/html/' + title + '.png')).catch(err => console.log(err))
-              self.recorder.emitUpdate(item.msg_sn, { "html_jpg": 'html/' + title + '.png' })
-              self.recorder.emit('toggleMakeImg', {
-                'row': item
-              })
-              await page.close()
-            } catch (err) {
-              console.log(err)
+          let screenshotWorker = child_process.fork(path.join(__dirname, '../', 'resource/ScreenshotWorker.js'), [], {
+            cwd: process.cwd(),
+            env: process.env,
+            stdio: [0, 1, 2, 'ipc'],
+            encoding: 'utf-8'
+          });
+
+          screenshotWorker.on('message', function(msg) {
+            console.log(msg)
+            if (typeof msg == 'object') {
+              if (msg.event == 'complete') {
+                let data = msg.data
+                let item = data.item
+                let title = item.title.replace(/[|\\/?*<>:]/g, '')
+                global.recorder.emitUpdate(item.msg_sn, { "html_jpg": 'html/' + title + '.png' })
+                global.recorder.emit('toggleMakeImg', {
+                  'row': item
+                })
+              }
+            }
+          })
+
+          let _id = req.query._id
+          let list = await self.recorder.findItems({ '_id': _id }, 1, 1)
+          let item = list[0]
+
+          console.log('处理[' + item.title + ']')
+
+          let title = item.title.replace(/[|\\/?*<>:]/g, '')
+          screenshotWorker.send({
+            'event': 'screenshot',
+            'data': {
+              savepath: path.join(os.homedir(), '.weicai-scraper/html/' + title + '.png'),
+              item: item
             }
           })
           res.send({
