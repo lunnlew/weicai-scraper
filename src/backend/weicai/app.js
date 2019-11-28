@@ -88,7 +88,6 @@ appServer.route(function(self) {
           });
 
           screenshotWorker.on('message', function(msg) {
-            console.log(msg)
             if (typeof msg == 'object') {
               if (msg.event == 'complete') {
                 let data = msg.data
