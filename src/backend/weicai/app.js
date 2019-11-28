@@ -243,7 +243,9 @@ appServer.route(function(self) {
         }
       case "getNextUniaccHis":
         {
-          let list = await self.recorder.findItems({ 'is_uniacc': { $exists: true } }, 1, 1)
+          let list = await self.recorder.findItems({ 'is_uniacc': { $exists: true } }, 1, 1, {
+            'history_end_time': -1
+          })
           let uniacc = {}
           if (list.length) {
             uniacc = list[0]
