@@ -42,9 +42,11 @@
               {{ row.publish_time | fmtDate('yyyy-MM-dd hh:mm') }}
             </template>
             <template slot-scope="{ row, index }" slot="action">
-              <Button type="primary" size="small" style="margin-right: 5px" @click="show(row, index)">查看</Button>
-              <Button type="info" size="small" @click="makeimg(row, index)">生成</Button>
-              <Button type="error" size="small" @click="remove(row, index)">删除</Button>
+              <ButtonGroup size="small">
+                <Button type="primary" size="small" @click="show(row, index)">查看</Button>
+                <Button type="info" size="small" :loading="loadingMakeimgs[index]" @click="makeimg(row, index)">生成</Button>
+                <Button type="error" size="small" @click="remove(row, index)">删除</Button>
+              </ButtonGroup>
             </template>
           </Table>
           <div style="text-align: left;margin-top: 30px;">
@@ -137,6 +139,7 @@ export default {
   props: [],
   data: () => {
     return {
+      loadingMakeimgs: [],
       previewModel: false,
       preview: {},
       showExtraInfo: false,
@@ -149,32 +152,38 @@ export default {
           key: 'title'
         }, {
           title: '作者',
-          key: 'author'
+          key: 'author',
+          width: 160
         }, {
           title: '阅读量',
           key: 'readNum',
-          slot: 'readNum'
+          slot: 'readNum',
+          width: 100
         }, {
           title: '点赞量',
           key: 'likeNum',
-          slot: 'likeNum'
+          slot: 'likeNum',
+          width: 80
         }, {
           title: '打赏量',
           key: 'rewardTotalCount',
-          slot: 'rewardTotalCount'
+          slot: 'rewardTotalCount',
+          width: 80
         }, {
           title: '图片',
           key: 'html_jpg',
-          slot: 'html_jpg'
+          slot: 'html_jpg',
+          width: 80
         }, {
           title: '发布时间',
           key: 'publish_time',
-          slot: 'publish_time'
+          slot: 'publish_time',
+          width: 160
         },
         {
           title: '操作',
           slot: 'action',
-          width: 150,
+          width: 250,
           align: 'center'
         }
       ]
@@ -186,10 +195,16 @@ export default {
       this.preview = row
     },
     makeimg(row, index) {
+      if (this.loadingMakeimgs[index]) {
+        return
+      }
+      this.$set(this.loadingMakeimgs, index, true)
       fetchDetail({
         act: 'makeimg',
         '_id': row._id
-      }).then(result => {})
+      }).then(result => {
+        this.$set(this.loadingMakeimgs, index, false)
+      })
     },
     remove(row, index) {
       this.$store.dispatch('deleteArticle', {
