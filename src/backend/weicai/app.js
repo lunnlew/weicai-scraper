@@ -228,9 +228,12 @@ appServer.route(function(self) {
               let uniacc = list[0]
               await self.recorder.updateItems({ _id: uniacc._id }, Object.assign(uniacc, req.body))
             } else {
+              let current_time = Math.round(new Date() / 1000)
               await self.recorder.insertItems(Object.assign({
                 'is_uniacc': true,
-                'create_time': Math.round(new Date() / 1000)
+                'create_time': current_time,
+                'history_duplicate_count': 0,
+                'history_end_time': current_time
               }, req.body))
             }
           }
@@ -244,7 +247,7 @@ appServer.route(function(self) {
       case "getNextUniaccHis":
         {
           let list = await self.recorder.findItems({ 'is_uniacc': { $exists: true } }, 1, 1, {
-            'history_end_time': -1
+            'history_end_time': 1
           })
           let uniacc = {}
           if (list.length) {

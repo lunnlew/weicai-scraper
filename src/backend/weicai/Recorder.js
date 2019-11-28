@@ -18,31 +18,48 @@ class Recorder extends events.EventEmitter {
         resolve()
         return
       }
+
+      // 读取该公众号最近的历史页采集结束时间
+      let uniacc_list = await self.findItems({ 'is_uniacc': { $exists: true }, 'biz': info.msg_biz })
+      let uniacc = {}
+      let current_time = Math.round(new Date() / 1000)
+      let history_duplicate_count = 0
+      let history_end_time = current_time
+      if (uniacc_list.length) {
+        uniacc = uniacc_list[0]
+        if (!'history_end_time' in uniacc) {
+          await self.updateItems({ biz: info.msg_biz }, Object.assign(uniacc, {
+            history_end_time: history_end_time
+          }))
+        }
+        if (!'history_duplicate_count' in uniacc) {
+          await self.updateItems({ biz: info.msg_biz }, Object.assign(uniacc, {
+            history_duplicate_count: history_duplicate_count
+          }))
+        }
+
+        history_duplicate_count = uniacc.history_duplicate_count || history_duplicate_count
+        history_end_time = uniacc.history_end_time || history_end_time
+      } else {
+        uniacc = {
+          'is_uniacc': true,
+          'biz': info.msg_biz,
+          'create_time': current_time,
+          'history_duplicate_count': history_duplicate_count,
+          'history_end_time': history_end_time
+        }
+        await self.insertItems(uniacc)
+      }
+
+
       // 查询是否存在记录
       let msg_list = await self.findItems({ 'msg_sn': info.msg_sn })
       // 存在记录
       if (msg_list.length) {
-        // 读取该公众号最近的历史页采集结束时间
-        let uniacc_list = await self.findItems({ 'is_uniacc': { $exists: true }, 'biz': info.msg_biz })
-        let history_end_time = Math.round(new Date() / 1000)
-        let history_duplicate_count = 0
-        let uniacc = {}
-        if (uniacc_list.length) {
-          uniacc = uniacc_list[0]
-          history_duplicate_count = uniacc.history_duplicate_count || history_duplicate_count
-          history_end_time = uniacc.history_end_time || history_end_time
-        } else {
-          uniacc = {
-            'is_uniacc': true,
-            'biz': info.msg_biz,
-            'create_time': Math.round(new Date() / 1000),
-            'history_end_time': history_end_time
-          }
-          await self.insertItems(uniacc)
-        }
+
         console.log("history_duplicate_count:" + history_duplicate_count)
         console.log("history_end_time:" + history_end_time)
-        let current_time = Math.round(new Date() / 1000)
+
         // 如果在30分钟以外则重置文章采集重复计数
         if (history_end_time + 30 * 60 <= current_time) {
           history_duplicate_count = 0
@@ -53,7 +70,7 @@ class Recorder extends events.EventEmitter {
         //
         await self.updateItems({ biz: info.msg_biz }, Object.assign(uniacc, {
           history_duplicate_count: history_duplicate_count,
-          history_end_time: Math.round(new Date() / 1000)
+          history_end_time: current_time
         }))
 
         // 超出限制计数，发起采集中断事件，并更新采集结束时间
@@ -72,8 +89,14 @@ class Recorder extends events.EventEmitter {
         })
 
       } else {
+
+        await self.updateItems({ biz: info.msg_biz }, Object.assign(uniacc, {
+          history_duplicate_count: history_duplicate_count,
+          history_end_time: history_end_time
+        }))
+
         info = Object.assign({
-          'create_time': Math.round(new Date() / 1000)
+          'create_time': current_time
         }, info)
         self.db.insert(info || {}).then(() => {
           self.emit('client_append_article_list', info)
@@ -174,10 +197,10 @@ class Recorder extends events.EventEmitter {
   // 删除记录事件
   async emitDelete(msg_sn, info) {}
 
-  async findItems(conditions, page, size) {
+  async findItems(conditions, page, size, sorts) {
     const self = this;
     return new Promise(function(resolve, reject) {
-      self.db.find(conditions, page, size).then((res) => {
+      self.db.find(conditions, page, size, sorts).then((res) => {
         resolve(res)
       }).catch((err) => {
         reject(err)
