@@ -98,6 +98,7 @@ appServer.route(function(self) {
                 global.recorder.emit('toggleMakeImg', {
                   'row': item
                 })
+                screenshotWorker.kill()
               }
             }
           })

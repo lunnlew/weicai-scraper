@@ -99,6 +99,11 @@ class ScreenshotQueue extends events.EventEmitter {
   async stop() {
     this.list = []
     this.fstop = true
+    this.complete = false
+    this._resolveIdle = empty
+    if (this.screenshotWorker) {
+      this.screenshotWorker.kill()
+    }
   }
 }
 
