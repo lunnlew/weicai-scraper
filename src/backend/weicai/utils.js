@@ -104,13 +104,15 @@ var pageScreenshot = async function(page, filename) {
 
   return new Promise(async (resolve, reject) => {
     if (partViewCount == 1) {
-      let img = await Jimp.read(images[0])
-      img.write(filename)
-    } else {
-      let img = await mergeImg(images, {
-        direction: true
+      Jimp.read(images[0]).then((img) => {
+        img.write(filename)
       })
-      img.write(filename)
+    } else {
+      mergeImg(images, {
+        direction: true
+      }).then((img) => {
+        img.write(filename, () => console.log('done'))
+      });
     }
     resolve()
   })
