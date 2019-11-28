@@ -50,7 +50,7 @@ class ScreenshotQueue extends events.EventEmitter {
       if (self.fstop) {
         return
       }
-      if (self.list.length <= 6) {
+      if (self.list.length == 0) {
         let list = await self.recorder.findItems({ 'msg_sn': { $exists: true }, 'html_jpg': { $exists: false } }, 1, 10)
         if (list.length > 0) {
           self.list = self.list.concat(list)
