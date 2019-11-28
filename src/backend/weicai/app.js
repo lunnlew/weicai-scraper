@@ -315,49 +315,10 @@ appServer.route(function(self) {
         {
           console.log('will start job task')
           if (!self.job) {
-            const CronJob = require('cron').CronJob
-            const job = new CronJob('0 */3 * * * *', async function() {
-              await puppeteerPool.use(async (browser) => {
-                let list = await self.recorder.findItems({ 'msg_sn': { $exists: true }, 'html_jpg': { $exists: false } }, 1, 5)
-                let queue = new PQueue({ concurrency: 1 });
-                for (let item of list) {
-                  if (!item.content_url) {
-                    continue
-                  }
-                  queue.add(() => {
-                    return new Promise(async (resolve, reject) => {
-                      let title = item.title.replace(/[|\\/?*<>:]/g, '')
-                      try {
-                        console.log('处理[' + item.title + ']')
-                        let page = await browser.newPage();
-                        await page.setViewport({
-                          width: 1000,
-                          height: 1920,
-                          deviceScaleFactor: 1
-                        })
-                        await page.goto(item.content_url, {
-                          timeout: 30000,
-                          waitUntil: ['networkidle0']
-                        });
-                        await autoScroll(page)
-                        await page.evaluate(() => { window.scrollTo(0, 0) })
-                        await page.waitFor(1000)
-                        await pageScreenshot(page, path.join(os.homedir(), '.weicai-scraper/html/' + title + '.png')).catch(err => console.log(err))
-                        self.recorder.emitUpdate(item.msg_sn, { "html_jpg": 'html/' + title + '.png' })
-                        await page.close()
-                      } catch (err) {
-                        console.log(err)
-                      }
-                      resolve()
-                    })
-                  })
-                }
-              })
-              await queue.onIdle()
-              queue = null
-            }, null, null, null, null, true);
-            job.start();
-            self.job = job
+            let ScreenshotQueue = require('./ScreenshotQueue')
+            let screenshotQueue = new ScreenshotQueue(self.recorder, puppeteerPool)
+            screenshotQueue.start()
+            self.job = screenshotQueue
           }
           res.send({ code: 200, msg: 'start job success', data: {} })
           break
