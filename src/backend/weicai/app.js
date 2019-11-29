@@ -243,6 +243,36 @@ appServer.route(function(self) {
         }
       case "fetchUrl":
         {
+          let fetchWorker = child_process.fork(path.join(__dirname, '../', 'resource/FetchWorker.js'), [], {
+            cwd: process.cwd(),
+            env: process.env,
+            stdio: [0, 1, 2, 'ipc'],
+            encoding: 'utf-8'
+          });
+
+          fetchWorker.on('message', function(msg) {
+            if (typeof msg == 'object') {
+              if (msg.event == 'complete') {
+                console.log('处理[' + url + '] killed')
+                fetchWorker.kill()
+              }
+            }
+          })
+
+          let url = req.query.url
+          console.log('处理[' + url + ']')
+
+          fetchWorker.send({
+            'event': 'fetch',
+            'data': {
+              url: url
+            }
+          })
+
+          res.send({
+            code: 200,
+            msg: 'success'
+          })
           break
         }
       case "saveArticle":
