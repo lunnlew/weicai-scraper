@@ -6,17 +6,24 @@ sidebar: auto
 ## 介绍
 weicai scraper是一个以NodeJs驱动的公众号文章采集工具，为了支持更方便地采集和本地浏览而创建并开源的。
 当你浏览微信公众号发现一个有趣的文章时，你就可以使用它下载该资源以用于本地浏览存储等。
+## 支持平台
+目前仅支持window10 x64
+## 功能
 
+1.公众号历史文章采集
+2.文章列表查看及搜索，包含标题，发布时间，链接等
+3.支持手动生成文章图片，也支持后台批量生成图片任务模式
+4.文章阅读数，点赞数，赞赏量，评论数采集
+5.文章评论数据采集
+6.公众号列表查看及搜索，包含名称等
+7.简化的采集代理设置操作
 
-### 特性
-### 路线图
-## 起步
-### 安装
-#### 二进制文件
+## 安装
+### 二进制文件
 
 |  操作系统  |         二进制包          |
 | :----: | :-------------------: |
-| winx64 |   [weicai-scraper-winx64-Setup.0.1.0.exe](https://github.com/lunnlew/weicai-scraper/releases/download/v0.1.0/Setup.0.1.0.exe)   |
+| winx64 |   [weicai-scraper-winx64-Setup.0.1.1.exe](https://github.com/lunnlew/weicai-scraper/releases/download/v0.1.1/Setup.0.1.1.exe)   |
 
 ## 技术栈
 
