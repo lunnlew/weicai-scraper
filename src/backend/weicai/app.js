@@ -241,6 +241,10 @@ appServer.route(function(self) {
           }
           break
         }
+      case "fetchUrl":
+        {
+          break
+        }
       case "saveArticle":
         {
           self.recorder.emitSave(req.body)

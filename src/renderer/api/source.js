@@ -81,3 +81,11 @@ export function fetchUniaccDetail(params) {
     params
   })
 }
+
+export function scraperAction(params) {
+  return request({
+    url: '/scraper',
+    method: 'post',
+    params
+  })
+}
