@@ -29,7 +29,7 @@ var autoScroll = function(page) {
   });
 }
 
-var pageScreenshot = async function(page, filename) {
+var pageScreenshot = async function(page, filename, callback) {
   let {
     pageHeight,
     viewport
@@ -80,16 +80,27 @@ var pageScreenshot = async function(page, filename) {
   return new Promise(async (resolve, reject) => {
     if (partViewCount == 1) {
       Jimp.read(images[0]).then((img) => {
-        img.write(filename)
+        img.write(filename, () => {
+          if (callback) {
+            callback(resolve)
+          } else {
+            resolve()
+          }
+        })
       })
     } else {
       mergeImg(images, {
         direction: true
       }).then((img) => {
-        img.write(filename, () => console.log('done'))
+        img.write(filename, () => {
+          if (callback) {
+            callback(resolve)
+          } else {
+            resolve()
+          }
+        })
       });
     }
-    resolve()
   })
 }
 
@@ -133,15 +144,16 @@ process.on('message', async (msg) => {
       await autoScroll(page)
       await page.evaluate(() => { window.scrollTo(0, 0) })
       await page.waitFor(1000)
-      await pageScreenshot(page, savepath).catch(err => console.log(err))
+      await pageScreenshot(page, savepath, (resolve) => {
+        process.send({
+          'event': 'complete',
+          'data': {
+            item: item
+          }
+        });
+        resolve()
+      }).catch(err => console.log(err))
       await page.close()
-
-      process.send({
-        'event': 'complete',
-        'data': {
-          item: item
-        }
-      });
 
     }
   }
