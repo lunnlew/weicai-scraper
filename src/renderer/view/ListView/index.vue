@@ -19,6 +19,9 @@
     </div>
     <div class="PageContent">
       <div class="PageScroller">
+        <div>
+          <Input search enter-button placeholder="搜索文章标题" @on-search="searchArtilce" @on-change="searchArtilceChange" />
+        </div>
         <div class="ListContainer">
           <Table stripe :columns="columns" :data="list" @on-row-dblclick="rowDblclick">
             <template slot-scope="{ row, index }" slot="readNum">
@@ -212,6 +215,20 @@ export default {
       this.$store.dispatch('deleteArticle', {
         'row': row,
         'index': index
+      })
+    },
+    searchArtilceChange(event) {
+      console.log(event)
+    },
+    searchArtilce(val) {
+      fetchList({
+        act: 'list',
+        keywords: val,
+        page: this.currentPage,
+        size: this.pageSize
+      }).then(result => {
+        this.total = result.data.total
+        this.$store.dispatch('updateList', result.data.list)
       })
     },
     loadData() {

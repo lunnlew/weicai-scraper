@@ -24,8 +24,9 @@ appServer.route(function(self) {
         {
           let page = req.query.page || 1
           let size = req.query.size || 10
-          let list = await self.recorder.findItems({ 'msg_sn': { $exists: true } }, page, size)
-          let total = await self.recorder.count({ 'msg_sn': { $exists: true } })
+          let keywords = req.query.keywords || ''
+          let list = await self.recorder.findItems({ 'msg_sn': { $exists: true }, 'title': new RegExp(keywords, 'i') }, page, size)
+          let total = await self.recorder.count({ 'msg_sn': { $exists: true }, 'title': new RegExp(keywords, 'i') })
           res.send({
             code: 200,
             msg: 'success',
@@ -173,8 +174,9 @@ appServer.route(function(self) {
         {
           let page = req.query.page || 1
           let size = req.query.size || 10
-          let list = await self.recorder.findItems({ 'is_uniacc': { $exists: true } }, page, size)
-          let total = await self.recorder.count({ 'is_uniacc': { $exists: true } })
+          let keywords = req.query.keywords || ''
+          let list = await self.recorder.findItems({ 'is_uniacc': { $exists: true }, 'nickname': new RegExp(keywords, 'i') }, page, size)
+          let total = await self.recorder.count({ 'is_uniacc': { $exists: true }, 'nickname': new RegExp(keywords, 'i') })
           res.send({
             code: 200,
             msg: 'success',

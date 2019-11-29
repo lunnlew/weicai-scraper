@@ -6,6 +6,9 @@
     </div>
     <div class="PageContent">
       <div class="PageScroller">
+        <div>
+          <Input search enter-button placeholder="搜索公众号" @on-search="searchUniacc" @on-change="searchUniaccChange" />
+        </div>
         <div class="ListContainer">
           <Table stripe :columns="columns" :data="list" @on-row-dblclick="rowDblclick">
             <template slot-scope="{ row, index }" slot="action">
@@ -81,6 +84,20 @@ export default {
       this.$store.dispatch('deleteUniacc', {
         'row': row,
         'index': index
+      })
+    },
+    searchUniaccChange(event) {
+      console.log(event)
+    },
+    searchUniacc(val) {
+      fetchUniaccList({
+        act: 'list',
+        keywords: val,
+        page: this.currentPage,
+        size: this.pageSize
+      }).then(result => {
+        this.total = result.data.total
+        this.$store.dispatch('updateUniaccList', result.data.list)
       })
     },
     loadData() {
