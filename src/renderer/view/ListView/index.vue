@@ -218,7 +218,13 @@ export default {
       })
     },
     searchArtilceChange(event) {
-      console.log(event)
+      let self = this
+      if (self.fSearchArt) {
+        clearTimeout(self.fSearchArt)
+      }
+      self.fSearchArt = setTimeout(() => {
+        self.searchArtilce(event.data)
+      }, 500)
     },
     searchArtilce(val) {
       fetchList({

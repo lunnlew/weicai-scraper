@@ -87,7 +87,13 @@ export default {
       })
     },
     searchUniaccChange(event) {
-      console.log(event)
+      let self = this
+      if (self.fSearchUniacc) {
+        clearTimeout(self.fSearchUniacc)
+      }
+      self.fSearchUniacc = setTimeout(() => {
+        self.searchUniacc(event.data)
+      }, 500)
     },
     searchUniacc(val) {
       fetchUniaccList({
