@@ -17,7 +17,7 @@ DWORD ProcessNameFindPID(LPCSTR ProcessName)
 	pe32.dwSize = sizeof(pe32);
 
 	//获得系统进程快照的句柄
-	HANDLE hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPALL, 0);
+	HANDLE hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 	if (hProcessSnap == INVALID_HANDLE_VALUE)
 	{
 		printf("CreateToolhelp32Snapshot error.\n");
