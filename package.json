@@ -17,7 +17,7 @@
     "test:unit": "vue-cli-service test:unit",
     "docs:dev": "vuepress dev _docs_src",
     "docs:build": "vuepress build _docs_src",
-    "native:build": "cd weicai-native && cross-env HOME=~/.electron-gyp node-gyp configure && cross-env HOME=~/.electron-gyp node-gyp build --target=6.1.4 --runtime=electron --arch=x64 --dist-url=https://electronjs.org/headers"
+    "native:build": "cd weicai-native && cross-env HOME=~/.electron-gyp node-gyp configure && cross-env HOME=~/.electron-gyp node-gyp rebuild --target=7.1.2 --runtime=electron --arch=x64 --dist-url=https://electronjs.org/headers"
   },
   "main": "background.js",
   "engines": {
@@ -96,6 +96,7 @@
     "eslint-plugin-standard": "^4.0.1",
     "eslint-plugin-vue": "^6.0.1",
     "nan": "^2.14.0",
+    "node-loader": "^0.6.0",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
     "vue-cli-plugin-electron-builder": "^1.4.2",

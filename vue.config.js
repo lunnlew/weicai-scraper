@@ -3,7 +3,6 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = {
   configureWebpack: {
-    plugins: [],
     entry: path.join(__dirname, 'src/renderer/main.js'),
     resolve: {
       alias: {
@@ -13,11 +12,16 @@ module.exports = {
       extensions: ['.js', '.vue', '.json', '.css']
     }
   },
-  chainWebpack: config => {},
+  chainWebpack: config => {
+    return config
+  },
   pluginOptions: {
     // see https://nklayman.github.io/vue-cli-plugin-electron-builder/guide/configuration.html
     electronBuilder: {
+      // 原生模块需要标记为外部模块
+      externals: [],
       builderOptions: {
+        // asarUnpack: ['*.node'],
         win: {
           "target": [{
             "target": "nsis",
@@ -53,6 +57,11 @@ module.exports = {
       },
       outputDir: 'dist_electron',
       chainWebpackMainProcess: config => {
+        // config.node({
+        //   __filename: false,
+        //   __dirname: false
+        // })
+
         config.plugin('copy')
           .use(require('copy-webpack-plugin'), [
             [{
@@ -60,6 +69,30 @@ module.exports = {
               to: path.join(__dirname, '.local-chromium')
             }]
           ])
+
+        // require('*.node') 方式加载原生模块需要
+        config.module
+          .rule('node-loader')
+          .test(/\.node$/)
+          .use('node-loader')
+          .loader('node-loader')
+          .end()
+
+        // config.module
+        //   .rule('file-loader')
+        //   .test(/\.node$/)
+        //   .use('file-loader')
+        //   .loader('file-loader')
+        //   .tap(options => {
+        //     options = {
+        //       name: '[name].[ext]',
+        //       outputPath: 'addons',
+        //       publicPath: '../../app.asar.unpacked/addons'
+        //     }
+        //     return options
+        //   })
+        //   .end()
+
       },
       chainWebpackRendererProcess: config => {
         config.plugin('define').tap(args => {

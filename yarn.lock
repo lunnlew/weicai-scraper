@@ -7748,6 +7748,11 @@ node-libs-browser@^2.2.1:
     util "^0.11.0"
     vm-browserify "^1.0.1"
 
+node-loader@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.npmjs.org/node-loader/-/node-loader-0.6.0.tgz#c797ef51095ed5859902b157f6384f6361e05ae8"
+  integrity sha1-x5fvUQle1YWZArFX9jhPY2HgWug=
+
 node-powershell@^4.0.0:
   version "4.0.0"
   resolved "https://registry.npmjs.org/node-powershell/-/node-powershell-4.0.0.tgz#f3a0b1ec4f5619b501b66005f8a663c8373e8da8"
