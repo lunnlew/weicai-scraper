@@ -36,6 +36,29 @@ weicai scraper是一个以NodeJs驱动的公众号文章采集工具，为了支
 
 ## 技术栈
 
+## 开发
+### 安装nvm
+|  操作系统  |         二进制包          |
+| :----: | :-------------------: |
+| win10 |   [nvm-windows](https://github.com/coreybutler/nvm/releases)   |
+
+### 指定Nodejs
+```sh
+## 安装nodejs版本
+nvm install 12.8.1 32
+
+## 指定nodejs版本
+nvm use 12.8.1 32
+
+## 查看生效nodejs版本
+nvm list
+node -v
+```
+### 更新依赖
+```sh
+yarn
+```
+
 ## 开源许可
 基于 [MIT license](https://opensource.org/licenses/MIT) 许可进行开源。
 
