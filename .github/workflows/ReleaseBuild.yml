@@ -10,7 +10,7 @@ jobs:
       matrix:
         node-version: [12.x]
         node-registry: ['https://registry.npmjs.org']
-        wecai-version: '0.1.2'
+        wecai-version: [0.1.2]
     steps:
     - uses: actions/checkout@v1
     - name: Use Node.js ${{ matrix.node-version }}
