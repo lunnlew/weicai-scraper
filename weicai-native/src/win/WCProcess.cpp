@@ -104,7 +104,7 @@ BOOL CheckProcessDllExists(DWORD dwProcessid, LPCSTR DllName) {
 
 
 /*
-* 根据进程名称及模块名称获得模块地址dll模块
+* 根据进程名称及模块名称获得dll模块基地址
 */
 LPVOID FindDllAddressByProcssIdAndDllName(DWORD dwProcessid, LPCSTR DllName) {
 	HANDLE hModuleSnap = INVALID_HANDLE_VALUE;
@@ -228,7 +228,7 @@ BOOL ProcessDllUninstall(DWORD dwProcessid, LPCSTR DllName) {
 
 	LPVOID dllBaseAdress = FindDllAddressByProcssIdAndDllName(dwProcessid, DllName);
 	if (dllBaseAdress == NULL) {
-		Nan::ThrowError("进程不存在该DLl模块\n");
+		Nan::ThrowError("进程不存在该Dll模块\n");
 		return false;
 	}
 

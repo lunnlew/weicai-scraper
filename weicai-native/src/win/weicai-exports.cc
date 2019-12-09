@@ -151,6 +151,9 @@ void Exp_CheckProcessExists(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 	info.GetReturnValue().Set(Nan::New((bool)dwPid));
 }
 
+/*
+* 检查进程是否存在指定的dll模块
+*/
 void Exp_CheckProcessDllExists(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 	if (info.Length() != 2) {
 		Nan::ThrowTypeError("必须且仅支持两个参数\n");
