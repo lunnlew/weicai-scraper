@@ -4,11 +4,11 @@ on:
     tags:
     - 'v*'
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  windows-build:
+    runs-on: windows-latest
     strategy:
       matrix:
-        node-version: [10.x]
+        node-version: [12.x]
         node-registry: ['https://registry.npmjs.org']
     steps:
     - uses: actions/checkout@v1
@@ -32,3 +32,13 @@ jobs:
         release_name: Release ${{ github.ref }}
         draft: false
         prerelease: false
+    - name: Upload Release Asset For Win
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        WEICAI_VERSION: 0.1.2
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist_electron/微采助手 Setup ${{ WEICAI_VERSION }}.exe
+        asset_name: 微采助手-Setup
+        asset_content_type: application/x-executable 
