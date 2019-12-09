@@ -10,6 +10,7 @@ jobs:
       matrix:
         node-version: [12.x]
         node-registry: ['https://registry.npmjs.org']
+        wecai-version: 0.1.2
     steps:
     - uses: actions/checkout@v1
     - name: Use Node.js ${{ matrix.node-version }}
@@ -36,9 +37,8 @@ jobs:
       uses: actions/upload-release-asset@v1.0.1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        WEICAI_VERSION: 0.1.2
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dist_electron/微采助手 Setup ${{ WEICAI_VERSION }}.exe
+        asset_path: ./dist_electron/微采助手 Setup ${{ matrix.wecai-version }}.exe
         asset_name: 微采助手-Setup
         asset_content_type: application/x-executable 
