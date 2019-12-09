@@ -6,7 +6,11 @@ const path = require('path')
 const os = require('os')
 const fs = require('fs-extra')
 
-const ChromiumPath = path.join(__dirname, '../.local-chromium/win64-706915/chrome-win/chrome.exe')
+const revision = require('puppeteer/package').puppeteer.chromium_revision
+const platform = process.platform
+
+const ChromiumPath = path.join(__dirname, `../.local-chromium/${platform}-${revision}/chrome-win/chrome.exe`)
+console.log(ChromiumPath)
 
 
 var autoScroll = function(page) {

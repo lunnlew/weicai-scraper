@@ -8,7 +8,11 @@ const fs = require('fs-extra')
 const Jimp = require('jimp')
 const mergeImg = require('merge-img')
 
-const ChromiumPath = path.join(__dirname, '../.local-chromium/win64-706915/chrome-win/chrome.exe')
+const revision = require('puppeteer/package').puppeteer.chromium_revision
+const platform = process.platform
+
+const ChromiumPath = path.join(__dirname, `../.local-chromium/${platform}-${revision}/chrome-win/chrome.exe`)
+console.log(ChromiumPath)
 
 
 var autoScroll = function(page) {

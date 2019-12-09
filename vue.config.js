@@ -1,5 +1,7 @@
 const path = require('path')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+const revision = require('puppeteer/package').puppeteer.chromium_revision
+const platform = process.platform
 
 module.exports = {
   configureWebpack: {
@@ -65,8 +67,8 @@ module.exports = {
         config.plugin('copy')
           .use(require('copy-webpack-plugin'), [
             [{
-              from: path.join(__dirname, 'node_modules/puppeteer/.local-chromium'),
-              to: path.join(__dirname, '.local-chromium')
+              from: path.join(__dirname, `node_modules/puppeteer/.local-chromium/${platform}-${revision}`),
+              to: path.join(__dirname, `.local-chromium/${platform}-${revision}`)
             }]
           ])
 
