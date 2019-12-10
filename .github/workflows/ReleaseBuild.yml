@@ -46,5 +46,5 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./dist_electron/微采助手 Setup 0.1.2.exe
-        asset_name: 微采助手-Setup
+        asset_name: Setup 0.1.2.exe
         asset_content_type: application/x-executable 
