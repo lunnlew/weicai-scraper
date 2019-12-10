@@ -17,14 +17,14 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         registry-url: ${{ matrix.node-registry }}
-    - name: npm install, build, and test
+    - name: yarn install, build, and test
       run: |
+        npm install yarn -g
         cd src/worker
-        npm install
+        yarn
         cd ../../
-        npm install
-        npm test --if-present
-        npm run electron:build
+        yarn
+        yarn run electron:build
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1.0.0
