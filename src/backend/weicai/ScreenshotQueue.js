@@ -3,7 +3,6 @@ const path = require('path')
 const events = require('events')
 const os = require('os')
 const child_process = require('child_process')
-const { autoScroll, pageScreenshot } = require('./utils')
 const empty = () => {};
 
 class ScreenshotQueue extends events.EventEmitter {

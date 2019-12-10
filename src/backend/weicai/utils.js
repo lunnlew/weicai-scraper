@@ -1,8 +1,6 @@
 const path = require('path')
 const os = require('os')
 const fs = require('fs-extra')
-const Jimp = require('jimp')
-const mergeImg = require('merge-img')
 
 // 大小转换
 var renderSize = function(filesize) {
@@ -36,91 +34,7 @@ var getFreePort = function() {
   });
 }
 
-var autoScroll = function(page) {
-  return page.evaluate(() => {
-    return new Promise((resolve, reject) => {
-      var totalHeight = 0;
-      var distance = 100;
-      var timer = setInterval(() => {
-        var scrollHeight = document.body.scrollHeight;
-        window.scrollBy(0, distance);
-        totalHeight += distance;
-        if (totalHeight >= scrollHeight) {
-          clearInterval(timer);
-          resolve(totalHeight);
-        }
-      }, 100);
-    })
-  });
-}
-
-var pageScreenshot = async function(page, filename) {
-  let {
-    pageHeight,
-    viewport
-  } = await page.evaluate(() => {
-    window.scrollTo(0, 0);
-    return {
-      pageHeight: document.body.scrollHeight,
-      viewport: {
-        height: document.body.clientHeight,
-        width: document.body.clientWidth
-      }
-    };
-  });
-  let viewHeight = viewport.height
-  let viewWidth = viewport.width
-
-  let maxViewHeight = viewHeight;
-  let partViewCount = Math.ceil(pageHeight / maxViewHeight);
-  let lastViewHeight = pageHeight - ((partViewCount - 1) * maxViewHeight);
-
-  let totalMarignTop = 0
-  let images = []
-  for (let i = 1; i <= partViewCount; i++) {
-    let currentViewHeight = i !== partViewCount ? maxViewHeight : lastViewHeight
-    let image = await page.screenshot({
-      fullPage: false,
-      clip: {
-        x: 0,
-        y: 0,
-        width: viewWidth,
-        height: currentViewHeight
-      }
-    })
-    images.push(image)
-    // 滚动距离
-    totalMarignTop += currentViewHeight
-    await page.evaluate((totalMarignTop) => {
-      return new Promise((resolve, reject) => {
-        $('body').css('margin-top', '-' + totalMarignTop + 'px')
-        var timer = setTimeout(() => {
-          clearTimeout(timer);
-          resolve();
-        }, 1000);
-      })
-    }, totalMarignTop)
-  }
-
-  return new Promise(async (resolve, reject) => {
-    if (partViewCount == 1) {
-      Jimp.read(images[0]).then((img) => {
-        img.write(filename)
-      })
-    } else {
-      mergeImg(images, {
-        direction: true
-      }).then((img) => {
-        img.write(filename, () => console.log('done'))
-      });
-    }
-    resolve()
-  })
-}
-
 module.exports = {
   renderSize,
-  getFreePort,
-  autoScroll,
-  pageScreenshot
+  getFreePort
 }

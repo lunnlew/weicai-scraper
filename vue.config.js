@@ -2,6 +2,7 @@ const path = require('path')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = {
+  lintOnSave: process.env.NODE_ENV !== 'production',
   configureWebpack: {
     entry: path.join(__dirname, 'src/renderer/main.js'),
     resolve: {
