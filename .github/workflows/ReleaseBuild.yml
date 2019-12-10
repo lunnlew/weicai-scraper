@@ -14,7 +14,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: lunnlew/setup-node@v1
+      uses: lunnlew/setup-node@v1.4.0
       with:
         node-version: ${{ matrix.node-version }}
         node-arch: ${{ matrix.node-arch }}
