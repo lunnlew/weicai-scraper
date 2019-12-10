@@ -17,13 +17,17 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         registry-url: ${{ matrix.node-registry }}
-    - name: yarn install, build, and test
+    - name: install yarn
       run: |
         npm install yarn -g
+    - name: worker-install
+      run: |
         cd src/worker
         yarn
         cd ../../
-        yarn
+    - name: electron-build
+      run: |
+        yarn --frozen-lockfile
         yarn run electron:build --verbose
     - name: Create Release
       id: create_release
