@@ -9,13 +9,15 @@ jobs:
     strategy:
       matrix:
         node-version: [12.x]
+        node-arch: ['x86']
         node-registry: ['https://registry.npmjs.org']
     steps:
     - uses: actions/checkout@v1
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
+      uses: lunnlew/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
+        node-arch: ${{ matrix.node-arch }}
         registry-url: ${{ matrix.node-registry }}
     - name: install tool yarn
       run: |
