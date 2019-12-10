@@ -16,7 +16,10 @@ class ScreenshotQueue extends events.EventEmitter {
     self.complete = false
     self._resolveIdle = empty
 
-    self.screenshotWorker = child_process.fork(path.join(__dirname, '../', 'resource/ScreenshotWorker.js'), [], {
+    const workerPath = process.env.NODE_ENV === 'development' ?
+      'src/worker/ScreenshotWorker.js' : path.join(__dirname, '../', 'worker/ScreenshotWorker.js')
+
+    self.screenshotWorker = child_process.fork(workerPath, [], {
       cwd: process.cwd(),
       env: process.env,
       stdio: [0, 1, 2, 'ipc'],

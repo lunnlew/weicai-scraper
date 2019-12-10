@@ -4,14 +4,14 @@ process.send('ScreenshotWorker inited')
 const puppeteer = require('puppeteer')
 const path = require('path')
 const os = require('os')
-const fs = require('fs-extra')
 const Jimp = require('jimp')
 const mergeImg = require('merge-img')
 
 const revision = require('puppeteer/package').puppeteer.chromium_revision
 const platform = process.platform
 
-const ChromiumPath = path.join(__dirname, `../.local-chromium/${platform}-${revision}/chrome-win/chrome.exe`)
+const cptah = `node_modules/puppeteer/.local-chromium/${platform}-${revision}/chrome-win/chrome.exe`
+const ChromiumPath = path.join(__dirname, cptah)
 console.log(ChromiumPath)
 
 

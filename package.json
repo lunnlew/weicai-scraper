@@ -51,6 +51,7 @@
     "generic-pool": "^3.7.1",
     "iconv-lite": "^0.5.0",
     "inquirer": "^7.0.0",
+    "jimp": "^0.9.3",
     "juicer": "^0.6.15",
     "less": "^3.10.3",
     "less-loader": "^5.0.0",

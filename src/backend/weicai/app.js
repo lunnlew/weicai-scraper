@@ -50,7 +50,10 @@ appServer.route(function(self) {
       case "makeimg":
         {
 
-          let screenshotWorker = child_process.fork(path.join(__dirname, '../', 'resource/ScreenshotWorker.js'), [], {
+          const workerPath = process.env.NODE_ENV === 'development' ?
+            'src/worker/ScreenshotWorker.js' : path.join(__dirname, '../', 'worker/ScreenshotWorker.js')
+
+          let screenshotWorker = child_process.fork(workerPath, [], {
             cwd: process.cwd(),
             env: process.env,
             stdio: [0, 1, 2, 'ipc'],
@@ -243,7 +246,10 @@ appServer.route(function(self) {
         }
       case "fetchUrl":
         {
-          let fetchWorker = child_process.fork(path.join(__dirname, '../', 'resource/FetchWorker.js'), [], {
+          const workerPath = process.env.NODE_ENV === 'development' ?
+            'src/worker/FetchWorker.js' : path.join(__dirname, '../', 'worker/FetchWorker.js')
+
+          let fetchWorker = child_process.fork(workerPath, [], {
             cwd: process.cwd(),
             env: process.env,
             stdio: [0, 1, 2, 'ipc'],

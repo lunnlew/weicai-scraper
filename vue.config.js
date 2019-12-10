@@ -23,7 +23,6 @@ module.exports = {
       // 原生模块需要标记为外部模块
       externals: [],
       builderOptions: {
-        // asarUnpack: ['*.node'],
         win: {
           "target": [{
             "target": "nsis",
@@ -47,8 +46,8 @@ module.exports = {
         },
         "productName": "微采助手",
         "extraResources": ["./tools/**", "./resource/**", "./web/**", {
-          "from": '.local-chromium',
-          "to": '.local-chromium'
+          'from': 'dist_electron/worker',
+          'to': 'worker'
         }],
         "nsis": {
           "oneClick": false,
@@ -64,13 +63,24 @@ module.exports = {
         //   __dirname: false
         // })
 
-        config.plugin('copy')
-          .use(require('copy-webpack-plugin'), [
-            [{
-              from: path.join(__dirname, `node_modules/puppeteer/.local-chromium/${platform}-${revision}`),
-              to: path.join(__dirname, `.local-chromium/${platform}-${revision}`)
-            }]
-          ])
+        // config.plugin('copy')
+        //   .use(require('copy-webpack-plugin'), [
+        //     [{
+        //       from: path.join(__dirname, `node_modules/puppeteer/.local-chromium/${platform}-${revision}`),
+        //       to: path.join(__dirname, `.local-chromium/${platform}-${revision}`)
+        //     }]
+        //   ])
+
+        if (process.env.NODE_ENV === 'production') {
+          config.plugin('copy')
+            .use(require('copy-webpack-plugin'), [
+              [{
+                from: path.join(__dirname, 'src/worker'),
+                to: path.join(__dirname, 'dist_electron/worker'),
+                ignore: ['.*']
+              }]
+            ])
+        }
 
         // require('*.node') 方式加载原生模块需要
         config.module
