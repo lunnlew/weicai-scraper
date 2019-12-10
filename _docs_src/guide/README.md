@@ -32,7 +32,7 @@ weicai scraper是一个以NodeJs驱动的公众号文章采集工具，为了支
 
 |  操作系统  |         二进制包          |
 | :----: | :-------------------: |
-| winx64 |   [weicai-scraper-winx64-Setup.0.1.1.exe](https://github.com/lunnlew/weicai-scraper/releases/download/v0.1.1/Setup.0.1.1.exe)   |
+| winx64 |   [weicai-scraper-Setup-x86-0.1.2.exe](https://github.com/lunnlew/weicai-scraper/releases/download/v0.1.2/Setup-x86-0.1.2.exe)   |
 
 ## 技术栈
 
