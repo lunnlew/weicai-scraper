@@ -26,8 +26,7 @@ module.exports = {
           "target": [{
             "target": "nsis",
             "arch": [
-              // "ia32",
-              "x64"
+              "ia32"
             ]
           }],
           icon: './public/app.png'
