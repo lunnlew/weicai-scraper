@@ -19,7 +19,9 @@ jobs:
         registry-url: ${{ matrix.node-registry }}
     - name: npm install, build, and test
       run: |
-        cd src/worker && npm install && cd ../../
+        cd src/worker
+        npm install
+        cd ../../
         npm install
         npm test --if-present
         npm run electron:build
