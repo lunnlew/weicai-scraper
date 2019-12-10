@@ -28,7 +28,7 @@ jobs:
         yarn --frozen-lockfile
     - name: electron-build
       run: |
-        yarn run electron:build --verbose
+        yarn run electron:build
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1.0.0
