@@ -72,11 +72,15 @@ var pageScreenshot = async function(page, filename, callback) {
     totalMarignTop += currentViewHeight
     await page.evaluate((totalMarignTop) => {
       return new Promise((resolve, reject) => {
-        $('body').css('margin-top', '-' + totalMarignTop + 'px')
-        var timer = setTimeout(() => {
-          clearTimeout(timer);
-          resolve();
-        }, 1000);
+        if (typeof $ != 'undefined') {
+          $('body').css('margin-top', '-' + totalMarignTop + 'px')
+          var timer = setTimeout(() => {
+            clearTimeout(timer);
+            resolve();
+          }, 1000);
+        } else {
+          resolve()
+        }
       })
     }, totalMarignTop)
   }

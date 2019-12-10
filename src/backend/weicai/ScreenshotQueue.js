@@ -69,14 +69,20 @@ class ScreenshotQueue extends events.EventEmitter {
       await new Promise(async (resolve, reject) => {
         console.log('处理[' + item.title + ']')
         let title = item.title.replace(/[|\\/?*<>:]/g, '')
-        self.screenshotWorker.send({
-          'event': 'screenshot',
-          'data': {
-            savepath: path.join(os.homedir(), '.weicai-scraper/html/' + title + '.png'),
-            item: item
-          }
-        })
-        await self.workerComplete()
+
+        if (typeof item.content_url == 'undefined') {
+          console.log('content_url err: ' + item.content_url)
+        } else {
+          self.screenshotWorker.send({
+            'event': 'screenshot',
+            'data': {
+              savepath: path.join(os.homedir(), '.weicai-scraper/html/' + title + '.png'),
+              item: item
+            }
+          })
+          await self.workerComplete()
+        }
+
         self.complete = false
         resolve()
       })

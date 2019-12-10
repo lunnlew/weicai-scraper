@@ -82,6 +82,12 @@ appServer.route(function(self) {
           console.log('处理[' + item.title + ']')
 
           let title = item.title.replace(/[|\\/?*<>:]/g, '')
+
+          if (typeof item.content_url == 'undefined') {
+            console.log('content_url err: ' + item.content_url)
+            break
+          }
+
           screenshotWorker.send({
             'event': 'screenshot',
             'data': {
@@ -267,6 +273,12 @@ appServer.route(function(self) {
 
           let url = req.query.url
           console.log('处理[' + url + ']')
+
+
+          if (typeof url == 'undefined') {
+            console.log('content_url err: ' + url)
+            break
+          }
 
           fetchWorker.send({
             'event': 'fetch',

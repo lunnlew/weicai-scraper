@@ -2,6 +2,7 @@
 
 const path = require('path')
 const events = require('events')
+const iconv = require('iconv-lite')
 
 // 由于 anyproxy 所依赖的 node-easy-cert 模块的依赖项 node-forge 0.6.1 版本不兼容 webpack
 // 提示 ReferenceError: Invalid left-hand side in assignment 错误
@@ -77,9 +78,11 @@ var removeRootCA = function() {
       console.log("removeRootCA with cmd: ", "powershell.exe", "-WindowStyle", "Hidden", "-file", path.join(__dirname, '../tools/winset.ps1'), '-Act', 'removeRootCA');
       child = spawn("powershell.exe", ["-WindowStyle", "Hidden", "-file", path.join(__dirname, '../tools/winset.ps1'), '-Act', 'removeRootCA']);
       child.stdout.on("data", function(data) {
+        data = iconv.decode(data, 'gbk')
         console.log("Powershell Data: " + data);
       });
       child.stderr.on("data", function(data) {
+        data = iconv.decode(data, 'gbk')
         console.log("Powershell Errors: " + data);
       });
       child.on("exit", function() {
@@ -94,20 +97,22 @@ var removeRootCA = function() {
   })
 }
 
-var enableGlobalProxy = function(ProxyAdd,ProxyPort) {
+var enableGlobalProxy = function(ProxyAdd, ProxyPort) {
   return new Promise(async (resolve, reject) => {
     let spawn = require("child_process").spawn,
       child;
     const isWin = /^win/.test(process.platform);
     if (isWin) {
-      ProxyAdd = ProxyAdd+':'+ProxyPort
+      ProxyAdd = ProxyAdd + ':' + ProxyPort
       console.log("platform:window");
       console.log("enableGlobalProxy with cmd: ", "powershell.exe", "-WindowStyle", "Hidden", "-file", path.join(__dirname, '../tools/winset.ps1'), '-Act', 'SetSystemProxy', '-Proxy', ProxyAdd);
       child = spawn("powershell.exe", ["-WindowStyle", "Hidden", "-file", path.join(__dirname, '../tools/winset.ps1'), '-Act', 'SetSystemProxy', '-Proxy', ProxyAdd]);
       child.stdout.on("data", function(data) {
+        data = iconv.decode(data, 'gbk')
         console.log("Powershell Data: " + data);
       });
       child.stderr.on("data", function(data) {
+        data = iconv.decode(data, 'gbk')
         console.log("Powershell Errors: " + data);
       });
       child.on("exit", function() {
@@ -132,9 +137,11 @@ var disableGlobalProxy = function() {
       console.log("disableGlobalProxy with cmd: ", "powershell.exe", "-WindowStyle", "Hidden", "-file", path.join(__dirname, '../tools/winset.ps1'), '-Act', 'SetSystemProxy');
       child = spawn("powershell.exe", ["-WindowStyle", "Hidden", "-file", path.join(__dirname, '../tools/winset.ps1'), '-Act', 'SetSystemProxy']);
       child.stdout.on("data", function(data) {
+        data = iconv.decode(data, 'gbk')
         console.log("Powershell Data: " + data);
       });
       child.stderr.on("data", function(data) {
+        data = iconv.decode(data, 'gbk')
         console.log("Powershell Errors: " + data);
       });
       child.on("exit", function() {
