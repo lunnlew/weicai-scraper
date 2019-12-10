@@ -1,7 +1,5 @@
 const path = require('path')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
-const revision = require('puppeteer/package').puppeteer.chromium_revision
-const platform = process.platform
 
 module.exports = {
   configureWebpack: {
