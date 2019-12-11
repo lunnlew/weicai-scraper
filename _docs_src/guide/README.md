@@ -49,6 +49,39 @@ Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope CurrentUser
 | :----: | :-------------------: |
 | win10 |   [nvm-windows](https://github.com/coreybutler/nvm/releases)   |
 
+### 调试远程注入的DLL组件-WeChatHelper
+#### 编译WeChatHelper
+使用`vs2017`运行项目编译
+#### 编译Detours
+```sh
+cd ~/Desktop
+git clone https://github.com/microsoft/Detours.git
+```
+运行`vs2017工具x86 Native Tools Command Prompt for VS 2017`
+```sh
+cd ~/Desktop/Detours
+nmake /f Makefile
+```
+#### 修改原始程序IAT
+```
+# 进入要调试的应用主程序
+cd D:/Applications/WeChat
+# 将要调试的dll复制到程序目录
+cp ~/Desktop/WeChatHelper/Debug/WeChatHelper.dll .
+cp ~/Desktop/WeChatHelper/Debug/WeChatHelper.pdb .
+# 修改IAT
+~/Desktop/Detours/bin.X86/setdll.exe /d:WeChatHelper.dll WeChat.exe
+# 恢复IAT
+~/Desktop/Detours/bin.X86/setdll.exe /r WeChat.exe
+
+```
+#### 配置vs2017的本地调试设置
+将`配置属性`-`调试`-`本地windows调试`: `命令参数`改为主程序地址,如`D:/Applications/WeChat/WeChat.exe`,`工作目录`改为主程序目录址,如`D:/Applications/WeChat`
+
+#### 运行调试
+在DLL入口下个断点， F5启动调试即可。
+
+
 ### 指定Nodejs
 ```sh
 ## 安装nodejs版本
