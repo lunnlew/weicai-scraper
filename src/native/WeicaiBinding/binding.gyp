@@ -1,7 +1,7 @@
 {
   "targets": [
     {
-      "target_name": "weicai-native",
+      "target_name": "WeicaiBinding",
       "sources": [],
       "include_dirs": [
         "<!(node -e \"require('nan')\")"
@@ -12,7 +12,7 @@
 	      		{
 	        		"defines": [],
 	        		"sources": [
-	          			"src/win/*.cc","src/win/*.cpp"
+	          			"src/*.cc","src/win/*.cpp"
 	        		]
 	        	}
         	]

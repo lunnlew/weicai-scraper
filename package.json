@@ -17,8 +17,8 @@
     "test:unit": "vue-cli-service test:unit",
     "docs:dev": "vuepress dev _docs_src",
     "docs:build": "vuepress build _docs_src",
-    "native:build-x64": "cd weicai-native && cross-env HOME=~/.electron-gyp node-gyp configure && cross-env HOME=~/.electron-gyp node-gyp rebuild --target=7.1.3 --runtime=electron --arch=x64  --dist-url=https://electronjs.org/headers",
-    "native:build-ia32": "cd weicai-native && cross-env HOME=~/.electron-gyp node-gyp configure && cross-env HOME=~/.electron-gyp node-gyp rebuild --target=7.1.3 --runtime=electron --arch=ia32  --dist-url=https://electronjs.org/headers"
+    "native:build-x64": "cdsrc/native/WeicaiBinding && cross-env HOME=~/.electron-gyp node-gyp configure && cross-env HOME=~/.electron-gyp node-gyp rebuild --target=7.1.3 --runtime=electron --arch=x64  --dist-url=https://electronjs.org/headers",
+    "native:build-ia32": "cd src/native/WeicaiBinding && cross-env HOME=~/.electron-gyp node-gyp configure && cross-env HOME=~/.electron-gyp node-gyp rebuild --target=7.1.3 --runtime=electron --arch=ia32  --dist-url=https://electronjs.org/headers"
   },
   "main": "background.js",
   "engines": {
@@ -71,7 +71,8 @@
     "vue-electron": "^1.0.6",
     "vue-router": "^3.0.3",
     "vuex": "^3.0.1",
-    "vuex-electron": "^1.0.3"
+    "vuex-electron": "^1.0.3",
+    "xml2js": "^0.4.22"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.1.1",

@@ -1,5 +1,5 @@
 #pragma once
-#include <nan.h>
+#include <atlbase.h>  
 
 /*
 * 检查指定进程名称是否存在

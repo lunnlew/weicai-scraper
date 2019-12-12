@@ -1,4 +1,5 @@
 #include "WCProcess.h"
+#include <nan.h>
 #include <TlHelp32.h>
 
 /*

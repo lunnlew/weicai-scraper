@@ -148,6 +148,90 @@ appServer.route(function(self) {
   })
 })
 
+var requestStrToMap = function(e) {
+  var t = []
+  let params = new URLSearchParams(e)
+  params.forEach((value, name, searchParams) => {
+    t[name] = value
+  })
+  return t
+}
+
+appServer.route(function(self) {
+  self.app.all('/wechatRobot', async function(req, res) {
+    console.log('wechatRobot')
+    console.log(req.body)
+    if (req.body.type == '公众号推送') {
+      // 要解析的推送内容
+      let xml = req.body.content
+      var xml2js = require('xml2js');
+      //xml->json
+      //xml2js默认会把子子节点的值变为一个数组, explicitArray设置为false
+      var xmlParser = new xml2js.Parser({ explicitArray: false, ignoreAttrs: true })
+      //json->xml
+      var jsonBuilder = new xml2js.Builder();
+      // xml -> json
+      xmlParser.parseString(xml, async function(err, result) {
+        //将返回的结果再次格式化
+        let citems = result['msg']['appmsg']['mmreader']['category']['item']
+        let items = []
+        if (!'length' in citems) {
+          items.push(citems)
+        } else {
+          items = citems
+        }
+
+        for (let item of items) {
+          let publisher = result['msg']['appmsg']['mmreader']['publisher']
+          let rs = requestStrToMap(item.url)
+          let uniacc = {
+            // 公众号名称
+            nickname: publisher.nickname,
+            // 公众号标识
+            biz: rs['__biz'],
+            // 公众号id
+            username: publisher.username,
+            // 公众号头像
+            headimg: '',
+          }
+          let list = await self.recorder.findItems({ 'is_uniacc': { $exists: true }, 'username': uniacc.username })
+
+          if (list && list.length) {
+            let luniacc = list[0]
+            await self.recorder.updateItems({ _id: uniacc._id }, Object.assign(luniacc, uniacc))
+          } else {
+            let current_time = Math.round(new Date() / 1000)
+            await self.recorder.insertItems(Object.assign({
+              'is_uniacc': true,
+              'create_time': current_time,
+              'history_duplicate_count': 0,
+              'history_end_time': current_time
+            }, uniacc))
+          }
+
+          let art = {
+            msg_sn: rs['sn'],
+            msg_biz: rs['__biz'],
+            msg_mid: rs['mid'],
+            msg_idx: rs['idx'],
+            title: item.title,
+            msg_desc: item.digest,
+            cover: item.cover,
+            content_url: item.url,
+            comment_id: '',
+            copyright_stat: 0,
+            author: item['sources']['source']['name'],
+            publish_time: item.pub_time
+          }
+          self.recorder.emitSave(art)
+        }
+      });
+
+    }
+    res.send({ code: 200, msg: '', data: {} })
+  })
+})
+
 appServer.route(function(self) {
   self.app.all('/proxy', async function(req, res) {
     let action = req.query.act || 'start'

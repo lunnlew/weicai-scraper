@@ -46,6 +46,9 @@ module.exports = {
         "extraResources": ["./tools/**", "./resource/**", "./web/**", {
           'from': 'dist_electron/worker',
           'to': 'worker'
+        }, {
+          'from': 'dist_electron/native',
+          'to': 'native'
         }],
         "nsis": {
           "oneClick": false,
@@ -76,8 +79,39 @@ module.exports = {
                 from: path.join(__dirname, 'src/worker'),
                 to: path.join(__dirname, 'dist_electron/worker'),
                 ignore: ['.*']
+              }, {
+                from: path.join(__dirname, 'src/native/WeChatHelper/Release/WeChatHelper.dll'),
+                to: path.join(__dirname, 'dist_electron/native/WeChatHelper.dll'),
+                ignore: ['.*']
+              }, {
+                from: path.join(__dirname, 'src/native/WeChatCtl/Release/WeChatCtl.dll'),
+                to: path.join(__dirname, 'dist_electron/native/WeChatCtl.dll'),
+                ignore: ['.*']
+              }, {
+                from: path.join(__dirname, 'src/native/WeicaiBinding/build/Release/WeicaiBinding.node'),
+                to: path.join(__dirname, 'dist_electron/native/WeicaiBinding.node'),
+                ignore: ['.*']
               }]
             ])
+        } else {
+
+          // config.plugin('copy')
+          //   .use(require('copy-webpack-plugin'), [
+          //     [{
+          //       from: path.join(__dirname, 'src/native/WeChatHelper/Debug/WeChatHelper.dll'),
+          //       to: path.join(__dirname, 'dist_electron/native/WeChatHelper.dll'),
+          //       ignore: ['.*']
+          //     }, {
+          //       from: path.join(__dirname, 'src/native/WeChatCtl/Debug/WeChatCtl.dll'),
+          //       to: path.join(__dirname, 'dist_electron/native/WeChatCtl.dll'),
+          //       ignore: ['.*']
+          //     }, {
+          //       from: path.join(__dirname, 'src/native/WeicaiBinding/build/Release/WeicaiBinding.node'),
+          //       to: path.join(__dirname, 'dist_electron/native/WeicaiBinding.node'),
+          //       ignore: ['.*']
+          //     }]
+          //   ])
+
         }
 
         // require('*.node') 方式加载原生模块需要

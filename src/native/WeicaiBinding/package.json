@@ -1,0 +1,19 @@
+{
+  "name": "weicai-native",
+  "version": "0.0.0",
+  "description": "node.js native addon",
+  "main": "./hello.js",
+  "private": true,
+  "scripts": {
+    "install": "cross-env HOME=~/.electron-gyp node-gyp configure && cross-env HOME=~/.electron-gyp node-gyp rebuild --target=6.1.4 --runtime=electron --arch=x64 --dist-url=https://electronjs.org/headers",
+    "start": "node hello.js"
+  },
+  "gypfile": true,
+  "dependencies": {
+    "bindings": "~1.2.1",
+    "nan": "^2.4.0"
+  },
+  "devDependencies": {
+    "cross-env": "^6.0.3"
+  }
+}

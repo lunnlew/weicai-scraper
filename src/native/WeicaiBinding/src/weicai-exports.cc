@@ -1,11 +1,13 @@
 #include <nan.h>
-#include "WCProcess.h"
+#include "win/WCProcess.h"
 
 #include <direct.h>
 #include <TlHelp32.h>
 
 #include <Windows.h>
 #include <Psapi.h>//EnumProcesses
+
+HINSTANCE hDLL;
 
 bool GetPrivileges()
 {
@@ -182,6 +184,43 @@ void Exp_CheckProcessDllExists(const Nan::FunctionCallbackInfo<v8::Value>& info)
 	info.GetReturnValue().Set(Nan::New((bool)exists));
 }
 
+/*
+* 启动控制客户端
+*/
+void Exp_startCtrlClient(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+	if (info.Length() != 1) {
+		Nan::ThrowTypeError("必须且仅支持一个参数\n");
+		return;
+	}
+	if (!info[0]->IsString()) {
+		Nan::ThrowTypeError("参数必须是字符串类型");
+		return;
+	}
+
+	if (hDLL==NULL) {
+		// 要加载的Dll路径
+		v8::Local<v8::String> dllPathName = v8::Local<v8::String>::Cast(info[0]);
+		v8::String::Utf8Value utfDllPathName(dllPathName);
+		hDLL = LoadLibrary((LPCSTR)std::string(*utfDllPathName).c_str());
+	}
+
+	info.GetReturnValue().Set(Nan::New((bool)(hDLL!=NULL)));
+}
+
+/*
+* 发送消息
+*/
+void Exp_sendCtlMsg(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+	if (hDLL!=NULL) {
+		typedef void(*sendCtlMsg)();
+		sendCtlMsg func=(sendCtlMsg)GetProcAddress(hDLL,"sendCtlMsg");
+		func();
+		info.GetReturnValue().Set(Nan::New(true));
+	}else{
+		info.GetReturnValue().Set(Nan::New(false));
+	}
+}
+
 void Init(v8::Local<v8::Object> exports) {
 	v8::Local<v8::Context> context = exports->CreationContext();
 
@@ -206,6 +245,18 @@ void Init(v8::Local<v8::Object> exports) {
 	exports->Set(context,
 		Nan::New("ProcessDllUninstall").ToLocalChecked(),
 		Nan::New<v8::FunctionTemplate>(Exp_ProcessDllUninstall)
+		->GetFunction(context)
+		.ToLocalChecked());
+
+	exports->Set(context,
+		Nan::New("startCtrlClient").ToLocalChecked(),
+		Nan::New<v8::FunctionTemplate>(Exp_startCtrlClient)
+		->GetFunction(context)
+		.ToLocalChecked());
+
+	exports->Set(context,
+		Nan::New("sendCtlMsg").ToLocalChecked(),
+		Nan::New<v8::FunctionTemplate>(Exp_sendCtlMsg)
 		->GetFunction(context)
 		.ToLocalChecked());
 }
