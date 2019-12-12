@@ -49,6 +49,25 @@ Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope CurrentUser
 | :----: | :-------------------: |
 | win10 |   [nvm-windows](https://github.com/coreybutler/nvm/releases)   |
 
+### 指定Nodejs
+```sh
+## 安装nodejs版本
+nvm install 12.8.1 32
+
+## 指定nodejs版本
+nvm use 12.8.1 32
+
+## 查看生效nodejs版本
+nvm list
+node -v
+```
+### 更新依赖
+```sh
+yarn
+```
+
+## 调试
+
 ### 调试远程注入的DLL组件-WeChatHelper
 #### 编译WeChatHelper
 使用`vs2017`运行项目编译
@@ -80,24 +99,6 @@ cp ~/Desktop/WeChatHelper/Debug/WeChatHelper.pdb .
 
 #### 运行调试
 在DLL入口下个断点， F5启动调试即可。
-
-
-### 指定Nodejs
-```sh
-## 安装nodejs版本
-nvm install 12.8.1 32
-
-## 指定nodejs版本
-nvm use 12.8.1 32
-
-## 查看生效nodejs版本
-nvm list
-node -v
-```
-### 更新依赖
-```sh
-yarn
-```
 
 ## 开源许可
 基于 [MIT license](https://opensource.org/licenses/MIT) 许可进行开源。
