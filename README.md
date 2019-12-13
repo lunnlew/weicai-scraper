@@ -5,6 +5,7 @@
 ![GitHub repo size](https://img.shields.io/github/repo-size/lunnlew/weicai-scraper)
 ![](https://github.com/lunnlew/weicai-scraper/workflows/Release%20Build/badge.svg)
 [![](https://david-dm.org/lunnlew/weicai-scraper/dev-status.svg)](https://david-dm.org/lunnlew/weicai-scraper?type=dev)
+![GitHub Releases](https://img.shields.io/github/downloads/lunnlew/weicai-scraper/latest/total)
 
 ## 用户文档
 请访问 [文档网站](https://weicai.karoy.cn/) 查看详细内容。
