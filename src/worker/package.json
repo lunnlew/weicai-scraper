@@ -22,6 +22,7 @@
   "author": "lunnlew",
   "license": "MIT",
   "dependencies": {
+    "fs-extra": "^8.1.0",
     "jimp": "^0.9.3",
     "merge-img": "^2.1.3",
     "puppeteer": "^2.0.0"

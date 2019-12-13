@@ -175,7 +175,7 @@ appServer.route(function(self) {
         //将返回的结果再次格式化
         let citems = result['msg']['appmsg']['mmreader']['category']['item']
         let items = []
-        if (!'length' in citems) {
+        if (!citems.hasOwnProperty('length')) {
           items.push(citems)
         } else {
           items = citems

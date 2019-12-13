@@ -67,16 +67,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		switch (pCopyData->dwData)
 		{
 		case WM_CheckIsLogin: {
+			//MessageBoxA(hWnd, "收到WM_CheckIsLogin指令", NULL, 0);
 			OutputDebugStringA("收到WM_CheckIsLogin指令\n");
 			CheckIsLogin();
 			break;
 		}
 		case WM_HookReciveMsg: {
+			MessageBoxA(hWnd, "收到WM_HookReciveMsg指令", NULL, 0);
 			OutputDebugStringA("收到WM_HookReciveMsg指令\n");
 			HOOK_ReciveMsg();
 			break;
 		}
 		case WM_ShowQrCode: {
+			//MessageBoxA(hWnd, "收到WM_ShowQrCode指令", NULL, 0);
 			OutputDebugStringA("收到WM_ShowQrCode指令\n");
 			WX_CallShowQrCode();
 			HOOK_SaveQrCode();

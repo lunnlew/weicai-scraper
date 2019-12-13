@@ -4,6 +4,26 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 module.exports = {
   lintOnSave: process.env.NODE_ENV !== 'production',
   configureWebpack: {
+    plugins: [
+      // 似乎只有prod模式才生效
+      new CopyWebpackPlugin([{
+        from: path.join(__dirname, 'src/worker'),
+        to: path.join(__dirname, 'dist_electron/worker'),
+        ignore: ['.*']
+      }, {
+        from: path.join(__dirname, 'src/native/WeChatHelper/Release/WeChatHelper.dll'),
+        to: path.join(__dirname, 'dist_electron/native/WeChatHelper.dll'),
+        ignore: ['.*']
+      }, {
+        from: path.join(__dirname, 'src/native/WeChatCtl/Release/WeChatCtl.dll'),
+        to: path.join(__dirname, 'dist_electron/native/WeChatCtl.dll'),
+        ignore: ['.*']
+      }, {
+        from: path.join(__dirname, 'src/native/WeicaiBinding/build/Release/WeicaiBinding.node'),
+        to: path.join(__dirname, 'dist_electron/native/WeicaiBinding.node'),
+        ignore: ['.*']
+      }]),
+    ],
     entry: path.join(__dirname, 'src/renderer/main.js'),
     resolve: {
       alias: {
@@ -29,6 +49,9 @@ module.exports = {
               "ia32"
             ]
           }],
+          // requestedExecutionLevel: 'requireAdministrator',
+          "rfc3161TimeStampServer": "http://tsa.startssl.com/rfc3161",
+          "signDlls": true,
           icon: './public/app.png'
         },
         mac: {
@@ -72,46 +95,35 @@ module.exports = {
         //     }]
         //   ])
 
+
+        // 似乎只有dev模式才生效
+        // 不完美-WeicaiBinding.node-会报错不存在-需要重新再次运行任务
+        config.plugin('copy')
+          .use(CopyWebpackPlugin, [
+            [{
+              from: path.join(__dirname, 'src/worker'),
+              to: path.join(__dirname, 'dist_electron/worker'),
+              ignore: ['.*']
+            }, {
+              from: path.join(__dirname, 'src/native/WeChatHelper/Debug/WeChatHelper.dll'),
+              to: path.join(__dirname, 'dist_electron/native/WeChatHelper.dll'),
+              ignore: ['.*']
+            }, {
+              from: path.join(__dirname, 'src/native/WeChatCtl/Debug/WeChatCtl.dll'),
+              to: path.join(__dirname, 'dist_electron/native/WeChatCtl.dll'),
+              ignore: ['.*']
+            }, {
+              from: path.join(__dirname, 'src/native/WeicaiBinding/build/Release/WeicaiBinding.node'),
+              to: path.join(__dirname, 'dist_electron/native/WeicaiBinding.node'),
+              ignore: ['.*']
+            }]
+          ])
+
         if (process.env.NODE_ENV === 'production') {
-          config.plugin('copy')
-            .use(require('copy-webpack-plugin'), [
-              [{
-                from: path.join(__dirname, 'src/worker'),
-                to: path.join(__dirname, 'dist_electron/worker'),
-                ignore: ['.*']
-              }, {
-                from: path.join(__dirname, 'src/native/WeChatHelper/Release/WeChatHelper.dll'),
-                to: path.join(__dirname, 'dist_electron/native/WeChatHelper.dll'),
-                ignore: ['.*']
-              }, {
-                from: path.join(__dirname, 'src/native/WeChatCtl/Release/WeChatCtl.dll'),
-                to: path.join(__dirname, 'dist_electron/native/WeChatCtl.dll'),
-                ignore: ['.*']
-              }, {
-                from: path.join(__dirname, 'src/native/WeicaiBinding/build/Release/WeicaiBinding.node'),
-                to: path.join(__dirname, 'dist_electron/native/WeicaiBinding.node'),
-                ignore: ['.*']
-              }]
-            ])
-        } else {
-
-          // config.plugin('copy')
-          //   .use(require('copy-webpack-plugin'), [
-          //     [{
-          //       from: path.join(__dirname, 'src/native/WeChatHelper/Debug/WeChatHelper.dll'),
-          //       to: path.join(__dirname, 'dist_electron/native/WeChatHelper.dll'),
-          //       ignore: ['.*']
-          //     }, {
-          //       from: path.join(__dirname, 'src/native/WeChatCtl/Debug/WeChatCtl.dll'),
-          //       to: path.join(__dirname, 'dist_electron/native/WeChatCtl.dll'),
-          //       ignore: ['.*']
-          //     }, {
-          //       from: path.join(__dirname, 'src/native/WeicaiBinding/build/Release/WeicaiBinding.node'),
-          //       to: path.join(__dirname, 'dist_electron/native/WeicaiBinding.node'),
-          //       ignore: ['.*']
-          //     }]
-          //   ])
-
+          config.plugin('define').tap(args => {
+            args[0]['NODE_ENV'] = "production"
+            return args
+          })
         }
 
         // require('*.node') 方式加载原生模块需要

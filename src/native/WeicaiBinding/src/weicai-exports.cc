@@ -197,6 +197,9 @@ void Exp_startCtrlClient(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 		return;
 	}
 
+	BOOL ret = GetPrivileges();
+	printf("GetPrivileges -> %d\n", ret);
+
 	if (hDLL==NULL) {
 		// 要加载的Dll路径
 		v8::Local<v8::String> dllPathName = v8::Local<v8::String>::Cast(info[0]);
@@ -211,6 +214,10 @@ void Exp_startCtrlClient(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 * 发送消息
 */
 void Exp_sendCtlMsg(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+	
+	BOOL ret = GetPrivileges();
+	printf("GetPrivileges -> %d\n", ret);
+
 	if (hDLL!=NULL) {
 		typedef void(*sendCtlMsg)();
 		sendCtlMsg func=(sendCtlMsg)GetProcAddress(hDLL,"sendCtlMsg");

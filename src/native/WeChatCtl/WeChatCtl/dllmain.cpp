@@ -12,8 +12,8 @@ VOID __declspec(dllexport) test()
 }
 
 extern "C"  __declspec(dllexport) VOID sendCtlMsg() {
-	//发送到控制端
-	HWND hWnd = FindWindow(NULL, TEXT("WeChatHelper"));
+	//发送到服务端
+	HWND hWnd = FindWindow(NULL, L"WeChatHelper");
 	if (hWnd == NULL)
 	{
 		OutputDebugStringA("未查找到WeChatHelper窗口");
