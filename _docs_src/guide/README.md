@@ -44,12 +44,24 @@ Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope CurrentUser
 ## 技术栈
 
 ## 开发
+### 系统环境
+
+	window10 x64
+	node v12.8.1 32位
+	python v2.7
+	Visual Studio 2017
+
 ### 安装nvm
 |  操作系统  |         二进制包          |
 | :----: | :-------------------: |
 | win10 |   [nvm-windows](https://github.com/coreybutler/nvm/releases)   |
 
-### 指定Nodejs
+### 安装Visual Studio 2017
+|         下载地址          |
+| :-------------------: |
+|   [Visual Studio 2017](https://visualstudio.microsoft.com/downloads/)   |
+
+### 安装Nodejs
 ```sh
 ## 安装nodejs版本
 nvm install 12.8.1 32
@@ -61,10 +73,23 @@ nvm use 12.8.1 32
 nvm list
 node -v
 ```
+
+### 安装yarn
+```sh
+npm install -g yarn
+```
+
 ### 更新依赖
 ```sh
 yarn
 ```
+
+### 安装Visual Studio 2017
+
+## 编译打包
+
+### 编译原生模块
+### 打包主程序
 
 ## 调试
 
@@ -99,6 +124,16 @@ cp ~/Desktop/WeChatHelper/Debug/WeChatHelper.pdb .
 
 #### 运行调试
 在DLL入口下个断点， F5启动调试即可。
+
+## 文档生成
+### 安装vuepress
+```sh
+yarn add vuepress --dev
+```
+### 构建文档
+```sh
+yarn run docs:build
+```
 
 ## 开源许可
 基于 [MIT license](https://opensource.org/licenses/MIT) 许可进行开源。

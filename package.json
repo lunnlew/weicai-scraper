@@ -101,7 +101,8 @@
     "stylus-loader": "^3.0.2",
     "vue-cli-plugin-electron-builder": "^1.4.2",
     "vue-html-loader": "^1.2.4",
-    "vue-template-compiler": "^2.6.10"
+    "vue-template-compiler": "^2.6.10",
+    "vuepress": "^1.2.0"
   },
   "__npminstall_done": false
 }
