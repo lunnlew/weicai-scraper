@@ -7,9 +7,11 @@ $proxyReg = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings";
 
 if ($Proxy -eq $null) {
     Set-ItemProperty -Path $proxyReg -Name ProxyEnable -Value 0;
+    Remove-ItemProperty -Path $proxyReg -Name ProxyServer;
 }else{
 	Set-ItemProperty -Path $proxyReg -Name ProxyServer -Value $Proxy;
 	Set-ItemProperty -Path $proxyReg -Name ProxyEnable -Value 1;
 }
 
 Write-Host "invoke cmd completed"
+
