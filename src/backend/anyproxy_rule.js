@@ -88,23 +88,27 @@ module.exports = {
       }
       if (/^\/mp\/profile_ext\?action=home/.test(requestDetail.requestOptions.path)) {
         // 正则匹配到JSON
-        let contentJSON = /var msgList = '(.+)';\n/.exec(content)[1];
-        // 转义为正常字符
-        contentJSON = escape2Html(contentJSON).replace(/\\\//g, "/");
-        let contentJs = JSON.parse(contentJSON);
+        let cpr = /var msgList = '(.+)';\n/.exec(content)
+        if (cpr != null) {
+          let contentJSON = cpr[1];
+          // 转义为正常字符
+          contentJSON = escape2Html(contentJSON).replace(/\\\//g, "/");
+          let contentJs = JSON.parse(contentJSON);
 
-        let list = contentJs.list;
-        for (let msg of list) {
-          //1 纯文本 49 富文本
-          if (msg.comm_msg_info.type != 49) {
-            continue
+          let list = contentJs.list;
+          for (let msg of list) {
+            //1 纯文本 49 富文本
+            if (msg.comm_msg_info.type != 49) {
+              continue
+            }
+            let dateTime = (msg.comm_msg_info.datetime * 1000).toString();
+            if (msg.app_msg_ext_info.is_multi) {
+              saveMutiMsg(dateTime, msg.app_msg_ext_info.multi_app_msg_item_list)
+            } else {
+              saveMsg(dateTime, msg.app_msg_ext_info)
+            }
           }
-          let dateTime = (msg.comm_msg_info.datetime * 1000).toString();
-          if (msg.app_msg_ext_info.is_multi) {
-            saveMutiMsg(dateTime, msg.app_msg_ext_info.multi_app_msg_item_list)
-          } else {
-            saveMsg(dateTime, msg.app_msg_ext_info)
-          }
+
         }
       }
       if (/^\/mp\/profile_ext\?action=getmsg/.test(requestDetail.requestOptions.path)) {

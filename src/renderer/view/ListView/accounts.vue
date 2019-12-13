@@ -36,7 +36,10 @@
                       <ListItemMeta title="名称" :description="showExtraData.nickname" />
                     </ListItem>
                     <ListItem>
-                      <ListItemMeta title="原始ID" :description="showExtraData.username" />
+                      <ListItemMeta title="WeChatId" :description="showExtraData.username" />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemMeta title="历史页" :description="showExtraData.history_url" />
                     </ListItem>
                   </List>
                 </TabPane>
@@ -67,8 +70,11 @@ export default {
           title: '名称',
           key: 'nickname'
         }, {
-          title: '原始ID',
+          title: 'WeChatId',
           key: 'username'
+        }, {
+          title: 'biz',
+          key: 'biz'
         },
         {
           title: '操作',
