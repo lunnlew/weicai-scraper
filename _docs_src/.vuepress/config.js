@@ -1,6 +1,6 @@
 module.exports = {
   base: '/',
-  title: 'weicai scraper',
+  title: '微采助手',
   dest: 'docs',
   description: '一个以NodeJs驱动的公众号文章采集工具。',
   themeConfig: {
