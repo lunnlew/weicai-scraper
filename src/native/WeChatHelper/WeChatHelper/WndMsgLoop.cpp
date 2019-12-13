@@ -73,7 +73,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			break;
 		}
 		case WM_HookReciveMsg: {
-			MessageBoxA(hWnd, "收到WM_HookReciveMsg指令", NULL, 0);
+			//MessageBoxA(hWnd, "收到WM_HookReciveMsg指令", NULL, 0);
 			OutputDebugStringA("收到WM_HookReciveMsg指令\n");
 			HOOK_ReciveMsg();
 			break;
