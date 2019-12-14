@@ -176,13 +176,13 @@ void HOOK_ReciveMsg() {
 		LogRecord(L"已经存在WX_ReciveMsg_HOOK", ofs);
 		return;
 	}
-	DWORD BASE = (DWORD)GetModuleHandle(L"WeChatWin.dll");
+	DWORD WeChatWinBaseAddr = (DWORD)GetModuleHandle(L"WeChatWin.dll");
 	LogRecord(L"WeChatWin.dll 基址", ofs);
-	LogRecord(char2TCAHR(std::to_string(BASE).c_str()), ofs);
+	LogRecord(char2TCAHR(std::to_string(WeChatWinBaseAddr).c_str()), ofs);
 
 	//计算需要HOOK的地址
-	DWORD dwHookAddr = BASE + offset_ReciveMessage - 5;
-	ReciveMsg_dwParam = BASE + offset_ReciveMessageParam;
+	DWORD dwHookAddr = WeChatWinBaseAddr + offset_ReciveMessage;
+	ReciveMsg_dwParam = WeChatWinBaseAddr + offset_ReciveMessageParam;
 	ReciveMsg_RetAddr = dwHookAddr + 5;
 
 	LogRecord(L"ReciveMsg_HOOK 地址", ofs);
