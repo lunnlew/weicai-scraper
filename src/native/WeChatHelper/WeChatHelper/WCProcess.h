@@ -1,5 +1,4 @@
 #pragma once
-#include <atlbase.h>  
 
 /*
 * 根据进程名称获得进程ID
