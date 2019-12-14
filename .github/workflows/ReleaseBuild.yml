@@ -39,7 +39,6 @@ jobs:
         cd src/native/WeicaiBinding
         yarn
         cd ../../../
-        yarn run native:build-WeicaiBinding-ia32
     - name: electron-build
       run: |
         yarn run electron:build
