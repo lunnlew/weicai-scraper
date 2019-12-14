@@ -1,11 +1,10 @@
 #include "stdafx.h"
-#include <atlbase.h>
-#include <TlHelp32.h>
+#include <tlhelp32.h>
 
 /*
 * 根据进程名称获得进程ID
 */
-DWORD FindProcessPidByName(LPCSTR ProcessName)
+DWORD FindProcessPidByName(wchar_t *ProcessName)
 {
 	//PROCESSENTRY32结构体，保存进程具体信息
 	PROCESSENTRY32 pe32 = { 0 };
@@ -22,8 +21,7 @@ DWORD FindProcessPidByName(LPCSTR ProcessName)
 	//循环获得所有进程
 	while (bProcess)
 	{
-		USES_CONVERSION;
-		if (strcmp(ProcessName, W2A(pe32.szExeFile)) == 0)
+		if (wcscmp(ProcessName, pe32.szExeFile) == 0)
 		{
 			return pe32.th32ProcessID;
 		}
@@ -36,7 +34,7 @@ DWORD FindProcessPidByName(LPCSTR ProcessName)
 /*
 * 检查进程是否存在指定的dll模块
 */
-BOOL CheckProcessDllExists(DWORD dwProcessid, LPCSTR DllName) {
+BOOL CheckProcessDllExists(DWORD dwProcessid, wchar_t * DllName) {
 	HANDLE hModuleSnap = INVALID_HANDLE_VALUE;
 	//初始化模块信息结构体
 	MODULEENTRY32 me32 = { sizeof(MODULEENTRY32) };
@@ -60,9 +58,7 @@ BOOL CheckProcessDllExists(DWORD dwProcessid, LPCSTR DllName) {
 	//循环获得所有
 	while (bModule)
 	{
-		//printf("%s\n", me32.szModule);
-		USES_CONVERSION;
-		if (strcmp(DllName, W2A(me32.szModule)) == 0)
+		if (wcscmp(DllName, me32.szModule) == 0)
 		{
 			return true;
 		}
