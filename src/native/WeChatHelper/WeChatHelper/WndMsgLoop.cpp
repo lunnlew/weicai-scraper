@@ -4,18 +4,21 @@
 #include "WndMsgLoop.h"
 #include "HookOffset.h"
 #include "MsgProtocol.h"
-
+#include "LogRecord.h"
 
 // 初始化消息循环窗口
 void InitWindow(HMODULE hModule)
 {
+	LogRecord(L"InitWindow", ofs);
+
 	RegisterWindow(hModule);
 }
 
 // 注册窗口及消息循环
 void RegisterWindow(HMODULE hModule)
 {
-	OutputDebugStringA("RegisterWindowMsgLoop\n");
+	LogRecord(L"RegisterWindowMsgLoop", ofs);
+
 	//1  设计一个窗口类
 	WNDCLASS wnd;
 	wnd.style = CS_VREDRAW | CS_HREDRAW;	//风格
@@ -62,30 +65,38 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 	// 仅处理WM_COPYDATA类消息
 	if (Message == WM_COPYDATA)
 	{
-		OutputDebugStringA("收到WM_COPYDATA类消息\n");
+		LogRecord(L"收到WM_COPYDATA类消息", ofs);
 		COPYDATASTRUCT *pCopyData = (COPYDATASTRUCT*)lParam;
+		LogRecord(L"switch type", ofs);
 		switch (pCopyData->dwData)
 		{
 		case WM_CheckIsLogin: {
-			//MessageBoxA(hWnd, "收到WM_CheckIsLogin指令", NULL, 0);
-			OutputDebugStringA("收到WM_CheckIsLogin指令\n");
+			LogRecord(L"收到WM_CheckIsLogin指令", ofs);
 			CheckIsLogin();
 			break;
 		}
 		case WM_HookReciveMsg: {
-			//MessageBoxA(hWnd, "收到WM_HookReciveMsg指令", NULL, 0);
-			OutputDebugStringA("收到WM_HookReciveMsg指令\n");
+			LogRecord(L"收到WM_HookReciveMsg指令", ofs);
 			HOOK_ReciveMsg();
 			break;
 		}
 		case WM_ShowQrCode: {
-			//MessageBoxA(hWnd, "收到WM_ShowQrCode指令", NULL, 0);
-			OutputDebugStringA("收到WM_ShowQrCode指令\n");
+			LogRecord(L"收到WM_ShowQrCode指令", ofs);
 			WX_CallShowQrCode();
 			HOOK_SaveQrCode();
 			break;
 		}
 		default:
+
+			char ty[34] = { 0 };
+			TCHAR * tchar = { 0 };
+			int iLength;
+
+			sprintf_s(ty, sizeof(ty), "%d", pCopyData->dwData);
+			iLength = MultiByteToWideChar(CP_ACP, 0, ty, strlen(ty) + 1, NULL, 0);
+			MultiByteToWideChar(CP_ACP, 0, ty, strlen(ty) + 1, tchar, iLength);
+
+			LogRecord(tchar, ofs);
 			break;
 		}
 	}

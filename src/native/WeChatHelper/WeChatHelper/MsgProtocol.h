@@ -26,4 +26,6 @@ void HOOK_ReciveMsg();
 void RecieveWxMesage();
 void SendWxMessage();
 
+
+
 std::wstring GetMsgByAddress(DWORD memAddress);

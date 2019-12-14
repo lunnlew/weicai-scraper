@@ -4,6 +4,7 @@
 #include <shlwapi.h>
 #include "MsgProtocol.h"
 #include "HookOffset.h"
+#include "LogRecord.h"
 
 // hook指令 
 BYTE WX_SaveQrCode_jmpCode[5] = { 0 };
@@ -32,6 +33,9 @@ void AntiRevoke()
 // 显示微信登陆二维码
 void WX_CallShowQrCode()
 {
+
+	LogRecord(L"WX_CallShowQrCode", ofs);
+
 	DWORD dwWeChatWinAddr = (DWORD)GetModuleHandle(L"WeChatWin.dll");
 	DWORD dwCallAddr1 = dwWeChatWinAddr + offset_GoToQrCode1;
 	DWORD dwCallAddr2 = dwWeChatWinAddr + offset_GoToQrCode2;
@@ -46,7 +50,8 @@ void WX_CallShowQrCode()
 // 保存微信登陆二维码
 void HOOK_SaveQrCode()
 {
-	OutputDebugStringA("WX_SaveQrCode\n");
+
+	LogRecord(L"HOOK_SaveQrCode", ofs);
 
 	//拿到模块基址
 	DWORD dwWeChatWinAddr = (DWORD)GetModuleHandle(L"WeChatWin.dll");
@@ -97,7 +102,8 @@ void __declspec(naked) invokeSaveImg()
 
 void SaveImg(DWORD qrcode)
 {
-	OutputDebugStringA("SaveImg\n");
+
+	LogRecord(L"SaveImg", ofs);
 	//获取图片长度
 	DWORD dwPicLen = qrcode + 0x4;
 	size_t cpyLen = (size_t)*((LPVOID*)dwPicLen);
@@ -114,14 +120,14 @@ void SaveImg(DWORD qrcode)
 	HANDLE hFile = CreateFileA(szPicturePath, GENERIC_ALL, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hFile == NULL)
 	{
-		OutputDebugStringA("创建图片文件失败\n");
+		LogRecord(L"创建图片文件失败", ofs);
 		return;
 	}
 
 	DWORD dwRead = 0;
 	if (WriteFile(hFile, PicData, cpyLen, &dwRead, NULL) == 0)
 	{
-		OutputDebugStringA("写入图片文件失败\n");
+		LogRecord(L"写入图片文件失败", ofs);
 		return;
 	}
 	CloseHandle(hFile);
@@ -134,6 +140,8 @@ void SaveImg(DWORD qrcode)
 // 卸载WX_SaveQrCode
 void WX_SaveQrCode_Unhook(DWORD dwHookOffset)
 {
+
+	LogRecord(L"WX_SaveQrCode_Unhook", ofs);
 	//拿到模块基址
 	DWORD dwWeChatWinAddr = (DWORD)GetModuleHandle(L"WeChatWin.dll");
 
@@ -165,25 +173,41 @@ DWORD ReciveMsg_RetAddr = 0;
 
 void HOOK_ReciveMsg() {
 	if (WX_ReciveMsg_HOOK == 1) {
-		OutputDebugStringA("已经存在WX_ReciveMsg_HOOK\n");
+		LogRecord(L"已经存在WX_ReciveMsg_HOOK", ofs);
 		return;
 	}
+	DWORD BASE = (DWORD)GetModuleHandle(L"WeChatWin.dll");
+	LogRecord(L"WeChatWin.dll 基址", ofs);
+	LogRecord(char2TCAHR(std::to_string(BASE).c_str()), ofs);
+
 	//计算需要HOOK的地址
-	DWORD dwHookAddr = (DWORD)GetModuleHandle(L"WeChatWin.dll") + offset_ReciveMessage - 5;
-	ReciveMsg_dwParam = (DWORD)GetModuleHandle(L"WeChatWin.dll") + offset_ReciveMessageParam;
+	DWORD dwHookAddr = BASE + offset_ReciveMessage - 5;
+	ReciveMsg_dwParam = BASE + offset_ReciveMessageParam;
 	ReciveMsg_RetAddr = dwHookAddr + 5;
+
+	LogRecord(L"ReciveMsg_HOOK 地址", ofs);
+	LogRecord(char2TCAHR(std::to_string(dwHookAddr).c_str()), ofs);
+
+	LogRecord(L"ReciveMsg_RetAddr 地址", ofs);
+	LogRecord(char2TCAHR(std::to_string(ReciveMsg_RetAddr).c_str()), ofs);
 
 	//组装数据
 	BYTE bJmpCode[5] = { 0xE9 };
 	*(DWORD*)&bJmpCode[1] = (DWORD)RecieveWxMesage - dwHookAddr - 5;
 
 	//保存当前位置的指令,在unhook的时候使用。
-	ReadProcessMemory(GetCurrentProcess(), (LPVOID)dwHookAddr, WX_ReciveMsg_BACK_HOOK, 5, 0);
+	bool r= ReadProcessMemory(GetCurrentProcess(), (LPVOID)dwHookAddr, WX_ReciveMsg_BACK_HOOK, 5, 0);
 
 	//覆盖指令 B9 E8CF895C //mov ecx,0x5C89CFE8
-	WriteProcessMemory(GetCurrentProcess(), (LPVOID)dwHookAddr, bJmpCode, 5, 0);
+	bool w = WriteProcessMemory(GetCurrentProcess(), (LPVOID)dwHookAddr, bJmpCode, 5, 0);
 
-	WX_ReciveMsg_HOOK = 1;
+	if (r&&w) {
+		//WX_ReciveMsg_HOOK = 1;
+		LogRecord(L"WX_ReciveMsg_HOOK成功", ofs);
+	}
+	else {
+		LogRecord(L"WX_ReciveMsg_HOOK失败", ofs);
+	}
 }
 
 
@@ -204,6 +228,7 @@ __declspec(naked) void RecieveWxMesage()
 		pushad
 		pushfd
 	}
+
 	SendWxMessage();
 
 	//恢复现场
@@ -229,6 +254,9 @@ struct Message
 
 void SendWxMessage()
 {
+
+
+	LogRecord(L"SendWxMessage", ofs);
 	Message *msg = new Message;
 
 	//信息块的位置
@@ -246,8 +274,6 @@ void SendWxMessage()
 	BOOL isSystemMessage = FALSE;	//是否是系统或红包消息
 	BOOL isFriendRequestMessage = FALSE;	//是否是好友请求消息
 	BOOL isOther = FALSE;	//是否是其他消息
-	
-	OutputDebugStringA(std::to_string(msgType).c_str());
 
 	switch (msgType)
 	{
@@ -456,7 +482,7 @@ void SendWxMessage()
 	HWND hWeChatRoot = FindWindow(NULL, L"WeChatCtl");
 	if (hWeChatRoot == NULL)
 	{
-		OutputDebugStringA("未查找到WeChatRoot窗口");
+		LogRecord(L"未查找到WeChatCtl窗口", ofs);
 		return;
 	}
 

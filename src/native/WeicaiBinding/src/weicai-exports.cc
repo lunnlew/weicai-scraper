@@ -89,8 +89,8 @@ void Exp_ProcessDllInject(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 	v8::Local<v8::String> dllName = v8::Local<v8::String>::Cast(info[2]);
 	v8::String::Utf8Value utfDllName(dllName);
 
-	BOOL ret = GetPrivileges();
-	printf("GetPrivileges -> %d\n", ret);
+	//BOOL ret = GetPrivileges();
+	//printf("GetPrivileges -> %d\n", ret);
 
 	// 根据进程名取得进程id
 	DWORD dwPid = FindProcessPidByName((LPCSTR)std::string(*utfProcessName).c_str());
@@ -125,8 +125,8 @@ void Exp_ProcessDllUninstall(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 	v8::Local<v8::String> dllName = v8::Local<v8::String>::Cast(info[1]);
 	v8::String::Utf8Value utfDllName(dllName);
 
-	BOOL ret = GetPrivileges();
-	printf("GetPrivileges -> %d\n", ret);
+	//BOOL ret = GetPrivileges();
+	//printf("GetPrivileges -> %d\n", ret);
 
 	// 根据进程名取得进程id
 	DWORD dwPid = FindProcessPidByName((LPCSTR)std::string(*utfProcessName).c_str());
@@ -197,8 +197,8 @@ void Exp_startCtrlClient(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 		return;
 	}
 
-	BOOL ret = GetPrivileges();
-	printf("GetPrivileges -> %d\n", ret);
+	//BOOL ret = GetPrivileges();
+	//printf("GetPrivileges -> %d\n", ret);
 
 	if (hDLL==NULL) {
 		// 要加载的Dll路径
@@ -215,8 +215,8 @@ void Exp_startCtrlClient(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 */
 void Exp_sendCtlMsg(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 	
-	BOOL ret = GetPrivileges();
-	printf("GetPrivileges -> %d\n", ret);
+	//BOOL ret = GetPrivileges();
+	//printf("GetPrivileges -> %d\n", ret);
 
 	if (hDLL!=NULL) {
 		typedef void(*sendCtlMsg)();
