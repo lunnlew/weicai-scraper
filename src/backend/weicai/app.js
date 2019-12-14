@@ -175,6 +175,8 @@ appServer.route(function(self) {
         let appmsg = result['msg']['appmsg']
 
         // 不是公众号推送消息跳过
+
+        //5公众号推送,21应用消息
         if (appmsg.type != 5) {
           return
         }
