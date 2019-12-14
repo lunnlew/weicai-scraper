@@ -41,7 +41,6 @@ jobs:
         cd ../../../
     - name: electron-build
       run: |
-        yarn
         yarn run electron:build
     - name: Create Release
       id: create_release

@@ -45,6 +45,7 @@
     "chai-as-promised": "^7.1.1",
     "child_process": "^1.0.2",
     "colorful": "^2.1.0",
+    "core-js": "^3.5.0",
     "cron": "^1.7.2",
     "express": "^4.17.1",
     "express-ws": "^4.0.0",
