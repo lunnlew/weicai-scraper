@@ -11,9 +11,17 @@ let p_WeChatDll_dir = 'd:/weicai-scraper/native'
 let p_WeChatHelper_path = path.join(p_WeChatDll_dir, "WeChatHelper.dll")
 console.log('NODE_ENV:' + process.env.NODE_ENV)
 
-if (process.env.NODE_ENV !== 'development') {
+if (process.env.NODE_ENV == 'development') {
+
+  // 开发模式
+  console.log('[dev]加载' + '../../dist_electron/native/WeicaiBinding.node')
+  weicaiNative = require('../../dist_electron/native/WeicaiBinding.node')
+  p_WeChatDll_dir = path.join(__dirname, "../../dist_electron/native")
+
+} else {
+
   // 发布模式
-  console.log('加载' + p_WeicaiBinding)
+  console.log('[prod]加载' + p_WeicaiBinding)
   weicaiNative = require(p_WeicaiBinding)
   // 由于未知原因无法直接从C盘下加载DLL资源
   // 于是复制到另外的盘符下来加载
@@ -27,12 +35,6 @@ if (process.env.NODE_ENV !== 'development') {
   } catch (err) {
     console.log('copy WeChatHelper.dll err: ' + err)
   }
-
-} else {
-  // 开发模式
-  console.log('加载' + '../../dist_electron/native/WeicaiBinding.node')
-  weicaiNative = require('../../dist_electron/native/WeicaiBinding.node')
-  p_WeChatDll_dir = path.join(__dirname, "../../dist_electron/native")
 }
 
 p_WeChatHelper_path = path.join(p_WeChatDll_dir, "WeChatHelper.dll")
