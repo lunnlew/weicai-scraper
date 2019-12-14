@@ -172,8 +172,15 @@ appServer.route(function(self) {
       var jsonBuilder = new xml2js.Builder();
       // xml -> json
       xmlParser.parseString(xml, async function(err, result) {
+        let appmsg = result['msg']['appmsg']
+
+        // 不是公众号推送消息跳过
+        if (appmsg.type != 5) {
+          return
+        }
+
         //将返回的结果再次格式化
-        let citems = result['msg']['appmsg']['mmreader']['category']['item']
+        let citems = appmsg['mmreader']['category']['item']
         let items = []
         if (!citems.hasOwnProperty('length')) {
           items.push(citems)
@@ -182,7 +189,7 @@ appServer.route(function(self) {
         }
 
         for (let item of items) {
-          let publisher = result['msg']['appmsg']['mmreader']['publisher']
+          let publisher = appmsg['mmreader']['publisher']
           let rs = requestStrToMap(item.url)
           let uniacc = {
             // 公众号名称
