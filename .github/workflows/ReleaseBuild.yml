@@ -14,6 +14,11 @@ jobs:
         wecai-version: ['0.1.3']
     steps:
     - uses: actions/checkout@v1
+    - name: native-build
+      run: |
+        yarn run native:build-WeChatCtl
+        yarn run native:build-WeChatHelper
+        yarn run native:build-WeicaiBinding-ia32
     - name: Use Node.js ${{ matrix.node-version }}
       uses: lunnlew/setup-node@v1.4.0
       with:
@@ -29,11 +34,6 @@ jobs:
         yarn
         cd ../../
         yarn --frozen-lockfile
-    - name: native-build
-      run: |
-        yarn run native:build-WeChatCtl
-        yarn run native:build-WeChatHelper
-        yarn run native:build-WeicaiBinding-ia32
     - name: electron-build
       run: |
         yarn run electron:build
