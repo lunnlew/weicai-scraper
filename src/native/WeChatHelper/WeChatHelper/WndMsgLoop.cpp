@@ -5,6 +5,7 @@
 #include "HookOffset.h"
 #include "MsgProtocol.h"
 #include "LogRecord.h"
+#include "WCProcess.h"
 
 // 初始化消息循环窗口
 void InitWindow(HMODULE hModule)

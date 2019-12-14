@@ -4,7 +4,7 @@
 /*
 * 根据进程名称获得进程ID
 */
-DWORD FindProcessPidByName(wchar_t *ProcessName)
+DWORD FindProcessPidByName(const wchar_t *ProcessName)
 {
 	//PROCESSENTRY32结构体，保存进程具体信息
 	PROCESSENTRY32 pe32 = { 0 };
@@ -34,7 +34,7 @@ DWORD FindProcessPidByName(wchar_t *ProcessName)
 /*
 * 检查进程是否存在指定的dll模块
 */
-BOOL CheckProcessDllExists(DWORD dwProcessid, wchar_t * DllName) {
+BOOL CheckProcessDllExists(DWORD dwProcessid, const wchar_t * DllName) {
 	HANDLE hModuleSnap = INVALID_HANDLE_VALUE;
 	//初始化模块信息结构体
 	MODULEENTRY32 me32 = { sizeof(MODULEENTRY32) };

@@ -392,8 +392,8 @@ void SendWxMessage()
 		memcpy(msg->msgSender, L"NULL", sizeof(L"NULL"));
 	}
 
-	if (StrStrW(msg->wxid, L"gh")) {
-		if ((StrCmpW(msg->wxid, L"gh_3dfda90e39d6") == 0))
+	if (wcscmp(msg->wxid, L"gh")) {
+		if ((wcscmp(msg->wxid, L"gh_3dfda90e39d6") == 0))
 		{
 			c = L"微信收款到账";
 			msg->isMoney = TRUE;
@@ -436,7 +436,7 @@ void SendWxMessage()
 		LPVOID pContent = *((LPVOID *)(**msgAddress + 0x68));
 		swprintf_s(tempcontent, L"%s", (wchar_t*)pContent);
 		//判断是否是转账消息
-		if (StrStrW(tempcontent, L"微信转账"))
+		if (wcscmp(tempcontent, L"微信转账"))
 		{
 			c = L"收到转账消息,已自动收款";
 		}
@@ -458,7 +458,7 @@ void SendWxMessage()
 		swprintf_s(tempbuff, L"%s", (wchar_t*)pContent);
 
 		//在这里处理加入群聊消息
-		if ((StrStrW(tempbuff, L"移出了群聊") || StrStrW(tempbuff, L"加入了群聊")))
+		if ((wcscmp(tempbuff, L"移出了群聊") || wcscmp(tempbuff, L"加入了群聊")))
 		{
 			c = (wchar_t*)tempbuff;
 		}
