@@ -29,6 +29,11 @@ jobs:
         yarn
         cd ../../
         yarn --frozen-lockfile
+    - name: native-build
+      run: |
+        yarn run native:build-WeChatCtl
+        yarn run native:build-WeChatHelper
+        yarn run native:build-WeicaiBinding-ia32
     - name: electron-build
       run: |
         yarn run electron:build
