@@ -39,7 +39,7 @@ Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope CurrentUser
 
 |  操作系统  |         二进制包          |
 | :----: | :-------------------: |
-| winx64 |   [微采助手-Setup-x86-0.1.2.exe](https://github.com/lunnlew/weicai-scraper/releases/download/v0.1.2/Setup-x86-0.1.2.exe)   |
+| winx64 |   [微采助手-Setup-x86-0.1.3.exe](https://github.com/lunnlew/weicai-scraper/releases/download/v0.1.3/Setup-x86-0.1.3.exe)   |
 
 ## 技术栈
 
