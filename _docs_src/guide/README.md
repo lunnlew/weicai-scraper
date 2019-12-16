@@ -13,7 +13,7 @@ sidebar: auto
 ## 介绍
 微采助手是一个以NodeJs驱动的公众号文章采集工具，为了支持更方便地采集和本地浏览而创建并开源的。
 当你浏览微信公众号发现一个有趣的文章时，你就可以使用它下载该资源以用于本地浏览存储等。
-
+![1](README/1.png)
 
 ## 支持平台
 目前仅支持window10 x64
@@ -168,7 +168,7 @@ git clone https://github.com/lunnlew/weicai-scraper.git
 ```
 
 ## 编译打包
-以`Visual Studio 2017`为例，原生模块`WeChatCtl`及`WeChatHelper`支持通过ide运行构建及命令行方式运行构建，ide方式运行相应的`sln`文件即可
+以`Visual Studio 2017`为例，原生模块`WeChatCtl`、`WeChatHelper`及`WeicaiBinding`支持通过ide运行构建及命令行方式运行构建，ide方式运行相应的`sln`文件即可
 
 ### 编译WeicaiBinding
 ```cmd
