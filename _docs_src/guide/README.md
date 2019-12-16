@@ -217,12 +217,11 @@ yarn run electron:serve
 yarn run electron:build
 ```
 
-## 调试
-### 调试远程注入DLL
+## 调试远程注入DLL
 以`WeChatHelper`为例
-#### 编译WeChatHelper
+### 编译WeChatHelper
 参考前文使用`vs2017`运行项目编译
-#### 编译Detours
+### 编译Detours
 ```sh
 cd ~/Desktop
 git clone https://github.com/microsoft/Detours.git
@@ -232,7 +231,7 @@ git clone https://github.com/microsoft/Detours.git
 cd ~/Desktop/Detours
 nmake /f Makefile
 ```
-#### 修改原始程序IAT
+### 修改原始程序IAT
 ```
 # 进入要调试的应用主程序
 cd D:/Applications/WeChat
@@ -245,13 +244,13 @@ cp ~/Desktop/weicai-scraper/src/native/WeChatHelper/Debug/WeChatHelper.pdb .
 ~/Desktop/Detours/bin.X86/setdll.exe /r WeChat.exe
 
 ```
-#### 配置vs2017的本地调试设置
+### 配置vs2017的本地调试设置
 
    将`配置属性`-`调试`-`本地windows调试`: 
    `命令参数`改为主程序地址如`D:/Applications/WeChat/WeChat.exe`;
    `工作目录`改为主程序目录址如`D:/Applications/WeChat`
 
-#### 运行调试
+### 运行调试
 在DLL入口下个断点， 启动调试即可。
 
 ## 文档生成
