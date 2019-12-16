@@ -9,6 +9,7 @@
 ![GitHub Release Date](https://img.shields.io/github/release-date/lunnlew/weicai-scraper)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/lunnlew/weicai-scraper)](https://github.com/lunnlew/weicai-scraper/releases)
 [![GitHub Releases](https://img.shields.io/github/downloads/lunnlew/weicai-scraper/latest/total)](https://github.com/lunnlew/weicai-scraper/releases)
+![1](./docs/assets/img/1.fcce54ca.png)
 
 ## 用户文档
 请访问 [文档网站](https://weicai.karoy.cn/) 查看详细内容。
