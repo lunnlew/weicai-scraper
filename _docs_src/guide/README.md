@@ -156,10 +156,13 @@ yarn
 cd src/worker && yarn
 ```
 
+## 安装Python 2.7
+
+[Python 下载地址](https://www.python.org/downloads/release/python-2717/)
+
 ### 安装Visual Studio 2017
-|         下载地址          |
-| :-------------------: |
-|   [Visual Studio 2017](https://visualstudio.microsoft.com/downloads/)   |
+
+[Visual Studio 下载地址](https://visualstudio.microsoft.com/downloads/)
 
 ## 下载源码
 ```sh
