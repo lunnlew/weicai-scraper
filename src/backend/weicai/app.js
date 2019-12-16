@@ -172,6 +172,10 @@ appServer.route(function(self) {
       var jsonBuilder = new xml2js.Builder();
       // xml -> json
       xmlParser.parseString(xml, async function(err, result) {
+        if (typeof result == 'undefined') {
+          return
+        }
+
         let appmsg = result['msg']['appmsg']
 
         // 不是公众号推送消息跳过

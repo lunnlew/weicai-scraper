@@ -27,6 +27,16 @@ sidebar: auto
 6. 公众号列表查看及搜索，包含名称等
 7. 简化的采集代理设置操作
 
+
+## 安装
+### 安装包
+
+|  操作系统  |         二进制包          |
+| :----: | :-------------------: |
+| winx64 |   [微采助手-Setup-x86-0.1.3.exe](https://github.com/lunnlew/weicai-scraper/releases/download/v0.1.3/Setup-x86-0.1.3.exe)   |
+
+
+
 ## 使用
 ### 使用前设置
 ```powershell
@@ -36,7 +46,7 @@ Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope CurrentUser
 ```
 ### 使用前注意
 
-	公众号历史文章列表页不要频繁进行访问刷新，否则会导致提示`操作频繁`并封禁该接口访问24小时。
+   公众号历史文章列表页不要频繁进行访问刷新，否则会导致提示`操作频繁`并封禁该接口访问24小时。
 
 ### 代理模式
 代理模式是在开启系统代理设置时，通过操作微信客户端访问并拦截内容来达成对`历史文章列表`，`文章页`，`文章评论数据`，`公众号信息`等采集。
@@ -97,17 +107,17 @@ Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope CurrentUser
 当公众号有推送文章数据过来的时候，软件将会采集处理并展示到软件的文章列表界面。
 
 
-## 安装
-### 二进制文件
-
-|  操作系统  |         二进制包          |
-| :----: | :-------------------: |
-| winx64 |   [微采助手-Setup-x86-0.1.3.exe](https://github.com/lunnlew/weicai-scraper/releases/download/v0.1.3/Setup-x86-0.1.3.exe)   |
-
-## 技术栈
-
 ## 开发
-### 系统环境
+### 技术栈及语言
+
+1. nodejs
+2. electron
+3. vue
+4. nodejs native addons
+5. c++ dll
+6. powershell
+
+### 系统开发环境
 
 	window10 x64
 	node v12.8.1 32位
@@ -118,11 +128,6 @@ Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope CurrentUser
 |  操作系统  |         二进制包          |
 | :----: | :-------------------: |
 | win10 |   [nvm-windows](https://github.com/coreybutler/nvm/releases)   |
-
-### 安装Visual Studio 2017
-|         下载地址          |
-| :-------------------: |
-|   [Visual Studio 2017](https://visualstudio.microsoft.com/downloads/)   |
 
 ### 安装Nodejs
 ```sh
@@ -144,21 +149,76 @@ npm install -g yarn
 
 ### 更新依赖
 ```sh
+## 主项目依赖
 yarn
+
+## worker依赖
+cd src/worker && yarn
 ```
 
 ### 安装Visual Studio 2017
+|         下载地址          |
+| :-------------------: |
+|   [Visual Studio 2017](https://visualstudio.microsoft.com/downloads/)   |
+
+## 下载源码
+```sh
+cd ~/Desktop
+git clone https://github.com/lunnlew/weicai-scraper.git
+```
 
 ## 编译打包
+以`Visual Studio 2017`为例，原生模块`WeChatCtl`及`WeChatHelper`支持通过ide运行构建及命令行方式运行构建，ide方式运行相应的`sln`文件即可
 
-### 编译原生模块
+### 编译WeicaiBinding
+```cmd
+# 原始命令
+cd src/native/WeicaiBinding && cross-env HOME=~/.electron-gyp node-gyp configure && cross-env HOME=~/.electron-gyp node-gyp rebuild --target=7.1.3 --runtime=electron --arch=ia32  --dist-url=https://electronjs.org/headers
+
+# 或者项目目录运行
+yarn run native:build-WeicaiBinding-ia32
+
+```
+
+### 编译WeChatCtl
+```cmd
+#命令方式
+##调试版本
+"C:/Program Files (x86)/Microsoft Visual Studio/2017/Professional/Common7/IDE/devenv" src/native/WeChatCtl/WeChatCtl.sln /Build "Debug|x86"
+##发布版本版本
+"C:/Program Files (x86)/Microsoft Visual Studio/2017/Professional/Common7/IDE/devenv" src/native/WeChatCtl/WeChatCtl.sln /Build "Release|x86"
+
+# 或者项目目录运行构建Release
+yarn run native:build-WeChatCtl
+```
+
+
+### 编译WeChatHelper
+```cmd
+#命令方式
+##调试版本
+"C:/Program Files (x86)/Microsoft Visual Studio/2017/Professional/Common7/IDE/devenv" src/native/WeChatHelper/WeChatHelper.sln /Build "Debug|x86"
+##发布版本版本
+"C:/Program Files (x86)/Microsoft Visual Studio/2017/Professional/Common7/IDE/devenv" src/native/WeChatHelper/WeChatHelper.sln /Build "Release|x86"
+
+# 或者项目目录运行构建Release
+yarn run native:build-WeChatHelper
+```
+### 运行开发模式
+```sh
+yarn run electron:serve
+```
+
 ### 打包主程序
+```sh
+yarn run electron:build
+```
 
 ## 调试
-
-### 调试远程注入的DLL组件-WeChatHelper
+### 调试远程注入DLL
+以`WeChatHelper`为例
 #### 编译WeChatHelper
-使用`vs2017`运行项目编译
+参考前文使用`vs2017`运行项目编译
 #### 编译Detours
 ```sh
 cd ~/Desktop
@@ -174,8 +234,8 @@ nmake /f Makefile
 # 进入要调试的应用主程序
 cd D:/Applications/WeChat
 # 将要调试的dll复制到程序目录
-cp ~/Desktop/WeChatHelper/Debug/WeChatHelper.dll .
-cp ~/Desktop/WeChatHelper/Debug/WeChatHelper.pdb .
+cp ~/Desktop/weicai-scraper/src/native/WeChatHelper/Debug/WeChatHelper.dll .
+cp ~/Desktop/weicai-scraper/src/native/WeChatHelper/Debug/WeChatHelper.pdb .
 # 修改IAT
 ~/Desktop/Detours/bin.X86/setdll.exe /d:WeChatHelper.dll WeChat.exe
 # 恢复IAT
@@ -183,10 +243,13 @@ cp ~/Desktop/WeChatHelper/Debug/WeChatHelper.pdb .
 
 ```
 #### 配置vs2017的本地调试设置
-将`配置属性`-`调试`-`本地windows调试`: `命令参数`改为主程序地址,如`D:/Applications/WeChat/WeChat.exe`,`工作目录`改为主程序目录址,如`D:/Applications/WeChat`
+
+   将`配置属性`-`调试`-`本地windows调试`: 
+   `命令参数`改为主程序地址如`D:/Applications/WeChat/WeChat.exe`;
+   `工作目录`改为主程序目录址如`D:/Applications/WeChat`
 
 #### 运行调试
-在DLL入口下个断点， F5启动调试即可。
+在DLL入口下个断点， 启动调试即可。
 
 ## 文档生成
 ### 安装vuepress
