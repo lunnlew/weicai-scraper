@@ -120,49 +120,65 @@ process.on('message', async (msg) => {
       console.log('event:' + msg.event)
       let savepath = msg.data.savepath
       let item = msg.data.item
-
-      if (!browser) {
-        browser = await puppeteer.launch({
-          args: [
-            '--disable-gpu',
-            '--disable-dev-shm-usage',
-            '--disable-setuid-sandbox',
-            '--no-first-run',
-            '--no-zygote',
-            '--no-sandbox'
-          ],
-          timeout: 0,
-          pipe: true,
-          headless: true,
-          ignoreHTTPSErrors: true,
-          executablePath: ChromiumPath,
-          defaultViewport: null
+      try {
+        if (!browser) {
+          browser = await puppeteer.launch({
+            args: [
+              '--disable-gpu',
+              '--disable-dev-shm-usage',
+              '--disable-setuid-sandbox',
+              '--no-first-run',
+              '--no-zygote',
+              '--no-sandbox'
+            ],
+            timeout: 0,
+            pipe: true,
+            headless: true,
+            ignoreHTTPSErrors: true,
+            executablePath: ChromiumPath,
+            defaultViewport: null
+          })
+        }
+        let page = await browser.newPage()
+        await page.setViewport({
+          width: 1000,
+          height: 1920,
+          deviceScaleFactor: 1
         })
-      }
-      let page = await browser.newPage()
-      await page.setViewport({
-        width: 1000,
-        height: 1920,
-        deviceScaleFactor: 1
-      })
-      await page.goto(item.content_url, {
-        timeout: 30000,
-        waitUntil: ['networkidle0']
-      });
-      await autoScroll(page)
-      await page.evaluate(() => { window.scrollTo(0, 0) })
-      await page.waitFor(1000)
-      await pageScreenshot(page, savepath, (resolve) => {
+        await page.goto(item.content_url, {
+          timeout: 30000,
+          waitUntil: ['networkidle0']
+        });
+        await autoScroll(page)
+        await page.evaluate(() => { window.scrollTo(0, 0) })
+        await page.waitFor(1000)
+        await pageScreenshot(page, savepath, (resolve) => {
+          process.send({
+            'event': 'complete',
+            'data': {
+              item: item
+            }
+          });
+          resolve()
+        }).catch(function(err) {
+          console.log(err)
+          process.send({
+            'event': 'complete-error',
+            'data': {
+              item: item
+            }
+          });
+        })
+        await page.close()
+      } catch (err) {
+        console.log(err)
         process.send({
-          'event': 'complete',
+          'event': 'complete-error',
           'data': {
             item: item
           }
         });
-        resolve()
-      }).catch(err => console.log(err))
-      await page.close()
-
+      }
     }
   }
 });

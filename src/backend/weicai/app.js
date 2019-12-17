@@ -71,6 +71,10 @@ appServer.route(function(self) {
                   'row': item
                 })
                 screenshotWorker.kill()
+              } else if (msg.event == 'complete-error') {
+                global.recorder.emit('toggleMakeImg', {
+                  'row': item
+                })
               }
             }
           })
