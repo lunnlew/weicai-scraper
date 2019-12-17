@@ -47,7 +47,7 @@
             <template slot-scope="{ row, index }" slot="action">
               <ButtonGroup size="small">
                 <Button type="primary" size="small" @click="show(row, index)">查看</Button>
-                <Button type="info" size="small" :loading="loadingMakeimgs[row._id]" @click="makeimg(row, index)">生成</Button>
+                <Button type="info" size="small" :loading="loadingMakeimgs[row.msg_sn]" @click="makeimg(row, index)">生成</Button>
                 <Button type="error" size="small" @click="remove(row, index)">删除</Button>
               </ButtonGroup>
             </template>
@@ -198,7 +198,7 @@ export default {
     },
     makeimg(row, index) {
       let self = this
-      if (self.loadingMakeimgs[row._id]) {
+      if (self.loadingMakeimgs[row.msg_sn]) {
         return
       }
 

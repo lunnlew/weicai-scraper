@@ -24,7 +24,7 @@ const mutations = {
   toggleMakeImg(state, data) {
     console.log(data)
     state.loadingMakeimgs = Object.assign({}, state.loadingMakeimgs, {
-      [data.row._id]: !state.loadingMakeimgs[data.row._id]
+      [data.row.msg_sn]: !state.loadingMakeimgs[data.row.msg_sn]
     })
     console.log(state.loadingMakeimgs)
   },
