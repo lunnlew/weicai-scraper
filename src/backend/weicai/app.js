@@ -206,7 +206,7 @@ appServer.route(function(self) {
 
         for (let item of items) {
           let publisher = appmsg['mmreader']['publisher']
-          let rs = requestStrToMap(item.url)
+          let rs = requestStrToMap(item.url.split('?')[1])
           let uniacc = {
             // 公众号名称
             nickname: publisher.nickname,
@@ -221,7 +221,7 @@ appServer.route(function(self) {
 
           if (list && list.length) {
             let luniacc = list[0]
-            await self.recorder.updateItems({ _id: uniacc._id }, Object.assign(luniacc, uniacc))
+            await self.recorder.updateItems({ _id: luniacc._id }, Object.assign(luniacc, uniacc))
           } else {
             let current_time = Math.round(new Date() / 1000)
             await self.recorder.insertItems(Object.assign({
