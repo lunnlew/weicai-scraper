@@ -72,6 +72,8 @@ appServer.route(function(self) {
                 })
                 screenshotWorker.kill()
               } else if (msg.event == 'complete-error') {
+                let data = msg.data
+                let item = data.item
                 global.recorder.emit('toggleMakeImg', {
                   'row': item
                 })
