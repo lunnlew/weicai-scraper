@@ -273,6 +273,19 @@ appServer.route(function(self) {
 })
 
 appServer.route(function(self) {
+  self.app.all('/wechatCtl', async function(req, res) {
+    let action = req.query.act || ''
+    switch (action) {
+      default:
+        {
+          res.send({ code: 201, msg: '未知操作', data: {} })
+          break
+        }
+    }
+  })
+})
+
+appServer.route(function(self) {
   self.app.all('/uniacc', async function(req, res) {
     let action = req.query.act || 'list'
     switch (action) {
