@@ -75,26 +75,30 @@ appServer.route(function(self) {
             }
           })
 
-          let _id = req.query._id
-          let list = await self.recorder.findItems({ '_id': _id }, 1, 1)
-          let item = list[0]
+          let msg_sn = req.query.msg_sn
+          let list = await self.recorder.findItems({ 'msg_sn': msg_sn }, 1, 1)
+          if (list.length) {
+            let item = list[0]
 
-          console.log('处理[' + item.title + ']')
+            console.log('处理[' + item.title + ']')
 
-          let title = item.title.replace(/[|\\/?*<>:]/g, '')
+            let title = item.title.replace(/[|\\/?*<>:]/g, '')
 
-          if (typeof item.content_url == 'undefined') {
-            console.log('content_url err: ' + item.content_url)
-            break
-          }
-
-          screenshotWorker.send({
-            'event': 'screenshot',
-            'data': {
-              savepath: path.join(os.homedir(), '.weicai-scraper/html/' + title + '.png'),
-              item: item
+            if (typeof item.content_url == 'undefined') {
+              console.log('content_url err: ' + item.content_url)
+              break
             }
-          })
+
+            screenshotWorker.send({
+              'event': 'screenshot',
+              'data': {
+                savepath: path.join(os.homedir(), '.weicai-scraper/html/' + title + '.png'),
+                item: item
+              }
+            })
+          } else {
+            console.log('未找到[msg_sn:' + msg_sn + ']的文章')
+          }
           res.send({
             code: 200,
             msg: 'success'

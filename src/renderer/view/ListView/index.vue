@@ -208,7 +208,7 @@ export default {
 
       fetchDetail({
         act: 'makeimg',
-        '_id': row._id
+        'msg_sn': row.msg_sn
       }).then(result => {})
     },
     remove(row, index) {
