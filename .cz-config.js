@@ -24,7 +24,7 @@ module.exports = {
         { value: '进展', name: '进展:   项目进展' },
     ],
 
-    scopes: [{ name: 'WeChatCtl' }, { name: 'WeChatHelper' }, { name: 'WeicaiBinding' }, { name: 'backend' }, { name: 'renderer' }, { name: 'docs' }, { name: 'deps' }, { name: 'other' }],
+    scopes: [{ name: 'WeChatCtl' }, { name: 'WeChatHelper' }, { name: 'WeicaiBinding' }, { name: 'backend' }, { name: 'renderer' }, { name: 'docs' }, { name: 'deps' }],
 
     allowTicketNumber: false,
     isTicketNumberRequired: false,
@@ -45,9 +45,9 @@ module.exports = {
     // override the messages, defaults are as follows
     messages: {
         type: "选择提交类型:",
-        scope: '\n选择本次变更范围(可选):',
+        scope: '\n选择本次变更类别(可选):',
         // used if allowCustomScopes is true
-        customScope: '本次变更范围描述:',
+        customScope: '自定义变更类别:',
         subject: '重要变更的简短描述:\n',
         body: '变更内容的详细描述(可选)。使用|换行:\n',
         breaking: '非兼容性说明(可选):\n',
