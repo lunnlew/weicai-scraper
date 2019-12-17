@@ -24,7 +24,7 @@ module.exports = {
         { value: '进展', name: '进展:   项目进展' },
     ],
 
-    scopes: [{ name: 'WeChatCtl' }, { name: 'WeChatHelper' }, { name: 'WeicaiBinding' }, { name: 'backend' }, { name: 'renderer' }, { name: 'docs' }],
+    scopes: [{ name: 'WeChatCtl' }, { name: 'WeChatHelper' }, { name: 'WeicaiBinding' }, { name: 'backend' }, { name: 'renderer' }, { name: 'docs' }, { name: 'deps' }, { name: 'other' }],
 
     allowTicketNumber: false,
     isTicketNumberRequired: false,
