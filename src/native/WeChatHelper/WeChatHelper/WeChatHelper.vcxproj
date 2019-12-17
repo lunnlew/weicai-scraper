@@ -147,6 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="HookOffset.h" />
     <ClInclude Include="LogRecord.h" />
     <ClInclude Include="MsgProtocol.h" />
     <ClInclude Include="stdafx.h" />
