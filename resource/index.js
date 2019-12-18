@@ -168,7 +168,7 @@ if (/^\/mp\/profile_ext\?action=home/.test(url)) {
 }
 
 // 文章详情页
-if (/^\/s[/?]/.test(url)) {
+if (/^\/s[/?]/.test(url)||/\/appmsg\/show[/?]/.test(url)) {
 
   var uniacc = {
     // 公众号名称
