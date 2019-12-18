@@ -96,6 +96,7 @@ class Recorder extends events.EventEmitter {
         }))
 
         info = Object.assign({
+          'detail_end_time': current_time,
           'create_time': current_time
         }, info)
         self.db.insert(info || {}).then(() => {
@@ -142,6 +143,7 @@ class Recorder extends events.EventEmitter {
         })
       } else {
         info = Object.assign({
+          'detail_end_time': Math.round(new Date() / 1000),
           'create_time': Math.round(new Date() / 1000)
         }, info)
         self.db.insert(info || {}).then(() => {
@@ -163,6 +165,7 @@ class Recorder extends events.EventEmitter {
         })
       } else {
         info = Object.assign({
+          'detail_end_time': Math.round(new Date() / 1000),
           'create_time': Math.round(new Date() / 1000)
         }, info)
         self.db.insert(info || {}).then(() => {
@@ -184,6 +187,7 @@ class Recorder extends events.EventEmitter {
         })
       } else {
         info = Object.assign({
+          'detail_end_time': Math.round(new Date() / 1000),
           'create_time': Math.round(new Date() / 1000)
         }, info)
         self.db.insert(info || {}).then(() => {
