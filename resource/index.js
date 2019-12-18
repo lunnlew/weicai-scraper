@@ -179,6 +179,7 @@ if (/^\/s[/?]/.test(url)) {
     username: user_name,
     // 公众号头像
     headimg: ori_head_img_url || '',
+    type: _ori_article_type
   }
 
   try {
@@ -236,7 +237,7 @@ if (/^\/s[/?]/.test(url)) {
     comment_id: comment_id,
     copyright_stat: copyright_stat,
     author: document.getElementsByTagName('meta')['author'].getAttribute('content'),
-    publish_time: svr_time,
+    publish_time: ct,
     detail_end_time: Math.round(new Date() / 1000)
   }
 
