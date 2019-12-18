@@ -438,7 +438,9 @@ appServer.route(function(self) {
         }
       case "getNextArticle":
         {
-          let list = await self.recorder.findItems({ 'msg_sn': { $exists: true }, 'content_url': { $exists: true }, 'msg_sn': { $ne: req.body.currentMsgSn } }, 1, 1)
+          let list = await self.recorder.findItems({ 'msg_sn': { $exists: true }, 'content_url': { $exists: true }, 'msg_sn': { $ne: req.body.currentMsgSn } }, 1, 1, {
+            'detail_end_time': 1
+          })
           let art = {}
           if (list.length) {
             art = list[0]

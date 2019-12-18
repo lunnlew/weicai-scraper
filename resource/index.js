@@ -184,8 +184,43 @@ if (/^\/s[/?]/.test(url)) {
   try {
     aJaxData('saveAccount',uniacc)
   } catch (err) {
-    alert('ss')
   }
+
+  var dialog = '<div style="position: fixed;left: 0px;top: 0px;z-index:100;right: 0;bottom: 0;padding: 150px;"><div style="background-color: #666;filter:alpha(Opacity=20);-moz-opacity:0.2;opacity: 0.4;position:absolute;top:0px;left:0px;z-index: 101;right: 0;bottom: 0;"></div><div style="position: relative;background: #fff;z-index: 102;padding: 10px;"><p style="text-align: center;">采集操作界面</p><div><div>任务选项切换</div><ul style="list-style: none;"><li><input type="radio" name="tasktype" value="1">自动采集下一篇文章</li></ul><button id="smttask">提交</button></div></div></div>'
+  $('body').append($(dialog))
+
+  var socket = new WebSocket('ws://localhost:6877/weicai/article_detail');
+  socket.addEventListener('open', function(event) {});
+  socket.addEventListener('message', function(event) {
+    console.log('Message from server', event.data);
+    var data = JSON.parse(event.data)
+    if (data.type == 'pause') {
+      clearTimeout(stime)
+    }
+  });
+
+  $('body').on('click','#smttask',function(){
+    var tasktype = $('input[name=tasktype]:checked').val()
+    if(tasktype==1){
+      // 请求下一篇文章
+      aJaxData('getNextArticle',{}).then(function(result){
+        if(result.code==200){
+          let art = result.data.art
+          if(art.content_url){
+          	setTimeout(()=>{
+            	location.href = art.content_url
+          	}, Math.floor(Math.random() * 7000 + 5000))
+          }else{
+            alert('无法取下一篇数据')
+          }
+        }else{
+          alert('没有下一篇数据了')
+        }
+      })
+    }
+
+  })
+
 
   var req_params = getQueryFromURL(location.href.replace(/&amp;/g, '&'))
   //
@@ -201,22 +236,16 @@ if (/^\/s[/?]/.test(url)) {
     comment_id: comment_id,
     copyright_stat: copyright_stat,
     author: document.getElementsByTagName('meta')['author'].getAttribute('content'),
-    publish_time: svr_time
+    publish_time: svr_time,
+    detail_end_time: Math.round(new Date() / 1000)
   }
 
   try {
     aJaxData('saveArticle',article).then(function(result){
-      // 请求下一篇文章
-      aJaxData('getNextArticle',{
-        'currentMsgSn':article.msg_sn
-      }).then(function(result){
-        let art = result.data.art
-        if(art.content_url){
-          setTimeout(()=>{
-            //location.href = result.data.art.content_url
-          }, Math.floor(Math.random() * 5000 + 5000))
-        }
-      })
+    	setTimeout(()=>{
+    		$("input[name=tasktype][value='1']").attr('checked','true')
+    		$('#smttask').click()
+    	}, Math.floor(Math.random() * 7000 + 5000))
     })
   } catch (err) {}
 }
