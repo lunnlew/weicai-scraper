@@ -3,6 +3,7 @@ process.send('ScreenshotWorker inited')
 
 const puppeteer = require('puppeteer')
 const path = require('path')
+const cheerio = require('cheerio')
 const os = require('os')
 const Jimp = require('jimp')
 const mergeImg = require('merge-img')
@@ -13,6 +14,21 @@ const platform = process.platform
 const cptah = `node_modules/puppeteer/.local-chromium/${platform}-${revision}/chrome-win/chrome.exe`
 const ChromiumPath = path.join(__dirname, cptah)
 console.log(ChromiumPath)
+
+String.prototype.html = function(encode) {
+  var replace = ["&#39;", "'", "&quot;", '"', "&nbsp;", " ", "&gt;", ">", "&lt;", "<", "&yen;", "¥", "&amp;", "&"];
+  var replaceReverse = ["&", "&amp;", "¥", "&yen;", "<", "&lt;", ">", "&gt;", " ", "&nbsp;", '"', "&quot;", "'", "&#39;"];
+  var target;
+  if (encode) {
+    target = replaceReverse;
+  } else {
+    target = replace;
+  }
+  for (var i = 0, str = this; i < target.length; i += 2) {
+    str = str.replace(new RegExp(target[i], 'g'), target[i + 1]);
+  }
+  return str;
+};
 
 
 var autoScroll = function(page) {
@@ -84,13 +100,20 @@ var pageScreenshot = async function(page, filename, callback) {
       })
     }, totalMarignTop)
   }
+  // 取得页面文本数据
+  let html = await page.content()
+  const $ = cheerio.load(html, { decodeEntities: false })
+  let text = $('#js_content').html().replace(/<[^>]*>|/g, "").html()
+  let data = {
+    'text': text
+  }
 
   return new Promise(async (resolve, reject) => {
     if (partViewCount == 1) {
       Jimp.read(images[0]).then((img) => {
         img.write(filename, () => {
           if (callback) {
-            callback(resolve)
+            callback(resolve, data)
           } else {
             resolve()
           }
@@ -102,7 +125,7 @@ var pageScreenshot = async function(page, filename, callback) {
       }).then((img) => {
         img.write(filename, () => {
           if (callback) {
-            callback(resolve)
+            callback(resolve, data)
           } else {
             resolve()
           }
@@ -152,11 +175,12 @@ process.on('message', async (msg) => {
         await autoScroll(page)
         await page.evaluate(() => { window.scrollTo(0, 0) })
         await page.waitFor(1000)
-        await pageScreenshot(page, savepath, (resolve) => {
+        await pageScreenshot(page, savepath, (resolve, data) => {
+          console.log(data)
           process.send({
             'event': 'complete',
             'data': {
-              item: item
+              item: Object.assign({}, item, data)
             }
           });
           resolve()

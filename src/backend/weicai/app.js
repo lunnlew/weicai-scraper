@@ -66,7 +66,7 @@ appServer.route(function(self) {
                 let data = msg.data
                 let item = data.item
                 let title = item.title.replace(/[|\\/?*<>:]/g, '')
-                global.recorder.emitUpdate(item.msg_sn, { "html_jpg": 'html/' + title + '.png' })
+                global.recorder.emitUpdate(item.msg_sn, { "html_jpg": 'html/' + title + '.png', "text": item.text })
                 global.recorder.emit('toggleMakeImg', {
                   'row': item
                 })
