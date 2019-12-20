@@ -1,6 +1,7 @@
 # weicai-scraper
-微信公众号历史文章采集
+微信公众号历史文章采集管理工具
 
+[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/lunnlew/weicai-scraper) 
 ![GitHub](https://img.shields.io/github/license/lunnlew/weicai-scraper)
 ![GitHub repo size](https://img.shields.io/github/repo-size/lunnlew/weicai-scraper)
 ![](https://github.com/lunnlew/weicai-scraper/workflows/Release%20Build/badge.svg)
