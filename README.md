@@ -1,3 +1,5 @@
+[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/lunnlew/weicai-scraper) 
+
 # weicai-scraper
 微信公众号历史文章采集
 
