@@ -134,7 +134,7 @@ export default {
         'view': 'ListView/accounts'
       }],
       menusScraper: [{
-        'name': '指定抓取',
+        'name': '提交链接',
         'view': 'ScraperView'
       }],
       batchAction: [{

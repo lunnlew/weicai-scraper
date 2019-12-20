@@ -1,5 +1,14 @@
 import request from '@/utils/request'
 
+export function articleAction(params, data) {
+  return request({
+    url: '/article',
+    method: 'post',
+    params,
+    data
+  })
+}
+
 export function fetchList(params) {
   return request({
     url: '/article',

@@ -6,6 +6,7 @@ const path = require('path')
 const os = require('os')
 const child_process = require('child_process')
 const fs = require('fs-extra')
+const json2csv = require('json2csv')
 
 const AppServer = require('./AppServer')
 const expressApp = require('./expressApp')
@@ -34,6 +35,41 @@ appServer.route(function(self) {
               'total': total,
               'list': list
             }
+          })
+          break
+        }
+      case "export":
+        {
+          // 导出类型
+          let type = req.query.type
+          // 要导出的字段
+          let body = req.body
+          let fields = body.fields.split(',')
+          console.log(fields);
+          // 总记录数
+          let total = await self.recorder.count({ 'msg_sn': { $exists: true } })
+          // 分页处理
+          let size = 100
+          let page = Math.round(total / size)
+          let writerStream = fs.createWriteStream('output.csv');
+          for (let i = 0; i <= page; i++) {
+            // 查询列表
+            let list = await self.recorder.findItems({ 'msg_sn': { $exists: true } }, page, size)
+            let csv = json2csv.parse(list, { fields: fields })
+            csv = Buffer.concat([new Buffer('\xEF\xBB\xBF', 'binary'), new Buffer(csv)])
+            writerStream.write(csv, 'UTF8')
+          }
+          // 标记文件末尾
+          writerStream.end()
+          writerStream.on('finish', function() {
+            console.log("写入完成。")
+          });
+          writerStream.on('error', function(err) {
+            console.log(err.stack)
+          });
+          res.send({
+            code: 200,
+            msg: 'success'
           })
           break
         }

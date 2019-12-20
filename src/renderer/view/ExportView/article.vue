@@ -19,6 +19,7 @@
   </div>
 </template>
 <script>
+import { articleAction } from '@/api/source'
 export default {
   name: 'ExportArticleListView',
   components: {},
@@ -56,7 +57,12 @@ export default {
       this.keys.push(current.pop())
     },
     clickExport(type) {
-
+      articleAction({
+        'act': 'export',
+        'type': type
+      }, {
+        fields: this.keys.map(a => a.field).join(',')
+      })
     }
   },
   mounted() {},
