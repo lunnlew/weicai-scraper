@@ -238,7 +238,8 @@ if (/^\/s[/?]/.test(url)||/\/appmsg\/show[/?]/.test(url)) {
     copyright_stat: copyright_stat,
     author: document.getElementsByTagName('meta')['author'].getAttribute('content'),
     publish_time: ct,
-    detail_end_time: Math.round(new Date() / 1000)
+    detail_end_time: Math.round(new Date() / 1000),
+    text: $('#js_content').html().replace(/<[^>]*>|/g, "").html()
   }
 
   try {
