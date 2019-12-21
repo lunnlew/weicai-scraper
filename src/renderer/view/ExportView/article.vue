@@ -12,7 +12,7 @@
           <Divider orientation="left">备选导出字段</Divider>
           <Tag type="dot" closable color="default" v-for="item in keys_save" :key="item.field" :name="item.name" @on-close="handleCloseB">{{ item.name }}</Tag>
           <Divider orientation="left">导出方式</Divider>
-          <Button type="primary" @click="clickExport('csv')">导出为CSV</Button>
+          <Button type="primary" :loading="loadingExport" @click="clickExport('csv')">导出为CSV</Button>
         </div>
       </div>
     </div>
@@ -42,6 +42,15 @@ export default {
       keys_save: [{
         'name': '采集时间',
         'field': 'create_time'
+      }, {
+        'name': '文章文本',
+        'field': 'text'
+      }, {
+        'name': '文章描述',
+        'field': 'msg_desc'
+      }, {
+        'name': '文章标识',
+        'field': 'msg_sn'
       }]
     }
   },
@@ -57,6 +66,9 @@ export default {
       this.keys.push(current.pop())
     },
     clickExport(type) {
+
+      this.$store.dispatch('toggleLoading')
+
       articleAction({
         'act': 'export',
         'type': type
@@ -67,7 +79,11 @@ export default {
   },
   mounted() {},
   watch: {},
-  computed: {}
+  computed: {
+    loadingExport() {
+      return this.$store.state.ExportView.loading
+    }
+  }
 }
 
 </script>

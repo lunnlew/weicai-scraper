@@ -22,6 +22,9 @@ socket.addEventListener('message', function(event) {
   if (data.type == 'toggleMakeImg') {
     store.dispatch('toggleMakeImg', data.data)
   }
+  if (data.type == 'export_status') {
+    store.dispatch('toggleLoading', data.data)
+  }
 });
 
 

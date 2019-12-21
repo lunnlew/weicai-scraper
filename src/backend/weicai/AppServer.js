@@ -52,6 +52,10 @@ class AppServer {
         console.log('wechat_history')
         self.ws['wechat_history'].send(JSON.stringify(data))
       })
+      self.recorder.on('export_status', (data) => {
+        console.log('export_status')
+        self.ws['wcclient'].send(JSON.stringify(data))
+      })
       self.recorder.on('article_detail', (data) => {
         console.log('article_detail')
         self.ws['article_detail'].send(JSON.stringify(data))

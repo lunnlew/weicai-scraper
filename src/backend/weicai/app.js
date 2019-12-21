@@ -62,9 +62,20 @@ appServer.route(function(self) {
           // 标记文件末尾
           writerStream.end()
           writerStream.on('finish', function() {
-            console.log("写入完成。")
+            self.recorder.emit('export_status', {
+              'type': 'export_status',
+              'data': {
+                'state': 'success'
+              }
+            })
           });
           writerStream.on('error', function(err) {
+            self.recorder.emit('export_status', {
+              'type': 'export_status',
+              'data': {
+                'state': 'fail'
+              }
+            })
             console.log(err.stack)
           });
           res.send({
