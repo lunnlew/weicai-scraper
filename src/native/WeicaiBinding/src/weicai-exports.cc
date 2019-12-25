@@ -1,11 +1,18 @@
+
+#include <iostream>
+#include <string>
+
+#include <node.h>
 #include <nan.h>
-#include "win/WCProcess.h"
 
 #include <direct.h>
 #include <TlHelp32.h>
 
 #include <Windows.h>
-#include <Psapi.h>//EnumProcesses
+#include <Psapi.h>
+
+#include "win/WCProcess.h"
+
 
 HINSTANCE hDLL;
 
@@ -100,6 +107,7 @@ void Exp_ProcessDllInject(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 }
 
 
+
 /*
 * 进程Dll卸载
 */
@@ -185,6 +193,49 @@ void Exp_CheckProcessDllExists(const Nan::FunctionCallbackInfo<v8::Value>& info)
 }
 
 /*
+* 获取微信的安装路径
+*/
+LPCSTR GetWechatInstalledPath() {
+
+	HKEY hKey;
+	LONG lRet = 0;
+
+	DWORD dwBuflen = MAX_PATH;
+	TCHAR InstallLocation[MAX_PATH];
+
+	LPCSTR subKeyName = TEXT("SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\WeChat");
+	lRet = RegCreateKeyEx(HKEY_LOCAL_MACHINE, subKeyName, 0, NULL, REG_OPTION_NON_VOLATILE,
+		KEY_EXECUTE | KEY_WOW64_64KEY, NULL, &hKey, NULL);
+
+	//下面开始查询
+	lRet = RegQueryValueEx(hKey, //打开注册表时返回的句柄
+		TEXT("InstallLocation"), //要查询的名称,查询的软件安装目录在这里
+		NULL, //一定为NULL或者0
+		NULL,
+		(LPBYTE)InstallLocation, //我们要的东西放在这里
+		&dwBuflen);
+
+	RegCloseKey(hKey);
+
+	return InstallLocation;
+}
+
+/*
+* 获取安装微信的版本信息
+*/
+void Exp_GetWechatVersion(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+
+	char szPath[MAX_PATH] = { 0 };
+	sprintf_s(szPath, "%s\\%s", GetWechatInstalledPath(), "WeChatWin.dll");
+
+	printf("WeChatWinPath -> %s\n", szPath);
+
+	std::string version = GetFileVersion(szPath);
+
+	info.GetReturnValue().Set(Nan::New<v8::String>(version).ToLocalChecked());
+}
+
+/*
 * 启动控制客户端
 */
 void Exp_startCtrlClient(const Nan::FunctionCallbackInfo<v8::Value>& info) {
@@ -264,6 +315,12 @@ void Init(v8::Local<v8::Object> exports) {
 	exports->Set(context,
 		Nan::New("sendCtlMsg").ToLocalChecked(),
 		Nan::New<v8::FunctionTemplate>(Exp_sendCtlMsg)
+		->GetFunction(context)
+		.ToLocalChecked());
+
+	exports->Set(context,
+		Nan::New("GetWechatVersion").ToLocalChecked(),
+		Nan::New<v8::FunctionTemplate>(Exp_GetWechatVersion)
 		->GetFunction(context)
 		.ToLocalChecked());
 }

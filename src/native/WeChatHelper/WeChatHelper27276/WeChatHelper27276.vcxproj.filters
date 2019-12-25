@@ -21,19 +21,19 @@
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="WndMsgLoop.h">
+    <ClInclude Include="..\WeChatHelperLib\HookOffset.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="WCProcess.h">
+    <ClInclude Include="..\WeChatHelperLib\LogRecord.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MsgProtocol.h">
+    <ClInclude Include="..\WeChatHelperLib\MsgProtocol.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="LogRecord.h">
+    <ClInclude Include="..\WeChatHelperLib\WCProcess.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="HookOffset.h">
+    <ClInclude Include="..\WeChatHelperLib\WndMsgLoop.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -41,22 +41,22 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="WeChatHelper.cpp">
+    <ClCompile Include="WeChatHelper27276.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="dllmain.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="WndMsgLoop.cpp">
+    <ClCompile Include="..\WeChatHelperLib\LogRecord.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="WCProcess.cpp">
+    <ClCompile Include="..\WeChatHelperLib\MsgProtocol.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MsgProtocol.cpp">
+    <ClCompile Include="..\WeChatHelperLib\WCProcess.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="LogRecord.cpp">
+    <ClCompile Include="..\WeChatHelperLib\WndMsgLoop.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

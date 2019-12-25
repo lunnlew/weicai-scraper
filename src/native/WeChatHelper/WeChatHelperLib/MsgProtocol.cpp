@@ -217,8 +217,7 @@ __declspec(naked) void RecieveWxMesage()
 	__asm
 	{
 		//补充被覆盖的代码
-		//5B950573  |.  B9 E8CF895C           mov ecx,WeChatWi.5C89CFE8
-		//mov ecx,0x5C89CFE8
+		//mov ecx,WeChatWin.dll+1624908 { (56B097FC) }
 		mov ecx, ReciveMsg_dwParam
 
 		//提取esp寄存器内容，放在一个变量中
@@ -263,6 +262,8 @@ void SendWxMessage()
 	DWORD** msgAddress = (DWORD * *)ReciveMsg_esp;
 	//消息类型
 	DWORD msgType = *((DWORD*)(**msgAddress + 0x30));
+	//消息来源类型
+	DWORD msgSource = *((DWORD*)(**msgAddress + 0x34));
 
 	BOOL isFriendMsg = FALSE;		//是否是好友消息
 	BOOL isImageMessage = FALSE;	//是否是图片消息
@@ -358,20 +359,14 @@ void SendWxMessage()
 		break;
 	}
 	const wchar_t* c = L"";
-	//消息内容
+
 	std::wstring fullmessgaedata = GetMsgByAddress(**msgAddress + 0x68);	//完整的消息内容
-	//判断消息来源是群消息还是好友消息
-	std::wstring msgSource2 = L"<msgsource />\n";
-	std::wstring msgSource = L"";
-	msgSource.append(GetMsgByAddress(**msgAddress + 0x168));
-	//好友消息
-	if (msgSource.length() <= msgSource2.length())
-	{
+
+	if (msgSource == 0x01) {
 		memcpy(msg->source, L"好友消息", sizeof(L"好友消息"));
 		isFriendMsg = TRUE;
 	}
-	else
-	{
+	else {
 		//群消息
 		memcpy(msg->source, L"群消息", sizeof(L"群消息"));
 	}
@@ -384,7 +379,7 @@ void SendWxMessage()
 	if (isFriendMsg == FALSE)
 	{
 		//显示消息发送者
-		LPVOID pSender = *((LPVOID *)(**msgAddress + 0x114));
+		LPVOID pSender = *((LPVOID *)(**msgAddress + offset_ReciveMessageParam_MsgSender));
 		swprintf_s(msg->msgSender, L"%s", (wchar_t*)pSender);
 	}
 	else
@@ -492,6 +487,7 @@ void SendWxMessage()
 	chatmsg.lpData = msg;// szSendBuf;//待发送的数据的起始地址(可以为NULL)
 	SendMessage(hWeChatRoot, WM_COPYDATA, NULL, (LPARAM)&chatmsg);
 }
+
 std::wstring GetMsgByAddress(DWORD memAddress)
 {
 	std::wstring tmp;

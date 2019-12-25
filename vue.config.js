@@ -11,8 +11,11 @@ module.exports = {
         to: path.join(__dirname, 'dist_electron/worker'),
         ignore: ['.*']
       }, {
-        from: path.join(__dirname, 'src/native/WeChatHelper/Release/WeChatHelper.dll'),
-        to: path.join(__dirname, 'dist_electron/native/WeChatHelper.dll'),
+        from: path.join(__dirname, 'src/native/WeChatHelper/Release/*.dll'),
+        to: path.join(__dirname, 'dist_electron/native/'),
+        transformPath(targetPath, absolutePath) {
+          return targetPath.replace('src\\native\\WeChatHelper\\Release\\', '')
+        },
         ignore: ['.*']
       }, {
         from: path.join(__dirname, 'src/native/WeChatCtl/Release/WeChatCtl.dll'),
@@ -105,8 +108,11 @@ module.exports = {
               to: path.join(__dirname, 'dist_electron/worker'),
               ignore: ['.*']
             }, {
-              from: path.join(__dirname, 'src/native/WeChatHelper/Debug/WeChatHelper.dll'),
-              to: path.join(__dirname, 'dist_electron/native/WeChatHelper.dll'),
+              from: path.join(__dirname, 'src/native/WeChatHelper/Debug/*.dll'),
+              to: path.join(__dirname, 'dist_electron/native/'),
+              transformPath(targetPath, absolutePath) {
+                return targetPath.replace('src\\native\\WeChatHelper\\Debug\\', '')
+              },
               ignore: ['.*']
             }, {
               from: path.join(__dirname, 'src/native/WeChatCtl/Debug/WeChatCtl.dll'),

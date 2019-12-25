@@ -1,5 +1,8 @@
 #pragma once
 #include <atlbase.h>  
+#include <string>
+
+#pragma comment(lib, "version.lib")
 
 /*
 * 检查指定进程名称是否存在
@@ -30,3 +33,5 @@ BOOL ProcessDllInject(DWORD dwProcessid, LPCSTR DllPath, LPCSTR DllName);
 * 进程Dll卸载
 */
 BOOL ProcessDllUninstall(DWORD dwProcessid, LPCSTR DllName);
+
+std::string GetFileVersion(LPCSTR filename);

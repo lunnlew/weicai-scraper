@@ -2,6 +2,37 @@
 #include <nan.h>
 #include <TlHelp32.h>
 
+
+/*
+* 获取文件的版本信息
+*/
+std::string GetFileVersion(LPCSTR filename)
+{
+	std::string asVer = "";
+	VS_FIXEDFILEINFO *pVsInfo;
+	unsigned int iFileInfoSize = sizeof(VS_FIXEDFILEINFO);
+	int iVerInfoSize = GetFileVersionInfoSizeA(filename, NULL);
+	if (iVerInfoSize != 0)
+	{
+		char *pBuf = NULL;
+
+		while (!pBuf)
+		{
+			pBuf = new char[iVerInfoSize];
+		}
+		if (GetFileVersionInfoA(filename, 0, iVerInfoSize, pBuf))
+		{
+			if (VerQueryValueA(pBuf, "\\", (void **)&pVsInfo, &iFileInfoSize))
+			{
+				sprintf(pBuf, "%d.%d.%d.%d", HIWORD(pVsInfo->dwFileVersionMS), LOWORD(pVsInfo->dwFileVersionMS), HIWORD(pVsInfo->dwFileVersionLS), LOWORD(pVsInfo->dwFileVersionLS));
+				asVer = pBuf;
+			}
+		}
+		delete pBuf;
+	}
+	return asVer;
+}
+
 /*
 * 检查指定进程名称是否存在
 */
