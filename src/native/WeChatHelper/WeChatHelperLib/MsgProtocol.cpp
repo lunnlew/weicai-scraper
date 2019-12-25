@@ -358,10 +358,10 @@ void SendWxMessage()
 		memcpy(msg->sourceTypeStr, L"非好友消息", sizeof(L"非好友消息"));
 	}
 
+	// 测试是否为公众号来源
 	char strOut[2 * 40] = { 0 };
-	WideCharToMultiByte(CP_ACP, 0, msg->msgSender, sizeof(msg->msgSender), strOut, sizeof(strOut), 0, 0);
-
-	if (startWith(strOut, "gh")) {
+	WideCharToMultiByte(CP_ACP, 0, msg->msgReciver, sizeof(msg->msgReciver), strOut, sizeof(strOut), 0, 0);
+	if (startWith(strOut, "gh_")) {
 		memcpy(msg->typeStr, L"公众号推送", sizeof(L"公众号推送"));
 	}
 	const wchar_t* c = msgContent.c_str();
