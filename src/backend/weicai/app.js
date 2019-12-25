@@ -218,9 +218,10 @@ appServer.route(function(self) {
   self.app.all('/wechatRobot', async function(req, res) {
     console.log('wechatRobot')
     console.log(req.body)
-    if (req.body.type == '公众号推送') {
+    let body = req.body
+    if (body.typeStr == '公众号推送') {
       // 要解析的推送内容
-      let xml = req.body.content
+      let xml = body.content
       var xml2js = require('xml2js');
       //xml->json
       //xml2js默认会把子子节点的值变为一个数组, explicitArray设置为false

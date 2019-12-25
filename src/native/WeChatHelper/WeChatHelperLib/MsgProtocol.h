@@ -29,3 +29,5 @@ void SendWxMessage();
 
 
 std::wstring GetMsgByAddress(DWORD memAddress);
+bool startWith(const std::string &str, const std::string &head);
+bool endWith(const std::string &str, const std::string &tail);

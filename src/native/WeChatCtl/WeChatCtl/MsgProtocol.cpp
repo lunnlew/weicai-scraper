@@ -64,29 +64,12 @@ void sendWeChatMessage(WeChatMessage *msg)
 {
 	json o;
 	o["content"] = string_To_UTF8(Wchar_tToString(msg->content));
-	o["isMoney"] = msg->isMoney;
 	o["msgSender"] = string_To_UTF8(Wchar_tToString(msg->msgSender));
-	o["source"] = string_To_UTF8(Wchar_tToString(msg->source));
-	o["type"] = string_To_UTF8(Wchar_tToString(msg->type));
-	o["wxid"] = string_To_UTF8(Wchar_tToString(msg->wxid));
-	
-	/*std::ostringstream oss;
-	std::string c = Wchar_tToString(msg.content);
-	replace_str(c, "\"", "\\\"");
-
-	oss << "{\"content\":\""
-		<< c
-		<< "\",\"type\":\""
-		<< Wchar_tToString(msg.type)
-		<< "\",\"msgSender\":\""
-		<< Wchar_tToString(msg.msgSender)
-		<< "\",\"wxid\":\""
-		<< Wchar_tToString(msg.wxid)
-		<< "\",\"source\":\""
-		<< Wchar_tToString(msg.source)
-		<< "\",\"isMoney\":\""
-		<< msg.isMoney
-		<< "\"}";*/
+	o["msgReciver"] = string_To_UTF8(Wchar_tToString(msg->msgReciver));
+	o["type"] = msg->type;
+	o["typeStr"] = string_To_UTF8(Wchar_tToString(msg->typeStr));
+	o["sourceType"] = msg->sourceType;
+	o["sourceTypeStr"] = string_To_UTF8(Wchar_tToString(msg->sourceTypeStr));
 	HttpRequest httpReq("127.0.0.1", 6877);
 	std::string res = httpReq.HttpPost("/wechatRobot", o.dump());
 }

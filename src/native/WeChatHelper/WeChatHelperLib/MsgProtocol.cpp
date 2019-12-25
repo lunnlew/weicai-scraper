@@ -243,14 +243,22 @@ __declspec(naked) void RecieveWxMesage()
 //消息结构体
 struct Message
 {
-	wchar_t type[10];		//消息类型
-	wchar_t source[20];		//消息来源
-	wchar_t wxid[40];		//微信ID/群ID
+	DWORD type;		//消息类型
+	wchar_t typeStr[10];		//消息类型
+	DWORD sourceType;		//消息来源
+	wchar_t sourceTypeStr[20];		//消息来源
+	wchar_t msgReciver[40];		//微信ID/群ID
 	wchar_t msgSender[40];	//消息发送者
 	wchar_t content[0x8000];	//消息内容
-	BOOL isMoney = FALSE;	//是否是收款消息
 };
 
+bool endWith(const std::string &str, const std::string &tail) {
+	return str.compare(str.size() - tail.size(), tail.size(), tail) == 0;
+}
+
+bool startWith(const std::string &str, const std::string &head) {
+	return str.compare(0, head.size(), head) == 0;
+}
 void SendWxMessage()
 {
 
@@ -261,58 +269,49 @@ void SendWxMessage()
 	//信息块的位置
 	DWORD** msgAddress = (DWORD * *)ReciveMsg_esp;
 	//消息类型
-	DWORD msgType = *((DWORD*)(**msgAddress + 0x30));
+	DWORD msgType = *((DWORD*)(**msgAddress + offset_ReciveMessageParam_MsgType));
 	//消息来源类型
-	DWORD msgSource = *((DWORD*)(**msgAddress + 0x34));
+	DWORD msgSource = *((DWORD*)(**msgAddress + offset_ReciveMessageParam_MsgSourceType));
+	//消息发送者
+	LPVOID pSender = *((LPVOID *)(**msgAddress + offset_ReciveMessageParam_MsgSender));
+	//消息接收者
+	LPVOID pWxid = *((LPVOID *)(**msgAddress + offset_ReciveMessageParam_MsgReciver));
 
-	BOOL isFriendMsg = FALSE;		//是否是好友消息
-	BOOL isImageMessage = FALSE;	//是否是图片消息
-	BOOL isRadioMessage = FALSE;	//是否是视频消息
-	BOOL isVoiceMessage = FALSE;	//是否是语音消息
-	BOOL isBusinessCardMessage = FALSE;	//是否是名片消息
-	BOOL isExpressionMessage = FALSE;	//是否是名片消息
-	BOOL isLocationMessage = FALSE;	//是否是位置消息
-	BOOL isSystemMessage = FALSE;	//是否是系统或红包消息
-	BOOL isFriendRequestMessage = FALSE;	//是否是好友请求消息
-	BOOL isOther = FALSE;	//是否是其他消息
+	msg->type = msgType;
+	msg->sourceType = msgSource;
+
+	swprintf_s(msg->msgReciver, L"%s", (wchar_t*)pWxid);
+	swprintf_s(msg->msgSender, L"%s", (wchar_t*)pSender);
 
 	switch (msgType)
 	{
 	case 0x01:
-		memcpy(msg->type, L"文字", sizeof(L"文字"));
+		memcpy(msg->typeStr, L"文字", sizeof(L"文字"));
 		break;
 	case 0x03:
-		memcpy(msg->type, L"图片", sizeof(L"图片"));
-		isImageMessage = TRUE;
+		memcpy(msg->typeStr, L"图片", sizeof(L"图片"));
 		break;
 	case 0x22:
-		memcpy(msg->type, L"语音", sizeof(L"语音"));
-		isVoiceMessage = TRUE;
+		memcpy(msg->typeStr, L"语音", sizeof(L"语音"));
 		break;
 	case 0x25:
-		memcpy(msg->type, L"好友确认", sizeof(L"好友确认"));
-		isFriendRequestMessage = TRUE;
+		memcpy(msg->typeStr, L"好友确认", sizeof(L"好友确认"));
 		break;
 	case 0x28:
-		memcpy(msg->type, L"POSSIBLEFRIEND_MSG", sizeof(L"POSSIBLEFRIEND_MSG"));
-		isOther = TRUE;
+		memcpy(msg->typeStr, L"POSSIBLEFRIEND_MSG", sizeof(L"POSSIBLEFRIEND_MSG"));
 		break;
 	case 0x2A:
-		memcpy(msg->type, L"名片", sizeof(L"名片"));
-		isBusinessCardMessage = TRUE;
+		memcpy(msg->typeStr, L"名片", sizeof(L"名片"));
 		break;
 	case 0x2B:
-		memcpy(msg->type, L"视频", sizeof(L"视频"));
-		isRadioMessage = TRUE;
+		memcpy(msg->typeStr, L"视频", sizeof(L"视频"));
 		break;
 	case 0x2F:
 		//石头剪刀布
-		memcpy(msg->type, L"表情", sizeof(L"表情"));
-		isExpressionMessage = TRUE;
+		memcpy(msg->typeStr, L"表情", sizeof(L"表情"));
 		break;
 	case 0x30:
-		memcpy(msg->type, L"位置", sizeof(L"位置"));
-		isLocationMessage = TRUE;
+		memcpy(msg->typeStr, L"位置", sizeof(L"位置"));
 		break;
 	case 0x31:
 		//共享实时位置
@@ -320,157 +319,53 @@ void SendWxMessage()
 		//转账
 		//链接
 		//收款
-		memcpy(msg->type, L"共享实时位置、文件、转账、链接", sizeof(L"共享实时位置、文件、转账、链接"));
-		isOther = TRUE;
+		memcpy(msg->typeStr, L"共享实时位置、文件、转账、链接", sizeof(L"共享实时位置、文件、转账、链接"));
 		break;
 	case 0x32:
-		memcpy(msg->type, L"VOIPMSG", sizeof(L"VOIPMSG"));
-		isOther = TRUE;
+		memcpy(msg->typeStr, L"VOIPMSG", sizeof(L"VOIPMSG"));
 		break;
 	case 0x33:
-		memcpy(msg->type, L"微信初始化", sizeof(L"微信初始化"));
-		isOther = TRUE;
+		memcpy(msg->typeStr, L"微信初始化", sizeof(L"微信初始化"));
 		break;
 	case 0x34:
-		memcpy(msg->type, L"VOIPNOTIFY", sizeof(L"VOIPNOTIFY"));
-		isOther = TRUE;
+		memcpy(msg->typeStr, L"VOIPNOTIFY", sizeof(L"VOIPNOTIFY"));
 		break;
 	case 0x35:
-		memcpy(msg->type, L"VOIPINVITE", sizeof(L"VOIPINVITE"));
-		isOther = TRUE;
+		memcpy(msg->typeStr, L"VOIPINVITE", sizeof(L"VOIPINVITE"));
 		break;
 	case 0x3E:
-		memcpy(msg->type, L"小视频", sizeof(L"小视频"));
-		isRadioMessage = TRUE;
+		memcpy(msg->typeStr, L"小视频", sizeof(L"小视频"));
 		break;
 	case 0x270F:
-		memcpy(msg->type, L"SYSNOTICE", sizeof(L"SYSNOTICE"));
-		isOther = TRUE;
+		memcpy(msg->typeStr, L"SYSNOTICE", sizeof(L"SYSNOTICE"));
 		break;
 	case 0x2710:
 		//系统消息
 		//红包
-		memcpy(msg->type, L"红包、系统消息", sizeof(L"红包、系统消息"));
-		isSystemMessage = TRUE;
+		memcpy(msg->typeStr, L"红包、系统消息", sizeof(L"红包、系统消息"));
 		break;
 	default:
-		memcpy(msg->type, std::to_string(msgType).c_str(), sizeof(std::to_string(msgType).c_str()));
-		isOther = TRUE;
+		memcpy(msg->typeStr, std::to_string(msgType).c_str(), sizeof(std::to_string(msgType).c_str()));
 		break;
 	}
-	const wchar_t* c = L"";
 
-	std::wstring fullmessgaedata = GetMsgByAddress(**msgAddress + 0x68);	//完整的消息内容
+	std::wstring msgContent = GetMsgByAddress(**msgAddress + offset_ReciveMessageParam_MsgContent);	//完整的消息内容
 
 	if (msgSource == 0x01) {
-		memcpy(msg->source, L"好友消息", sizeof(L"好友消息"));
-		isFriendMsg = TRUE;
+		memcpy(msg->sourceTypeStr, L"好友消息", sizeof(L"好友消息"));
 	}
 	else {
-		//群消息
-		memcpy(msg->source, L"群消息", sizeof(L"群消息"));
+		memcpy(msg->sourceTypeStr, L"非好友消息", sizeof(L"非好友消息"));
 	}
 
-	//显示微信ID/群ID
-	LPVOID pWxid = *((LPVOID *)(**msgAddress + 0x40));
-	swprintf_s(msg->wxid, L"%s", (wchar_t*)pWxid);
+	char strOut[2 * 40] = { 0 };
+	WideCharToMultiByte(CP_ACP, 0, msg->msgSender, sizeof(msg->msgSender), strOut, sizeof(strOut), 0, 0);
 
-	//如果是群消息
-	if (isFriendMsg == FALSE)
-	{
-		//显示消息发送者
-		LPVOID pSender = *((LPVOID *)(**msgAddress + offset_ReciveMessageParam_MsgSender));
-		swprintf_s(msg->msgSender, L"%s", (wchar_t*)pSender);
+	if (startWith(strOut, "gh")) {
+		memcpy(msg->typeStr, L"公众号推送", sizeof(L"公众号推送"));
 	}
-	else
-	{
-		memcpy(msg->msgSender, L"NULL", sizeof(L"NULL"));
-	}
+	const wchar_t* c = msgContent.c_str();
 
-	if (wcscmp(msg->wxid, L"gh")) {
-		if ((wcscmp(msg->wxid, L"gh_3dfda90e39d6") == 0))
-		{
-			c = L"微信收款到账";
-			msg->isMoney = TRUE;
-		}
-		else
-		{
-			memcpy(msg->type, L"公众号推送", sizeof(L"公众号推送"));
-			c = fullmessgaedata.c_str();
-		}
-	}//过滤图片消息 
-	else if (isImageMessage == TRUE)
-	{
-		c = L"收到图片消息,请在手机上查看";
-	}
-	else if (isRadioMessage == TRUE)
-	{
-		c = L"收到视频消息,请在手机上查看";
-	}
-	else if (isVoiceMessage == TRUE)
-	{
-		c = L"收到语音消息,请在手机上查";
-	}
-	else if (isBusinessCardMessage == TRUE)
-	{
-		c = L"收到名片消息,已自动添加好友";
-	}
-	else if (isExpressionMessage == TRUE)
-	{
-		c = L"收到表情消息,请在手机上查看";
-	}
-	//自动通过好友请求
-	else if (isFriendRequestMessage == TRUE)
-	{
-		c = L"收收到好友请求,已自动通过";
-	}
-	else if (isOther == TRUE)
-	{
-		//取出消息内容
-		wchar_t tempcontent[0x10000] = { 0 };
-		LPVOID pContent = *((LPVOID *)(**msgAddress + 0x68));
-		swprintf_s(tempcontent, L"%s", (wchar_t*)pContent);
-		//判断是否是转账消息
-		if (wcscmp(tempcontent, L"微信转账"))
-		{
-			c = L"收到转账消息,已自动收款";
-		}
-		else
-		{
-			c = L"收到共享实时位置、文件、链接等其他消息,请在手机上查看";
-			c = fullmessgaedata.c_str();
-
-		}
-	}
-	else if (isLocationMessage == TRUE)
-	{
-		c = L"收到位置消息,请在手机上查看";
-	}
-	else if (isSystemMessage == TRUE)
-	{
-		wchar_t tempbuff[0x1000];
-		LPVOID pContent = *((LPVOID *)(**msgAddress + 0x68));
-		swprintf_s(tempbuff, L"%s", (wchar_t*)pContent);
-
-		//在这里处理加入群聊消息
-		if ((wcscmp(tempbuff, L"移出了群聊") || wcscmp(tempbuff, L"加入了群聊")))
-		{
-			c = (wchar_t*)tempbuff;
-		}
-		else
-		{
-			c = L"收到红包或系统消息,请在手机上查看";
-		}
-
-	}
-	//过滤完所有消息之后
-	else
-	{
-		c = fullmessgaedata.c_str();
-	}
-	//swprintf_s(msg->content, wcslen(c) * sizeof(wchar_t), (wchar_t*)c);
-
-	//msg->content = (wchar_t*)std::malloc(wcslen(c) * sizeof(wchar_t));
 	wcscpy_s(msg->content, wcslen(c) + 1, c);
 
 	//控制窗口
