@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WeChatHelper27276", "WeChat
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WeChatHelper27188", "WeChatHelper27188\WeChatHelper27188.vcxproj", "{8C06B159-D973-4CC4-946D-86DD1CC84E5A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WeChatHelper26852", "WeChatHelper26852\WeChatHelper26852.vcxproj", "{7DEB0719-3D39-4DE3-9862-9993D2541FEC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,6 +33,14 @@ Global
 		{8C06B159-D973-4CC4-946D-86DD1CC84E5A}.Release|x64.Build.0 = Release|x64
 		{8C06B159-D973-4CC4-946D-86DD1CC84E5A}.Release|x86.ActiveCfg = Release|Win32
 		{8C06B159-D973-4CC4-946D-86DD1CC84E5A}.Release|x86.Build.0 = Release|Win32
+		{7DEB0719-3D39-4DE3-9862-9993D2541FEC}.Debug|x64.ActiveCfg = Debug|x64
+		{7DEB0719-3D39-4DE3-9862-9993D2541FEC}.Debug|x64.Build.0 = Debug|x64
+		{7DEB0719-3D39-4DE3-9862-9993D2541FEC}.Debug|x86.ActiveCfg = Debug|Win32
+		{7DEB0719-3D39-4DE3-9862-9993D2541FEC}.Debug|x86.Build.0 = Debug|Win32
+		{7DEB0719-3D39-4DE3-9862-9993D2541FEC}.Release|x64.ActiveCfg = Release|x64
+		{7DEB0719-3D39-4DE3-9862-9993D2541FEC}.Release|x64.Build.0 = Release|x64
+		{7DEB0719-3D39-4DE3-9862-9993D2541FEC}.Release|x86.ActiveCfg = Release|Win32
+		{7DEB0719-3D39-4DE3-9862-9993D2541FEC}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
