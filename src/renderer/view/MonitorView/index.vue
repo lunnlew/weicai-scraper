@@ -7,59 +7,22 @@
     <div class="PageContent">
       <div class="Page">
         <Tabs value="name1">
-          <TabPane label="代理设置" name="name1">
-            <Form :label-width="80" style="width: 300px">
-              <FormItem label="代理IP">
-                {{setting.proxy_ip}}
-              </FormItem>
-              <FormItem label="代理端口">
-                {{setting.proxy_port}}
-              </FormItem>
-              <FormItem>
-                <Button type="primary" @click="handleSubmit()">保存</Button>
-              </FormItem>
-            </Form>
-          </TabPane>
-          <TabPane label="采集设置" name="name2"></TabPane>
+          <TabPane label="监控设置" name="name1"></TabPane>
         </Tabs>
       </div>
     </div>
   </div>
 </template>
 <script>
-import { fetchSetting, saveSetting } from '@/api/source'
-
 export default {
-  name: 'SettingView',
+  name: 'MonitorView',
   components: {},
   props: [],
   data: () => {
-    return {
-      setting: {
-        proxy_ip: '127.0.0.1',
-        proxy_port: '6879'
-      }
-    }
+    return {}
   },
-  methods: {
-    handleSubmit() {
-      var that = this
-      saveSetting({
-        act: 'save'
-      }, that.setting).then(result => {})
-    },
-    loadData() {
-      var that = this
-      fetchSetting({
-        act: 'get'
-      }).then(result => {
-        that.setting = Object.assign(that.setting, result.data)
-      })
-    }
-  },
-  mounted() {
-    this.loadData()
-  },
+  methods: {},
+  mounted() {},
   watch: {},
   computed: {}
 }

@@ -44,7 +44,7 @@
         <div class="lib-navigation" role="navigation">
           <div class="sidebar-header-container">
             <div class="sidebar-header">
-              <div class="SidebarLibrariesTitle">采集</div>
+              <div class="SidebarLibrariesTitle">扩展工具</div>
             </div>
           </div>
           <div class="sidebar-item" v-for="(menu, i) in menusScraper">
@@ -88,7 +88,7 @@
         <div class="lib-navigation" role="navigation">
           <div class="sidebar-header-container">
             <div class="sidebar-header">
-              <div class="SidebarLibrariesTitle">设置</div>
+              <div class="SidebarLibrariesTitle">采集设置</div>
             </div>
           </div>
           <div class="sidebar-item" v-for="(menu, i) in menusSetting">
@@ -136,14 +136,17 @@ export default {
       menusScraper: [{
         'name': '提交链接',
         'view': 'ScraperView'
-      }],
-      batchAction: [{
+      }, {
         'name': '导出文章列表',
         'view': 'ExportView/article'
       }],
+      batchAction: [],
       menusSetting: [{
-        'name': '采集设置',
-        'view': 'SettingView'
+        'name': '代理模式',
+        'view': 'ProxyView'
+      }, {
+        'name': '监控模式',
+        'view': 'MonitorView'
       }]
     }
   },

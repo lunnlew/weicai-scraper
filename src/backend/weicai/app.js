@@ -244,6 +244,8 @@ appServer.route(function(self) {
         }
 
         //将返回的结果再次格式化
+        //<category type="20"> 为公众号文章推送数据
+
         let citems = appmsg['mmreader']['category']['item']
         let items = []
         if (!citems.hasOwnProperty('length')) {
