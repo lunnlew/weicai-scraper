@@ -76,7 +76,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		}
 		case WM_ReciveMsg: {
 			OutputDebugStringA("ÊÕµ½WM_ReciveMsgÖ¸Áî\n");
-			WeChatMessage *msg = WeChatMessageA(pCopyData->cbData);
+			WeChatMessage *msg = (WeChatMessage *)malloc(pCopyData->cbData);
 			msg = (WeChatMessage*)pCopyData->lpData;
 			sendWeChatMessage(msg);
 			break;

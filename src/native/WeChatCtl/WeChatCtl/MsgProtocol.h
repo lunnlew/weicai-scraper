@@ -12,7 +12,7 @@ struct WeChatMessage
 	wchar_t sourceTypeStr[20];		//消息来源
 	wchar_t msgReciver[40];		//微信ID/群ID
 	wchar_t msgSender[40];	//消息发送者
-	wchar_t content[0x8000];	//消息内容
+	wchar_t content[1];	//消息内容
 };
 
 // 窗口间通信协议

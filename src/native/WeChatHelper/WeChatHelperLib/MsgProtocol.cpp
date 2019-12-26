@@ -249,7 +249,7 @@ struct Message
 	wchar_t sourceTypeStr[20];		//消息来源
 	wchar_t msgReciver[40];		//微信ID/群ID
 	wchar_t msgSender[40];	//消息发送者
-	wchar_t content[0x8000];	//消息内容
+	wchar_t content[1];	//消息内容
 };
 
 bool endWith(const std::string &str, const std::string &tail) {
@@ -264,7 +264,6 @@ void SendWxMessage()
 
 
 	LogRecord(L"SendWxMessage", ofs);
-	Message *msg = new Message;
 
 	//信息块的位置
 	DWORD** msgAddress = (DWORD * *)ReciveMsg_esp;
@@ -276,9 +275,17 @@ void SendWxMessage()
 	LPVOID pSender = *((LPVOID *)(**msgAddress + offset_ReciveMessageParam_MsgSender));
 	//消息接收者
 	LPVOID pWxid = *((LPVOID *)(**msgAddress + offset_ReciveMessageParam_MsgReciver));
+	//完整的消息内容
+	std::wstring msgContent = GetMsgByAddress(**msgAddress + offset_ReciveMessageParam_MsgContent);
+	const wchar_t* c = msgContent.c_str();
+
+	//分配长度
+	DWORD len = sizeof(Message)+sizeof(wchar_t)*wcslen(c);
+	Message *msg = (Message *)malloc(len);
 
 	msg->type = msgType;
 	msg->sourceType = msgSource;
+	wcscpy_s(msg->content, wcslen(c) + 1, c);
 
 	swprintf_s(msg->msgReciver, L"%s", (wchar_t*)pWxid);
 	swprintf_s(msg->msgSender, L"%s", (wchar_t*)pSender);
@@ -349,8 +356,6 @@ void SendWxMessage()
 		break;
 	}
 
-	std::wstring msgContent = GetMsgByAddress(**msgAddress + offset_ReciveMessageParam_MsgContent);	//完整的消息内容
-
 	if (msgSource == 0x01) {
 		memcpy(msg->sourceTypeStr, L"好友消息", sizeof(L"好友消息"));
 	}
@@ -364,9 +369,6 @@ void SendWxMessage()
 	if (startWith(strOut, "gh_")) {
 		memcpy(msg->typeStr, L"公众号推送", sizeof(L"公众号推送"));
 	}
-	const wchar_t* c = msgContent.c_str();
-
-	wcscpy_s(msg->content, wcslen(c) + 1, c);
 
 	//控制窗口
 	HWND hWeChatRoot = FindWindow(NULL, L"WeChatCtl");
@@ -377,9 +379,9 @@ void SendWxMessage()
 	}
 
 	COPYDATASTRUCT chatmsg;
-	chatmsg.dwData = WM_ReciveMsg;//保存一个数值, 可以用来作标志等
-	chatmsg.cbData = sizeof(Message);// strlen(szSendBuf);//待发送的数据的长
-	chatmsg.lpData = msg;// szSendBuf;//待发送的数据的起始地址(可以为NULL)
+	chatmsg.dwData = WM_ReciveMsg;// 保存一个数值, 可以用来作标志等
+	chatmsg.cbData = len;// 待发送的数据的长
+	chatmsg.lpData = msg;// 待发送的数据的起始地址
 	SendMessage(hWeChatRoot, WM_COPYDATA, NULL, (LPARAM)&chatmsg);
 }
 
