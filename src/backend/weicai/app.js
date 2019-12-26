@@ -7,6 +7,8 @@ const os = require('os')
 const child_process = require('child_process')
 const fs = require('fs-extra')
 const json2csv = require('json2csv')
+const shell = require('electron').shell
+
 
 const AppServer = require('./AppServer')
 const expressApp = require('./expressApp')
@@ -51,7 +53,8 @@ appServer.route(function(self) {
           // 分页处理
           let size = 100
           let page = Math.round(total / size)
-          let writerStream = fs.createWriteStream('output.csv');
+          let output = path.join(os.homedir(), '.weicai-scraper/output.csv');
+          let writerStream = fs.createWriteStream(output);
           for (let i = 0; i <= page; i++) {
             // 查询列表
             let list = await self.recorder.findItems({ 'msg_sn': { $exists: true } }, page, size)
@@ -68,6 +71,8 @@ appServer.route(function(self) {
                 'state': 'success'
               }
             })
+            // 打开文件夹
+            shell.showItemInFolder(output)
           });
           writerStream.on('error', function(err) {
             self.recorder.emit('export_status', {
