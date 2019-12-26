@@ -248,7 +248,7 @@ cp ~/Desktop/weicai-scraper/src/native/WeChatHelper/Debug/WeChatHelper.pdb .
 ### 配置vs2017的本地调试设置
 
    将`配置属性`-`调试`-`本地windows调试`: 
-   `命令参数`改为主程序地址如`D:/Applications/WeChat/WeChat.exe`;
+   `命令`改为主程序地址如`D:/Applications/WeChat/WeChat.exe`;
    `工作目录`改为主程序目录址如`D:/Applications/WeChat`
 
 ### 运行调试
