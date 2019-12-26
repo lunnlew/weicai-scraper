@@ -1,10 +1,11 @@
 ﻿// dllmain.cpp : 定义 DLL 应用程序的入口点。
 #include "stdafx.h"
+
 // 窗口消息循环
 #include "WndMsgLoop.h"
 
 //在使用Debug远程调试DLL必须要有__declspec函数 导出
-VOID __declspec(dllexport) test()
+DLLAPI void test()
 {
 	OutputDebugStringA("__declspec(dllexport) test() \r\n");
 }

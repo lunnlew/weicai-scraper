@@ -1,13 +1,10 @@
 
 #include "stdafx.h"
-#define DLLEXPORT
-
 #include "LogRecord.h"
 
 std::ofstream ofs;
 
 DLLAPI BOOL LogRecord(const TCHAR* fmt, std::ofstream& oFile, ...)
-
 {
 
 	static const int nBufflen = 500;

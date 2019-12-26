@@ -1,15 +1,5 @@
 #pragma once
 
-#ifdef DLLEXPORT
-
-#define DLLAPI _declspec(dllexport)
-
-#else
-
-#define DLLAPI _declspec(dllimport)
-
-#endif
-
 #include <fstream>
 #include <iostream>
 #include <string>

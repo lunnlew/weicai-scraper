@@ -15,6 +15,8 @@
 
 // 在此处引用程序需要的其他标头
 
+// 导出定义
+#define DLLAPI _declspec(dllexport)
 
 // 定义微信版本
 #define WECHAT_VERSION 27276
