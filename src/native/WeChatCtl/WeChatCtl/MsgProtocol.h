@@ -7,9 +7,9 @@
 struct WeChatMessage
 {
 	DWORD type;		//消息类型
-	wchar_t typeStr[10];		//消息类型
+	wchar_t typeStr[80];		//消息类型
 	DWORD sourceType;		//消息来源
-	wchar_t sourceTypeStr[20];		//消息来源
+	wchar_t sourceTypeStr[80];		//消息来源
 	wchar_t msgReciver[40];		//微信ID/群ID
 	wchar_t msgSender[40];	//消息发送者
 	wchar_t content[1];	//消息内容
