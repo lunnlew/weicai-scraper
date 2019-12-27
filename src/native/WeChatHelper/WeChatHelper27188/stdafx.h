@@ -19,4 +19,4 @@
 #define DLLAPI _declspec(dllexport)
 
 // 定义微信版本
-#define WECHAT_VERSION 27188
+#define WECHAT_WINDLL_VERSION 27188
