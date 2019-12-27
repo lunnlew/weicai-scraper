@@ -14,6 +14,8 @@ const AppServer = require('./AppServer')
 const expressApp = require('./expressApp')
 const Recorder = require('./Recorder')
 const ProxyServer = require('./ProxyServer')
+const WeChatCtl = require('../WeChatCtl')
+let weChatCtl = new WeChatCtl()
 global.recorder = new Recorder()
 let appServer = new AppServer()
 appServer.bindApp(expressApp, recorder)
@@ -218,6 +220,26 @@ var requestStrToMap = function(e) {
   })
   return t
 }
+
+appServer.route(function(self) {
+  self.app.all('/wechatCtl', async function(req, res) {
+    console.log(req.body)
+    let action = req.query.act || ''
+    switch (action) {
+      case "startWechatHelper":
+        {
+          weChatCtl.startWechatHelper();
+          res.send({ code: 200, msg: 'proxy', data: {} })
+          break;
+        }
+      default:
+        {
+          res.send({ code: 200, msg: 'proxy', data: {} })
+          break
+        }
+    }
+  })
+})
 
 appServer.route(function(self) {
   self.app.all('/wechatRobot', async function(req, res) {

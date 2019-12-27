@@ -1,9 +1,10 @@
-import { articleDelete, uniaccDelete, proxyAct, jobAct } from '@/api/source'
+import { articleDelete, uniaccDelete, proxyAct, wechatAct, jobAct } from '@/api/source'
 
 const state = {
   list: [],
   boolSwitchJob: false,
   boolSwitchProxy: false,
+  boolSwitchMonitor: false,
   uniacclist: [],
   loadingMakeimgs: []
 }
@@ -49,6 +50,9 @@ const mutations = {
       state.boolSwitchJob = !enable;
     }
     state.boolSwitchProxy = enable;
+  },
+  switchMonitor(state, enable) {
+    state.boolSwitchMonitor = enable;
   }
 }
 
@@ -100,6 +104,12 @@ const actions = {
       'act': enable ? 'start' : 'close'
     }).then(result => {})
     commit('switchProxy', enable)
+  },
+  switchMonitor({ commit }, enable) {
+    wechatAct({
+      'act': enable ? 'startWechatHelper' : 'closeWechatHelper'
+    }).then(result => {})
+    commit('switchMonitor', enable)
   }
 }
 

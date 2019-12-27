@@ -66,6 +66,16 @@ export function proxyAct(params) {
   })
 }
 
+
+export function wechatAct(params, data) {
+  return request({
+    url: '/wechatCtl',
+    method: 'post',
+    params,
+    data
+  })
+}
+
 export function jobAct(params) {
   return request({
     url: '/job',

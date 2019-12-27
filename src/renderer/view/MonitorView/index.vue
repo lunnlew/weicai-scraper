@@ -7,7 +7,13 @@
     <div class="PageContent">
       <div class="Page">
         <Tabs value="name1">
-          <TabPane label="监控设置" name="name1"></TabPane>
+          <TabPane label="监控设置" name="name1">
+            <span class="label">启用监控模式</span>
+            <i-switch size="large" v-model="boolSwitchMonitor" @on-change="switchMonitorChange">
+              <span slot="open">开启</span>
+              <span slot="close">关闭</span>
+            </i-switch>
+          </TabPane>
         </Tabs>
       </div>
     </div>
@@ -21,10 +27,21 @@ export default {
   data: () => {
     return {}
   },
-  methods: {},
+  methods: {
+    switchMonitorChange(status) {
+      this.$store.dispatch('switchMonitor', status)
+    }
+  },
   mounted() {},
   watch: {},
-  computed: {}
+  computed: {
+    boolSwitchMonitor: {
+      get: function() {
+        return this.$store.state.ListView.boolSwitchMonitor
+      },
+      set: function(v) {}
+    }
+  }
 }
 
 </script>
