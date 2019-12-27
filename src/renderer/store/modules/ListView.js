@@ -5,6 +5,7 @@ const state = {
   boolSwitchJob: false,
   boolSwitchProxy: false,
   boolSwitchMonitor: false,
+  boolSwitchAntiRevoke: false,
   uniacclist: [],
   loadingMakeimgs: []
 }
@@ -53,6 +54,9 @@ const mutations = {
   },
   switchMonitor(state, enable) {
     state.boolSwitchMonitor = enable;
+  },
+  switchAntiRevoke(state, enable) {
+    state.boolSwitchAntiRevoke = enable;
   }
 }
 
@@ -110,6 +114,12 @@ const actions = {
       'act': enable ? 'startWechatHelper' : 'closeWechatHelper'
     }).then(result => {})
     commit('switchMonitor', enable)
+  },
+  switchAntiRevoke({ commit }, enable) {
+    wechatAct({
+      'act': enable ? 'startAntiRevoke' : 'closeAntiRevoke'
+    }).then(result => {})
+    commit('switchAntiRevoke', enable)
   }
 }
 

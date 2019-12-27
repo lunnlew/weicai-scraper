@@ -266,13 +266,19 @@ void Exp_startCtrlClient(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 */
 void Exp_sendCtlMsg(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 	
-	//BOOL ret = GetPrivileges();
-	//printf("GetPrivileges -> %d\n", ret);
+	if (info.Length() != 1) {
+		Nan::ThrowTypeError("必须且仅支持一个参数\n");
+		return;
+	}
+	if (!info[0]->IsNumber()) {
+		Nan::ThrowTypeError("参数必须是数字类型\n");
+		return;
+	}
 
 	if (hDLL!=NULL) {
-		typedef void(*sendCtlMsg)();
+		typedef void(*sendCtlMsg)(int);
 		sendCtlMsg func=(sendCtlMsg)GetProcAddress(hDLL,"sendCtlMsg");
-		func();
+		func(info[0]->NumberValue());
 		info.GetReturnValue().Set(Nan::New(true));
 	}else{
 		info.GetReturnValue().Set(Nan::New(false));

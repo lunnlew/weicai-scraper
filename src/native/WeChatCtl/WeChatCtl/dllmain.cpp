@@ -11,7 +11,7 @@ VOID __declspec(dllexport) test()
 	OutputDebugStringA("__declspec(dllexport) test() \r\n");
 }
 
-extern "C"  __declspec(dllexport) VOID sendCtlMsg() {
+extern "C"  __declspec(dllexport) VOID sendCtlMsg(int MsgType) {
 	//发送到服务端
 	HWND hWnd = FindWindow(NULL, L"WeChatHelper");
 	if (hWnd == NULL)
@@ -20,7 +20,7 @@ extern "C"  __declspec(dllexport) VOID sendCtlMsg() {
 		return;
 	}
 	COPYDATASTRUCT chatmsg;
-	chatmsg.dwData = WM_HookReciveMsg;
+	chatmsg.dwData = MsgType;
 	chatmsg.cbData = 0;
 	chatmsg.lpData = NULL;
 	SendMessage(hWnd, WM_COPYDATA, NULL, (LPARAM)&chatmsg);

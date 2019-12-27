@@ -15,7 +15,7 @@ DWORD WX_SaveQrCode_RetAddr = 0;
 // ecx¼Ä´æÆ÷
 DWORD qrcode_ecx = 0;
 
-void AntiRevoke()
+void HOOK_AntiRevoke()
 {
 	unsigned char fix[1] = { 0xEB };
 	DWORD dwPathcAddr = (DWORD)GetModuleHandle(L"WeChatWin.dll") + offset_WxAntiRevoke;
@@ -268,8 +268,8 @@ void SendWxMessage()
 	const wchar_t* c = msgContent.c_str();
 
 	//·ÖÅä³¤¶È
-	DWORD len = sizeof(Message)+sizeof(wchar_t)*wcslen(c);
-	Message *msg = (Message *)malloc(len);
+	DWORD len = sizeof(WeChatMessage)+sizeof(wchar_t)*wcslen(c);
+	WeChatMessage *msg = (WeChatMessage *)malloc(len);
 
 	msg->type = msgType;
 	msg->sourceType = msgSource;

@@ -39,7 +39,7 @@
 #define offset_GoToQrCode1 0x0			//跳转到二维码
 #define offset_GoToQrCode2 0x0			//跳转到二维码
 
-#define offset_WxAntiRevoke 0x0			//防撤回
+#define offset_WxAntiRevoke 0x26256B		//防撤回
 
 #elif WECHAT_WINDLL_VERSION == 27276
 

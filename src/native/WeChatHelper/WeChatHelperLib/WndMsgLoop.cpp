@@ -80,6 +80,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			HOOK_ReciveMsg();
 			break;
 		}
+		case WM_HookAntiRevoke: {
+			LogRecord(L"收到WM_HookAntiRevoke指令", ofs);
+			HOOK_AntiRevoke();
+			break;
+		}
 		case WM_ShowQrCode: {
 			LogRecord(L"收到WM_ShowQrCode指令", ofs);
 			WX_CallShowQrCode();

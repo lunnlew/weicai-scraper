@@ -13,6 +13,11 @@
               <span slot="open">开启</span>
               <span slot="close">关闭</span>
             </i-switch>
+            <span class="label">启用消息防撤回</span>
+            <i-switch size="large" v-model="boolSwitchAntiRevoke" @on-change="switchAntiRevokeChange">
+              <span slot="open">开启</span>
+              <span slot="close">关闭</span>
+            </i-switch>
           </TabPane>
         </Tabs>
       </div>
@@ -30,6 +35,9 @@ export default {
   methods: {
     switchMonitorChange(status) {
       this.$store.dispatch('switchMonitor', status)
+    },
+    switchAntiRevokeChange(status) {
+      this.$store.dispatch('switchAntiRevoke', status)
     }
   },
   mounted() {},
@@ -38,6 +46,12 @@ export default {
     boolSwitchMonitor: {
       get: function() {
         return this.$store.state.ListView.boolSwitchMonitor
+      },
+      set: function(v) {}
+    },
+    boolSwitchAntiRevoke: {
+      get: function() {
+        return this.$store.state.ListView.boolSwitchAntiRevoke
       },
       set: function(v) {}
     }

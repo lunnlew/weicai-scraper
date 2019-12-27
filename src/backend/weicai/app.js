@@ -232,6 +232,12 @@ appServer.route(function(self) {
           res.send({ code: 200, msg: 'proxy', data: {} })
           break;
         }
+      case "startAntiRevoke":
+        {
+          weChatCtl.startAntiRevoke();
+          res.send({ code: 200, msg: 'proxy', data: {} })
+          break;
+        }
       default:
         {
           res.send({ code: 200, msg: 'proxy', data: {} })

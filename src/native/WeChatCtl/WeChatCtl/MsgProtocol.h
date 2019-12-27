@@ -15,11 +15,13 @@ struct WeChatMessage
 	wchar_t content[1];	//消息内容
 };
 
-// 窗口间通信协议
+//====消息状态类消息表示====
 
+//====动作请求类消息表示====
+#define WM_HookReciveMsg 502	// hook消息接收
+#define WM_HookAntiRevoke 504 // hook消息撤回
 #define WM_ShowQrCode 1		// 取得微信登陆二维码
 #define WM_CheckIsLogin 501	// 检查是否登录
-#define WM_HookReciveMsg 502	// hook消息接收
 #define WM_ReciveMsg 503	// 消息接收
 
 
