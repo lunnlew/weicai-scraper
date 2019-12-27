@@ -115,6 +115,7 @@ Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope CurrentUser
 | 2.7.1.88 |   2.7.1.88   |
 | 2.7.2.76 |   2.7.2.76   |
 | 2.8.0.78 |   2.7.2.78   |
+| 2.8.0.88 |   2.8.0.88   |
 
 ## 开发
 ### 技术栈及语言
