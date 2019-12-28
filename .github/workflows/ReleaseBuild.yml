@@ -28,7 +28,7 @@ jobs:
         yarn run app:install-deps
     - name: electron-build
       run: |
-        yarn run app:release
+        yarn run app:build2019-release
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1.0.0
