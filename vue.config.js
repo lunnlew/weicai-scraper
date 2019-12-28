@@ -139,20 +139,20 @@ module.exports = {
           .loader('node-loader')
           .end()
 
-        // config.module
-        //   .rule('file-loader')
-        //   .test(/\.node$/)
-        //   .use('file-loader')
-        //   .loader('file-loader')
-        //   .tap(options => {
-        //     options = {
-        //       name: '[name].[ext]',
-        //       outputPath: 'native',
-        //       publicPath: '../../app.asar.unpacked/native'
-        //     }
-        //     return options
-        //   })
-        //   .end()
+        config.module
+          .rule('file-loader')
+          .test(/\.node$/)
+          .use('file-loader')
+          .loader('file-loader')
+          .tap(options => {
+            options = {
+              name: '[name].[ext]',
+              outputPath: 'native',
+              publicPath: '../../app.asar.unpacked/native'
+            }
+            return options
+          })
+          .end()
       },
       chainWebpackRendererProcess: config => {
         config.plugin('define').tap(args => {
