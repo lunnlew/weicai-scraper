@@ -8,12 +8,24 @@ const fs = require('fs-extra')
 const WeChatHelperWorkerPath = process.env.NODE_ENV === 'development' ?
   'src/worker/WeChatHelperWorker.js' : path.join(__dirname, '../', 'worker/WeChatHelperWorker.js')
 
+// prod模式下
+// 由于没权限直接加载c盘二进制资源，须在其他盘处理
+
+console.log('NODE_ENV:' + process.env.NODE_ENV)
+
+let p_WeChatDll_dir = 'd:/weicai-scraper/native'
+if (process.env.NODE_ENV == 'development') {
+  p_WeChatDll_dir = path.join(__dirname, "../dist_electron/native")
+} else {
+  fs.copySync(path.join(__dirname, "../native"), p_WeChatDll_dir)
+}
+
 class WeChatCtl extends events.EventEmitter {
-  constructor() {
+  constructor(weicaiNative) {
     super()
     this.WeChatHelperWorker = null
     console.log('加载' + 'WeicaiBinding.node')
-    this.weicaiNative = require('../../dist_electron/native/WeicaiBinding.node')
+    this.weicaiNative = weicaiNative
     this.isWeChatCtl = false
   }
   async startWechatHelper() {
@@ -29,26 +41,7 @@ class WeChatCtl extends events.EventEmitter {
         if (msg.event == 'startCtl') {
           console.log('WeiChatWorker inited')
 
-          let p_WeChatDll_dir = 'd:/weicai-scraper/native'
           let p_WeChatCtl_path = path.join(p_WeChatDll_dir, "WeChatCtl.dll")
-          console.log('NODE_ENV:' + process.env.NODE_ENV)
-
-          if (process.env.NODE_ENV == 'development') {
-            p_WeChatDll_dir = path.join(__dirname, "../dist_electron/native")
-
-          } else {
-            try {
-              if (!fs.existsSync(p_WeChatCtl_path)) {
-                fs.copySync(path.join(__dirname, "../native/WeChatCtl.dll"), p_WeChatCtl_path)
-                console.log('copy WeChatCtl.dll success')
-              } else {
-                console.log('WeChatCtl.dll exists')
-              }
-            } catch (err) {
-              console.log('copy WeChatCtl.dll err: ' + err)
-            }
-          }
-          p_WeChatCtl_path = path.join(p_WeChatDll_dir, "WeChatCtl.dll")
           console.log('加载' + p_WeChatCtl_path)
           let loadCtlSuccess = self.weicaiNative.startCtrlClient(p_WeChatCtl_path)
           if (loadCtlSuccess) {

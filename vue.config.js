@@ -21,10 +21,6 @@ module.exports = {
         from: path.join(__dirname, 'src/native/WeChatCtl/Release/WeChatCtl.dll'),
         to: path.join(__dirname, 'dist_electron/native/WeChatCtl.dll'),
         ignore: ['.*']
-      }, {
-        from: path.join(__dirname, 'src/native/WeicaiBinding/build/Release/WeicaiBinding.node'),
-        to: path.join(__dirname, 'dist_electron/native/WeicaiBinding.node'),
-        ignore: ['.*']
       }]),
     ],
     entry: path.join(__dirname, 'src/renderer/main.js'),
@@ -85,22 +81,8 @@ module.exports = {
       },
       outputDir: 'dist_electron',
       chainWebpackMainProcess: config => {
-        // config.node({
-        //   __filename: false,
-        //   __dirname: false
-        // })
-
-        // config.plugin('copy')
-        //   .use(require('copy-webpack-plugin'), [
-        //     [{
-        //       from: path.join(__dirname, `node_modules/puppeteer/.local-chromium/${platform}-${revision}`),
-        //       to: path.join(__dirname, `.local-chromium/${platform}-${revision}`)
-        //     }]
-        //   ])
-
 
         // 似乎只有dev模式才生效
-        // 不完美-WeicaiBinding.node-会报错不存在-需要重新再次运行任务
         config.plugin('copy')
           .use(CopyWebpackPlugin, [
             [{
@@ -118,10 +100,6 @@ module.exports = {
               from: path.join(__dirname, 'src/native/WeChatCtl/Debug/WeChatCtl.dll'),
               to: path.join(__dirname, 'dist_electron/native/WeChatCtl.dll'),
               ignore: ['.*']
-            }, {
-              from: path.join(__dirname, 'src/native/WeicaiBinding/build/Release/WeicaiBinding.node'),
-              to: path.join(__dirname, 'dist_electron/native/WeicaiBinding.node'),
-              ignore: ['.*']
             }]
           ])
 
@@ -131,7 +109,6 @@ module.exports = {
             return args
           })
         }
-
         // require('*.node') 方式加载原生模块需要
         config.module
           .rule('node-loader')
@@ -148,13 +125,12 @@ module.exports = {
         //   .tap(options => {
         //     options = {
         //       name: '[name].[ext]',
-        //       outputPath: 'addons',
-        //       publicPath: '../../app.asar.unpacked/addons'
+        //       outputPath: 'native',
+        //       publicPath: '../../app.asar.unpacked/native'
         //     }
         //     return options
         //   })
         //   .end()
-
       },
       chainWebpackRendererProcess: config => {
         config.plugin('define').tap(args => {
