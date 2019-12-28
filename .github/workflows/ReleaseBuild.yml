@@ -14,11 +14,6 @@ jobs:
         wecai-version: ['0.1.6']
     steps:
     - uses: actions/checkout@v1
-    - name: native-dll-build
-      run: |
-        "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/Common7/IDE/devenv" src/native/WeChatCtl/WeChatCtl.sln /Build "Release|x86"
-        "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/Common7/IDE/devenv" src/native/WeChatHelper/WeChatHelper.sln /Build "Release|x86"
-      shell: cmd
     - name: Use Node.js ${{ matrix.node-version }}
       uses: lunnlew/setup-node@v1.4.0
       with:
@@ -30,18 +25,10 @@ jobs:
         npm install yarn -g
     - name: yarn install deps
       run: |
-        yarn
-        cd src/worker
-        yarn
-        cd ../../
-    - name: WeicaiBinding-build
-      run: |
-        cd src/native/WeicaiBinding
-        yarn
-        cd ../../../
+        yarn run app:install-deps
     - name: electron-build
       run: |
-        yarn run electron:build
+        yarn run app:release
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1.0.0
