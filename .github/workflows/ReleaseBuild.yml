@@ -30,10 +30,10 @@ jobs:
         npm install yarn -g
     - name: yarn install deps
       run: |
+        yarn
         cd src/worker
         yarn
         cd ../../
-        yarn --frozen-lockfile
     - name: WeicaiBinding-build
       run: |
         cd src/native/WeicaiBinding
