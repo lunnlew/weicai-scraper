@@ -11,7 +11,7 @@ jobs:
         node-version: [12.x]
         node-arch: ['x86']
         node-registry: ['https://registry.npmjs.org']
-        wecai-version: ['0.1.4']
+        wecai-version: ['0.1.5']
     steps:
     - uses: actions/checkout@v1
     - name: native-dll-build
