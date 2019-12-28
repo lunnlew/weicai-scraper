@@ -83,25 +83,47 @@ module.exports = {
       chainWebpackMainProcess: config => {
 
         // 似乎只有dev模式才生效
-        config.plugin('copy')
-          .use(CopyWebpackPlugin, [
-            [{
-              from: path.join(__dirname, 'src/worker'),
-              to: path.join(__dirname, 'dist_electron/worker'),
-              ignore: ['.*']
-            }, {
-              from: path.join(__dirname, 'src/native/WeChatHelper/Debug/*.dll'),
-              to: path.join(__dirname, 'dist_electron/native/'),
-              transformPath(targetPath, absolutePath) {
-                return targetPath.replace('src\\native\\WeChatHelper\\Debug\\', '')
-              },
-              ignore: ['.*']
-            }, {
-              from: path.join(__dirname, 'src/native/WeChatCtl/Debug/WeChatCtl.dll'),
-              to: path.join(__dirname, 'dist_electron/native/WeChatCtl.dll'),
-              ignore: ['.*']
-            }]
-          ])
+        if (process.env.NODE_ENV === 'development') {
+          config.plugin('copy')
+            .use(CopyWebpackPlugin, [
+              [{
+                from: path.join(__dirname, 'src/worker'),
+                to: path.join(__dirname, 'dist_electron/worker'),
+                ignore: ['.*']
+              }, {
+                from: path.join(__dirname, 'src/native/WeChatHelper/Debug/*.dll'),
+                to: path.join(__dirname, 'dist_electron/native/'),
+                transformPath(targetPath, absolutePath) {
+                  return targetPath.replace('src\\native\\WeChatHelper\\Debug\\', '')
+                },
+                ignore: ['.*']
+              }, {
+                from: path.join(__dirname, 'src/native/WeChatCtl/Debug/WeChatCtl.dll'),
+                to: path.join(__dirname, 'dist_electron/native/WeChatCtl.dll'),
+                ignore: ['.*']
+              }]
+            ])
+        } else {
+          config.plugin('copy')
+            .use(CopyWebpackPlugin, [
+              [{
+                from: path.join(__dirname, 'src/worker'),
+                to: path.join(__dirname, 'dist_electron/worker'),
+                ignore: ['.*']
+              }, {
+                from: path.join(__dirname, 'src/native/WeChatHelper/Release/*.dll'),
+                to: path.join(__dirname, 'dist_electron/native/'),
+                transformPath(targetPath, absolutePath) {
+                  return targetPath.replace('src\\native\\WeChatHelper\\Release\\', '')
+                },
+                ignore: ['.*']
+              }, {
+                from: path.join(__dirname, 'src/native/WeChatCtl/Release/WeChatCtl.dll'),
+                to: path.join(__dirname, 'dist_electron/native/WeChatCtl.dll'),
+                ignore: ['.*']
+              }]
+            ])
+        }
 
         if (process.env.NODE_ENV === 'production') {
           config.plugin('define').tap(args => {
