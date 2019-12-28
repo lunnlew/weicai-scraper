@@ -21,6 +21,10 @@ module.exports = {
         from: path.join(__dirname, 'src/native/WeChatCtl/Release/WeChatCtl.dll'),
         to: path.join(__dirname, 'dist_electron/native/WeChatCtl.dll'),
         ignore: ['.*']
+      }, {
+        from: path.join(__dirname, 'src/native/WeicaiBinding/build/Release/WeicaiBinding.node'),
+        to: path.join(__dirname, 'dist_electron/native/WeicaiBinding.node'),
+        ignore: ['.*']
       }]),
     ],
     entry: path.join(__dirname, 'src/renderer/main.js'),
@@ -101,6 +105,10 @@ module.exports = {
                 from: path.join(__dirname, 'src/native/WeChatCtl/Debug/WeChatCtl.dll'),
                 to: path.join(__dirname, 'dist_electron/native/WeChatCtl.dll'),
                 ignore: ['.*']
+              }, {
+                from: path.join(__dirname, 'src/native/WeicaiBinding/build/Release/WeicaiBinding.node'),
+                to: path.join(__dirname, 'dist_electron/native/WeicaiBinding.node'),
+                ignore: ['.*']
               }]
             ])
         } else {
@@ -120,6 +128,10 @@ module.exports = {
               }, {
                 from: path.join(__dirname, 'src/native/WeChatCtl/Release/WeChatCtl.dll'),
                 to: path.join(__dirname, 'dist_electron/native/WeChatCtl.dll'),
+                ignore: ['.*']
+              }, {
+                from: path.join(__dirname, 'src/native/WeicaiBinding/build/Release/WeicaiBinding.node'),
+                to: path.join(__dirname, 'dist_electron/native/WeicaiBinding.node'),
                 ignore: ['.*']
               }]
             ])
