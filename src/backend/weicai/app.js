@@ -249,6 +249,14 @@ appServer.route(function(self) {
 })
 
 appServer.route(function(self) {
+  self.app.all('/wechatRegister', async function(req, res) {
+    console.log('wechatRegister')
+    console.log(req.body)
+    res.send({ code: 200, msg: '', data: {} })
+  })
+})
+
+appServer.route(function(self) {
   self.app.all('/wechatRobot', async function(req, res) {
     console.log('wechatRobot')
     console.log(req.body)

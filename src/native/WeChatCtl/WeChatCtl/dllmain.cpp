@@ -3,6 +3,7 @@
 // 窗口消息循环
 #include "WndMsgLoop.h"
 #include "MsgProtocol.h"
+#include  "LogRecord.h"
 
 
 //在使用Debug远程调试DLL必须要有__declspec函数 导出
@@ -16,7 +17,7 @@ extern "C"  __declspec(dllexport) VOID sendCtlMsg(int MsgType) {
 	HWND hWnd = FindWindow(NULL, L"WeChatHelper");
 	if (hWnd == NULL)
 	{
-		OutputDebugStringA("未查找到WeChatHelper窗口");
+		LogRecord(L"未查找到WeChatHelper窗口", ofs);
 		return;
 	}
 	COPYDATASTRUCT chatmsg;

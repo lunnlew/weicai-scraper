@@ -23,6 +23,7 @@ struct WeChatMessage
 #define WM_ShowQrCode 1		// 取得微信登陆二维码
 #define WM_CheckIsLogin 501	// 检查是否登录
 #define WM_ReciveMsg 503	// 消息接收
+#define WM_RegWeChatHelper 505 // WeChatHelper注册
 
 
 void sendWeChatMessage(WeChatMessage *msg);

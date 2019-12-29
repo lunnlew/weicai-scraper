@@ -4,6 +4,7 @@
 #include "WndMsgLoop.h"
 #include "HookOffset.h"
 #include "MsgProtocol.h"
+#include  "LogRecord.h"
 
 // 初始化消息循环窗口
 void InitWindow(HMODULE hModule)
@@ -14,7 +15,7 @@ void InitWindow(HMODULE hModule)
 // 注册窗口及消息循环
 void RegisterWindow(HMODULE hModule)
 {
-	OutputDebugStringA("RegisterWindowMsgLoop\n");
+	LogRecord(L"收到RegisterWindowMsgLoop指令", ofs);
 	//1  设计一个窗口类
 	WNDCLASS wnd;
 	wnd.style = CS_VREDRAW | CS_HREDRAW;	//风格
@@ -62,27 +63,34 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 	// 仅处理WM_COPYDATA类消息
 	if (Message == WM_COPYDATA)
 	{
-		OutputDebugStringA("收到WM_COPYDATA类消息\n");
+		LogRecord(L"收到WM_COPYDATA类消息", ofs);
 		COPYDATASTRUCT *pCopyData = (COPYDATASTRUCT*)lParam;
 		switch (pCopyData->dwData)
 		{
 		case WM_CheckIsLogin: {
-			OutputDebugStringA("收到WM_CheckIsLogin指令\n");
+			LogRecord(L"收到WM_CheckIsLogin指令", ofs);
 			break;
 		}
 		case WM_HookReciveMsg: {
-			OutputDebugStringA("收到WM_HookReciveMsg指令\n");
+			LogRecord(L"收到WM_HookReciveMsg指令", ofs);
 			break;
 		}
 		case WM_ReciveMsg: {
-			OutputDebugStringA("收到WM_ReciveMsg指令\n");
+			LogRecord(L"收到WM_ReciveMsg指令", ofs);
 			WeChatMessage *msg = (WeChatMessage *)malloc(pCopyData->cbData);
 			msg = (WeChatMessage*)pCopyData->lpData;
 			sendWeChatMessage(msg);
 			break;
 		}
 		case WM_ShowQrCode: {
-			OutputDebugStringA("收到WM_ShowQrCode指令\n");
+			LogRecord(L"收到WM_ShowQrCode指令", ofs);
+			break;
+		}
+		case WM_RegWeChatHelper: {
+			LogRecord(L"收到WM_RegWeChatHelper指令", ofs);
+			LPCWSTR *WeChatHelper = (LPCWSTR *)malloc(pCopyData->cbData);
+			WeChatHelper = (LPCWSTR*)pCopyData->lpData;
+
 			break;
 		}
 		default:

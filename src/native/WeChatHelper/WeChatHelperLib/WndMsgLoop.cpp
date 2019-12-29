@@ -5,11 +5,39 @@
 #include "MsgProtocol.h"
 #include "LogRecord.h"
 #include "WCProcess.h"
+#include "HttpRequest.h"
+#include "json.hpp"
+
+
+#pragma comment(lib, "rpcrt4.lib")
+#include <rpc.h>
+
+
+using json = nlohmann::json;
+
+using namespace std;
+
+DWORD isRegisterWnd;
+LPCWSTR WeChatHelper;
 
 // 初始化消息循环窗口
 void InitWindow(HMODULE hModule)
 {
 	LogRecord(L"InitWindow", ofs);
+
+	UUID uuid;
+	UuidCreate(&uuid);
+	char *str;
+	UuidToStringA(&uuid, (RPC_CSTR*)&str);
+
+	char ty[1024] = { 0 };
+	sprintf_s(ty, sizeof(ty), "%s%s", "WeChatHelper", "");//str);
+	TCHAR tstr[1024] = TEXT("");
+	CharToTchar(ty, tstr);
+	WeChatHelper = (LPCWSTR)tstr;
+	LogRecord(WeChatHelper, ofs);
+
+	RpcStringFreeA((RPC_CSTR*)&str);
 
 	RegisterWindow(hModule);
 }
@@ -30,13 +58,13 @@ void RegisterWindow(HMODULE hModule)
 	wnd.hCursor = NULL;
 	wnd.hbrBackground = (HBRUSH)COLOR_WINDOW;
 	wnd.lpszMenuName = NULL;
-	wnd.lpszClassName = TEXT("WeChatHelper");
+	wnd.lpszClassName = WeChatHelper;
 	//2  注册窗口类
 	RegisterClass(&wnd);
 	//3  创建窗口
 	HWND hWnd = CreateWindow(
-		TEXT("WeChatHelper"),	//窗口类名
-		TEXT("WeChatHelper"),	//窗口名
+		WeChatHelper,	//窗口类名
+		WeChatHelper,	//窗口名
 		WS_OVERLAPPEDWINDOW,	//窗口风格
 		10, 10, 500, 300,	//窗口位置
 		NULL,	//父窗口句柄
@@ -44,6 +72,10 @@ void RegisterWindow(HMODULE hModule)
 		hModule,	//实例句柄
 		NULL	//传递WM_CREATE消息时的附加参数
 	);
+
+
+	SetTimer(hWnd, 1, 1000, RegisterWnd);
+
 	//4  更新显示窗口
 	ShowWindow(hWnd, SW_HIDE);
 	UpdateWindow(hWnd);
@@ -56,6 +88,51 @@ void RegisterWindow(HMODULE hModule)
 		TranslateMessage(&msg);
 		//	5.3转发到消息回调函数
 		DispatchMessage(&msg);
+	}
+}
+
+// 服务信息注册
+void  CALLBACK RegisterWnd(HWND   hwnd, UINT   uMsg, UINT   idEvent, DWORD   dwTime)
+{
+	// 注册成功
+	if (isRegisterWnd) {
+		KillTimer(hwnd, 1);
+	}
+	else {
+		//控制窗口
+		HWND hWeChatRoot = FindWindow(NULL, L"WeChatCtl");
+		if (hWeChatRoot == NULL)
+		{
+			LogRecord(L"未查找到WeChatCtl窗口", ofs);
+			return;
+		}
+
+		COPYDATASTRUCT chatmsg;
+		chatmsg.dwData = WM_RegWeChatHelper;// 保存一个数值, 可以用来作标志等
+		chatmsg.cbData = sizeof(WeChatHelper);// 待发送的数据的长
+		chatmsg.lpData = (LPVOID)WeChatHelper;// 待发送的数据的起始地址
+		SendMessage(hWeChatRoot, WM_COPYDATA, NULL, (LPARAM)&chatmsg);
+
+
+		// 尝试注册
+		json o;
+		o["WeChatHelperName"] = string_To_UTF8(convLPCWSTRtoString(WeChatHelper));
+		HttpRequest httpReq("127.0.0.1", 6877);
+		std::string res = httpReq.HttpPost("/wechatRegister", o.dump());
+		std::string body = httpReq.getBody(res);
+		int code = 201;
+		if (body != "") {
+			auto bd = json::parse(body);
+			code = bd["code"].get<int>();
+		}
+
+		if (code==200) {
+			isRegisterWnd = true;
+			LogRecord(L"注册成功", ofs);
+		}
+		else {
+			LogRecord(L"注册失败", ofs);
+		}
 	}
 }
 

@@ -36,6 +36,12 @@
     <ClInclude Include="..\WeChatHelperLib\WndMsgLoop.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\WeChatHelperLib\json.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\WeChatHelperLib\HttpRequest.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -57,6 +63,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\WeChatHelperLib\WndMsgLoop.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\WeChatHelperLib\HttpRequest.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -21,6 +21,7 @@ struct WeChatMessage
 #define WM_ShowQrCode 1		// 取得微信登陆二维码
 #define WM_CheckIsLogin 501	// 检查是否登录
 #define WM_ReciveMsg 503	// 消息接收
+#define WM_RegWeChatHelper 505 // WeChatHelper注册
 
 
 //====代码覆写类HOOK====
@@ -46,3 +47,10 @@ void SendWxMessage();
 std::wstring GetMsgByAddress(DWORD memAddress);
 bool startWith(const std::string &str, const std::string &head);
 bool endWith(const std::string &str, const std::string &tail);
+void TcharToChar(const TCHAR * tchar, char * _char);
+void CharToTchar(const char * _char, TCHAR * tchar);
+std::string convLPCWSTRtoString(LPCWSTR wString);
+LPCWSTR convStringToLPCWSTR(std::string String);
+void replace_str(std::string& str, const std::string& before, const std::string& after);
+std::string Wchar_tToString(wchar_t *wchar);
+std::string string_To_UTF8(const std::string & str);
