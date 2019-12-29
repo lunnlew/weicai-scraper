@@ -63,12 +63,14 @@ var pageScreenshot = async function(page, filename, callback) {
       }
     };
   });
-  let viewHeight = viewport.height
+  let viewHeight = 1920
   let viewWidth = viewport.width
 
   let maxViewHeight = viewHeight;
   let partViewCount = Math.ceil(pageHeight / maxViewHeight);
   let lastViewHeight = pageHeight - ((partViewCount - 1) * maxViewHeight);
+
+  console.log("partViewCount： " + partViewCount)
 
   let totalMarignTop = 0
   let images = []
@@ -156,7 +158,7 @@ process.on('message', async (msg) => {
             ],
             timeout: 0,
             pipe: true,
-            headless: true,
+            headless: false,
             ignoreHTTPSErrors: true,
             executablePath: ChromiumPath,
             defaultViewport: null
@@ -176,7 +178,6 @@ process.on('message', async (msg) => {
         await page.evaluate(() => { window.scrollTo(0, 0) })
         await page.waitFor(1000)
         await pageScreenshot(page, savepath, (resolve, data) => {
-          console.log(data)
           process.send({
             'event': 'complete',
             'data': {
