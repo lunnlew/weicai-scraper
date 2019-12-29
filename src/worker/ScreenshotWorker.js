@@ -158,7 +158,7 @@ process.on('message', async (msg) => {
             ],
             timeout: 0,
             pipe: true,
-            headless: false,
+            headless: true,
             ignoreHTTPSErrors: true,
             executablePath: ChromiumPath,
             defaultViewport: null
