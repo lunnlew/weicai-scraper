@@ -10,7 +10,7 @@ jobs:
       matrix:
         node-version: [12.x]
         node-arch: ['x86']
-        node-registry: ['https://registry.npmjs.org']
+        node-registry: ['https://registry.yarnpkg.com']
         wecai-version: ['0.1.6']
     steps:
     - uses: actions/checkout@v1
