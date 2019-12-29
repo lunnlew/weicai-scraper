@@ -7,10 +7,6 @@ module.exports = {
     plugins: [
       // 似乎只有prod模式才生效
       new CopyWebpackPlugin([{
-        from: path.join(__dirname, 'src/worker'),
-        to: path.join(__dirname, 'dist_electron/worker'),
-        ignore: ['.*']
-      }, {
         from: path.join(__dirname, 'src/native/WeChatHelper/Release/*.dll'),
         to: path.join(__dirname, 'dist_electron/native/'),
         transformPath(targetPath, absolutePath) {
