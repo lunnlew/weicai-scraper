@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <vector>
 
 # define WeChatMessageA(size) (WeChatMessage*) std::malloc(size)
 
@@ -27,3 +28,5 @@ struct WeChatMessage
 
 
 void sendWeChatMessage(WeChatMessage *msg);
+
+extern std::vector<std::string> wehcatHelpers;

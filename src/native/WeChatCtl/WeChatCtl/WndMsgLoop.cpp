@@ -4,7 +4,10 @@
 #include "WndMsgLoop.h"
 #include "HookOffset.h"
 #include "MsgProtocol.h"
-#include  "LogRecord.h"
+#include "StringTool.h"
+#include "LogRecord.h"
+
+std::vector<std::string> wehcatHelpers;
 
 // 初始化消息循环窗口
 void InitWindow(HMODULE hModule)
@@ -88,8 +91,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		}
 		case WM_RegWeChatHelper: {
 			LogRecord(L"收到WM_RegWeChatHelper指令", ofs);
-			LPCWSTR *WeChatHelper = (LPCWSTR *)malloc(pCopyData->cbData);
-			WeChatHelper = (LPCWSTR*)pCopyData->lpData;
+			LPCWSTR WeChatHelper = (LPCWSTR )malloc(pCopyData->cbData);
+			WeChatHelper = (LPCWSTR)pCopyData->lpData;
+			wehcatHelpers.push_back(LPCWSTRtoString(WeChatHelper));
 
 			break;
 		}

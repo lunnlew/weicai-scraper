@@ -3,6 +3,7 @@
 #include "WndMsgLoop.h"
 #include "HookOffset.h"
 #include "MsgProtocol.h"
+#include "StringTool.h"
 #include "LogRecord.h"
 #include "WCProcess.h"
 #include "HttpRequest.h"
@@ -116,7 +117,7 @@ void  CALLBACK RegisterWnd(HWND   hwnd, UINT   uMsg, UINT   idEvent, DWORD   dwT
 
 		// ³¢ÊÔ×¢²á
 		json o;
-		o["WeChatHelperName"] = string_To_UTF8(convLPCWSTRtoString(WeChatHelper));
+		o["WeChatHelperName"] = stringToUTF8(LPCWSTRtoString(WeChatHelper));
 		HttpRequest httpReq("127.0.0.1", 6877);
 		std::string res = httpReq.HttpPost("/wechatRegister", o.dump());
 		std::string body = httpReq.getBody(res);
