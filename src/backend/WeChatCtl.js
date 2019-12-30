@@ -54,7 +54,7 @@ class WeChatCtl extends events.EventEmitter {
               } else {
                 console.log('发送启用消息接收指令-失败')
               }
-            }, 2000)
+            }, 5000)
           } else {
             console.log('加载控制端失败')
           }

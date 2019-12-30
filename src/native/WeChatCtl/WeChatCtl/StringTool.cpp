@@ -1,5 +1,11 @@
 #include "stdafx.h"
 #include <string>
+#include <vector>
+#include <iostream>
+#include <sstream>
+#include <iterator>
+
+
 
 std::string stringToUTF8(const std::string & str)
 {
@@ -130,4 +136,12 @@ TCHAR* CharToTchar(const char* str)
 
 	return retStr;
 
+}
+
+std::string ListToString(std::vector<std::string> list){
+	std::stringstream ss;
+
+	std::copy(list.begin(), list.end(), std::ostream_iterator<std::string>(ss, ";"));
+
+	return ss.str();
 }

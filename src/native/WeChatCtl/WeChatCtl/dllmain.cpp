@@ -3,8 +3,8 @@
 // 窗口消息循环
 #include "WndMsgLoop.h"
 #include "MsgProtocol.h"
-#include  "LogRecord.h"
-
+#include "LogRecord.h"
+#include "StringTool.h"
 
 //在使用Debug远程调试DLL必须要有__declspec函数 导出
 VOID __declspec(dllexport) test()
@@ -14,7 +14,17 @@ VOID __declspec(dllexport) test()
 
 // 发送控制消息到WeChatHelper
 extern "C"  __declspec(dllexport) VOID sendCtlMsg(int MsgType) {
-	HWND hWnd = FindWindow(NULL, L"WeChatHelper");
+	std::string WeChatHelperName = "WeChatHelper";
+	if (wehcatHelpers.size() > 0) {
+		WeChatHelperName = wehcatHelpers[0];
+	}
+	LogRecord(L"wehcatHelpers size:", ofs);
+	LogRecord(CharToTchar(std::to_string(wehcatHelpers.size()).c_str()), ofs);
+
+	LogRecord(L"wehcatHelpers list:", ofs);
+	LogRecord(CharToTchar(ListToString(wehcatHelpers).c_str()), ofs);
+
+	HWND hWnd = FindWindow(NULL, StringToLPCWSTR(WeChatHelperName));
 	if (hWnd == NULL)
 	{
 		LogRecord(L"未查找到WeChatHelper窗口", ofs);

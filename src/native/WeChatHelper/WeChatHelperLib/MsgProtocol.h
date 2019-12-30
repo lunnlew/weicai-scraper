@@ -22,6 +22,7 @@ struct WeChatMessage
 #define WM_CheckIsLogin 501	// 检查是否登录
 #define WM_ReciveMsg 503	// 消息接收
 #define WM_RegWeChatHelper 505 // WeChatHelper注册
+#define WM_UnRegWeChatHelper 506 // WeChatHelper注销
 
 
 //====代码覆写类HOOK====

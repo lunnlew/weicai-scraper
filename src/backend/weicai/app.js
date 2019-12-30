@@ -252,6 +252,10 @@ appServer.route(function(self) {
   self.app.all('/wechatRegister', async function(req, res) {
     console.log('wechatRegister')
     console.log(req.body)
+    self.ws['wcclient'].send(JSON.stringify({
+      'type': "wechatRegister",
+      'data': req.body
+    }))
     res.send({ code: 200, msg: '', data: {} })
   })
 })

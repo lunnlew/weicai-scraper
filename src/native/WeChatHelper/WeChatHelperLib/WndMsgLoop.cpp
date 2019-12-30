@@ -10,6 +10,7 @@
 #include "json.hpp"
 
 
+
 #pragma comment(lib, "rpcrt4.lib")
 #include <rpc.h>
 
@@ -20,6 +21,7 @@ using namespace std;
 
 DWORD isRegisterWnd;
 LPCWSTR WeChatHelper;
+HWND hWnd;
 
 // 初始化消息循环窗口
 void InitWindow(HMODULE hModule)
@@ -32,7 +34,7 @@ void InitWindow(HMODULE hModule)
 	UuidToStringA(&uuid, (RPC_CSTR*)&str);
 
 	char ty[1024] = { 0 };
-	sprintf_s(ty, sizeof(ty), "%s%s", "WeChatHelper", "");//str);
+	sprintf_s(ty, sizeof(ty), "%s%s", "WeChatHelper", str);
 	TCHAR tstr[1024] = TEXT("");
 	CharToTchar(ty, tstr);
 	WeChatHelper = (LPCWSTR)tstr;
@@ -63,7 +65,7 @@ void RegisterWindow(HMODULE hModule)
 	//2  注册窗口类
 	RegisterClass(&wnd);
 	//3  创建窗口
-	HWND hWnd = CreateWindow(
+	hWnd = CreateWindow(
 		WeChatHelper,	//窗口类名
 		WeChatHelper,	//窗口名
 		WS_OVERLAPPEDWINDOW,	//窗口风格
@@ -75,7 +77,7 @@ void RegisterWindow(HMODULE hModule)
 	);
 
 
-	SetTimer(hWnd, 1, 1000, RegisterWnd);
+	SetTimer(hWnd, 1, 1000, Do_RegisterWeChatHelper);
 
 	//4  更新显示窗口
 	ShowWindow(hWnd, SW_HIDE);
@@ -91,49 +93,89 @@ void RegisterWindow(HMODULE hModule)
 		DispatchMessage(&msg);
 	}
 }
+void UnRegisterWeChatHelper() {
+	//控制窗口
+	HWND hWeChatRoot = FindWindow(NULL, L"WeChatCtl");
+	if (hWeChatRoot == NULL)
+	{
+		LogRecord(L"未查找到WeChatCtl窗口", ofs);
+		return;
+	}
+	COPYDATASTRUCT chatmsg;
+	chatmsg.dwData = WM_UnRegWeChatHelper;// 保存一个数值, 可以用来作标志等
+	std::string s = LPCWSTRtoString(WeChatHelper);
+	chatmsg.cbData = s.length() + 1;// 待发送的数据的长
+	chatmsg.lpData = (char*)s.c_str();// 待发送的数据的起始地址
+	SendMessage(hWeChatRoot, WM_COPYDATA, NULL, (LPARAM)&chatmsg);
+
+	// 尝试注销
+	json o;
+	o["WeChatHelperName"] = stringToUTF8(LPCWSTRtoString(WeChatHelper));
+	o["Act"] = "UnRegisterWeChatHelper";
+	HttpRequest httpReq("127.0.0.1", 6877);
+	std::string res = httpReq.HttpPost("/wechatRegister", o.dump());
+	std::string body = httpReq.getBody(res);
+	int code = 201;
+	if (body != "") {
+		auto bd = json::parse(body);
+		code = bd["code"].get<int>();
+	}
+
+	if (code == 200) {
+		isRegisterWnd = false;
+		LogRecord(L"WeChatHelper注销成功", ofs);
+	}
+	else {
+		LogRecord(L"WeChatHelper注销失败", ofs);
+	}
+}
+
+void RegisterWeChatHelper() {
+	//控制窗口
+	HWND hWeChatRoot = FindWindow(NULL, L"WeChatCtl");
+	if (hWeChatRoot == NULL)
+	{
+		LogRecord(L"未查找到WeChatCtl窗口", ofs);
+		return;
+	}
+	COPYDATASTRUCT chatmsg;
+	chatmsg.dwData = WM_RegWeChatHelper;// 保存一个数值, 可以用来作标志等
+	std::string s = LPCWSTRtoString(WeChatHelper);
+	chatmsg.cbData = s.length() + 1;// 待发送的数据的长
+	chatmsg.lpData = (char*)s.c_str();// 待发送的数据的起始地址
+	SendMessage(hWeChatRoot, WM_COPYDATA, NULL, (LPARAM)&chatmsg);
+
+	// 尝试注册
+	json o;
+	o["WeChatHelperName"] = stringToUTF8(LPCWSTRtoString(WeChatHelper));
+	o["Act"] = "RegisterWeChatHelper";
+	HttpRequest httpReq("127.0.0.1", 6877);
+	std::string res = httpReq.HttpPost("/wechatRegister", o.dump());
+	std::string body = httpReq.getBody(res);
+	int code = 201;
+	if (body != "") {
+		auto bd = json::parse(body);
+		code = bd["code"].get<int>();
+	}
+
+	if (code == 200) {
+		isRegisterWnd = true;
+		LogRecord(L"WeChatHelper注册成功", ofs);
+	}
+	else {
+		LogRecord(L"WeChatHelper注册失败", ofs);
+	}
+}
 
 // 服务信息注册
-void  CALLBACK RegisterWnd(HWND   hwnd, UINT   uMsg, UINT   idEvent, DWORD   dwTime)
+void  CALLBACK Do_RegisterWeChatHelper(HWND   hwnd, UINT   uMsg, UINT   idEvent, DWORD   dwTime)
 {
 	// 注册成功
 	if (isRegisterWnd) {
 		KillTimer(hwnd, 1);
 	}
 	else {
-		//控制窗口
-		HWND hWeChatRoot = FindWindow(NULL, L"WeChatCtl");
-		if (hWeChatRoot == NULL)
-		{
-			LogRecord(L"未查找到WeChatCtl窗口", ofs);
-			return;
-		}
-
-		COPYDATASTRUCT chatmsg;
-		chatmsg.dwData = WM_RegWeChatHelper;// 保存一个数值, 可以用来作标志等
-		chatmsg.cbData = sizeof(WeChatHelper);// 待发送的数据的长
-		chatmsg.lpData = (LPVOID)WeChatHelper;// 待发送的数据的起始地址
-		SendMessage(hWeChatRoot, WM_COPYDATA, NULL, (LPARAM)&chatmsg);
-
-
-		// 尝试注册
-		json o;
-		o["WeChatHelperName"] = stringToUTF8(LPCWSTRtoString(WeChatHelper));
-		HttpRequest httpReq("127.0.0.1", 6877);
-		std::string res = httpReq.HttpPost("/wechatRegister", o.dump());
-		std::string body = httpReq.getBody(res);
-		int code = 201;
-		if (body != "") {
-			auto bd = json::parse(body);
-			code = bd["code"].get<int>();
-		}
-
-		if (code==200) {
-			isRegisterWnd = true;
-			LogRecord(L"注册成功", ofs);
-		}
-		else {
-			LogRecord(L"注册失败", ofs);
-		}
+		RegisterWeChatHelper();
 	}
 }
 

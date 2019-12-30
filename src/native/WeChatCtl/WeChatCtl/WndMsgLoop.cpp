@@ -91,10 +91,35 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		}
 		case WM_RegWeChatHelper: {
 			LogRecord(L"收到WM_RegWeChatHelper指令", ofs);
-			LPCWSTR WeChatHelper = (LPCWSTR )malloc(pCopyData->cbData);
-			WeChatHelper = (LPCWSTR)pCopyData->lpData;
-			wehcatHelpers.push_back(LPCWSTRtoString(WeChatHelper));
+			std::string s = (char*)malloc(pCopyData->cbData);
+			s = (char*)pCopyData->lpData;
+			wehcatHelpers.push_back(s);
 
+			LogRecord(L"wehcatHelpers size:", ofs);
+			LogRecord(CharToTchar(std::to_string(wehcatHelpers.size()).c_str()), ofs);
+
+			LogRecord(L"wehcatHelpers list:", ofs);
+			LogRecord(CharToTchar(ListToString(wehcatHelpers).c_str()), ofs);
+			break;
+		}
+		case WM_UnRegWeChatHelper: {
+			LogRecord(L"收到WM_UnRegWeChatHelper指令", ofs);
+			std::string s = (char*)malloc(pCopyData->cbData);
+			s = (char*)pCopyData->lpData;
+			std::vector<std::string>::iterator it;
+			for (it=wehcatHelpers.begin(); it!=wehcatHelpers.end();)
+			{
+				if (*it==s)
+					it = wehcatHelpers.erase(it);
+				else
+					++it; 
+			}
+
+			LogRecord(L"wehcatHelpers size:", ofs);
+			LogRecord(CharToTchar(std::to_string(wehcatHelpers.size()).c_str()), ofs);
+
+			LogRecord(L"wehcatHelpers list:", ofs);
+			LogRecord(CharToTchar(ListToString(wehcatHelpers).c_str()), ofs);
 			break;
 		}
 		default:
