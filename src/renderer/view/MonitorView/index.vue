@@ -13,11 +13,11 @@
               <span slot="open">开启</span>
               <span slot="close">关闭</span>
             </i-switch>
-            <span class="label">启用消息防撤回</span>
+            <!-- <span class="label">启用消息防撤回</span>
             <i-switch size="large" v-model="boolSwitchAntiRevoke" @on-change="switchAntiRevokeChange">
               <span slot="open">开启</span>
               <span slot="close">关闭</span>
-            </i-switch>
+            </i-switch> -->
           </TabPane>
         </Tabs>
       </div>
