@@ -49,10 +49,9 @@ if (weicaiNative.CheckProcessExists("WeChat.exe")) {
     console.log('加载' + p_WeChatDll_dir + '/' + p_WeChatDll_name)
     let loadHelperSuccess = weicaiNative.ProcessDllInject("WeChat.exe", p_WeChatDll_dir, p_WeChatDll_name)
     if (loadHelperSuccess) {
-      console.log('辅助服务端已注入')
+      console.log('辅助服务端注入成功')
     } else {
       console.log('辅助服务端注入失败')
-      process.exit()
     }
   } else {
     console.log('辅助服务端已存在')
@@ -60,7 +59,7 @@ if (weicaiNative.CheckProcessExists("WeChat.exe")) {
     //console.log('ProcessDllUninstall')
   }
   process.send({
-    'event': 'startCtl'
+    'event': 'WeChatHelperInjectCompleted'
   })
 } else {
   console.log('微信未启动')

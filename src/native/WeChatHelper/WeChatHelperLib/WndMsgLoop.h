@@ -8,12 +8,13 @@ extern DWORD isRegisterWnd;
 extern LPCWSTR WeChatHelper;
 extern HWND hWnd;
 extern HMODULE dlModule;
+extern DWORD checkFailNum;
 
 void InitWindow(HMODULE hModule);
 void UnloadProc(HMODULE hModule);
 void RegisterWindow(HMODULE hModule);
 LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam);
 void  CALLBACK Do_RegisterWeChatHelper(HWND   hwnd, UINT   uMsg, UINT   idEvent, DWORD   dwTime);
-void  CALLBACK Do_UnloadProc(HWND   hwnd, UINT   uMsg, UINT   idEvent, DWORD   dwTime);
+void  CALLBACK Do_CheckWeChatCtrl(HWND   hwnd, UINT   uMsg, UINT   idEvent, DWORD   dwTime);
 void UnRegisterWeChatHelper();
 void RegisterWeChatHelper();

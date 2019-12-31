@@ -28,7 +28,19 @@ class WeChatCtl extends events.EventEmitter {
     this.weicaiNative = weicaiNative
     this.isWeChatCtl = false
   }
-  async startWechatHelper() {
+  async startWechatCtl() {
+    const self = this
+    let p_WeChatCtl_path = path.join(p_WeChatDll_dir, "WeChatCtl.dll")
+    console.log('加载' + p_WeChatCtl_path)
+    let loadCtlSuccess = self.weicaiNative.startCtrlClient(p_WeChatCtl_path)
+    if (loadCtlSuccess) {
+      self.isWeChatCtl = true
+      console.log('加载控制端成功')
+    } else {
+      console.log('加载控制端失败')
+    }
+  }
+  async startWechatHelperInject() {
     const self = this
     self.WeChatHelperWorker = child_process.fork(WeChatHelperWorkerPath, [], {
       cwd: process.cwd(),
@@ -38,38 +50,11 @@ class WeChatCtl extends events.EventEmitter {
     })
     self.WeChatHelperWorker.on('message', function(msg) {
       if (typeof msg == 'object') {
-        if (msg.event == 'startCtl') {
-          console.log('WeiChatWorker inited')
-
-          let p_WeChatCtl_path = path.join(p_WeChatDll_dir, "WeChatCtl.dll")
-          console.log('加载' + p_WeChatCtl_path)
-          let loadCtlSuccess = self.weicaiNative.startCtrlClient(p_WeChatCtl_path)
-          if (loadCtlSuccess) {
-            self.isWeChatCtl = true
-            console.log('加载控制端成功')
-            setTimeout(function() {
-              let hookSuccess = self.weicaiNative.sendCtlMsg(502)
-              if (hookSuccess) {
-                console.log('发送启用消息接收指令-完成')
-              } else {
-                console.log('发送启用消息接收指令-失败')
-              }
-            }, 5000)
-          } else {
-            console.log('加载控制端失败')
-          }
+        if (msg.event == 'WeChatHelperInjectCompleted') {
+          console.log('WeiChatWorker WeChatHelperInjectCompleted')
         }
       }
     })
-  }
-  async startAntiRevoke() {
-    const self = this
-    let hookSuccess = self.weicaiNative.sendCtlMsg(504)
-    if (hookSuccess) {
-      console.log('发送启用防撤回指令-完成')
-    } else {
-      console.log('发送启用防撤回指令-失败')
-    }
   }
 }
 

@@ -20,12 +20,14 @@ DWORD isRegisterWnd;
 LPCWSTR WeChatHelper;
 HWND hWnd;
 HMODULE dlModule;
+DWORD checkFailNum;
 
 // 初始化消息循环窗口
 void InitWindow(HMODULE hModule)
 {
 	LogRecord(L"InitWindow", ofs);
 	dlModule = hModule;
+	checkFailNum = 0;
 
 	UUID uuid;
 	UuidCreate(&uuid);
@@ -47,26 +49,6 @@ void InitWindow(HMODULE hModule)
 void UnloadProc(HMODULE hModule) {
 	LogRecord(L"进行卸载dll", ofs);
 	FreeLibraryAndExitThread(dlModule, 0);
-}
-
-// 卸载注册
-void  CALLBACK Do_UnloadProc(HWND   hwnd, UINT   uMsg, UINT   idEvent, DWORD   dwTime)
-{
-	//控制窗口
-	HWND hWeChatRoot = FindWindow(NULL, L"WeChatCtl");
-	if (hWeChatRoot == NULL)
-	{
-		LogRecord(L"未查找到WeChatCtl窗口,开始进行DLL卸载", ofs);
-		LogRecord(L"复原所有的HOOK点", ofs);
-		if (sWeChatHookPoint->enable_WX_ReciveMsg_Hook) {
-			LogRecord(L"复原WX_ReciveMsg_Hook", ofs);
-			UnHOOK_ReciveMsg();
-		}
-
-		HANDLE hThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)UnloadProc, NULL, 0, NULL);
-		CloseHandle(hThread);
-		return;
-	}
 }
 
 // 注册窗口及消息循环
@@ -100,9 +82,8 @@ void RegisterWindow(HMODULE hModule)
 		NULL	//传递WM_CREATE消息时的附加参数
 	);
 
-
 	SetTimer(hWnd, 1, 1*1000, Do_RegisterWeChatHelper);
-	SetTimer(hWnd, 2, 60*1000, Do_UnloadProc);
+	SetTimer(hWnd, 2, 60*1000, Do_CheckWeChatCtrl);
 
 	//4  更新显示窗口
 	ShowWindow(hWnd, SW_HIDE);
@@ -123,7 +104,7 @@ void UnRegisterWeChatHelper() {
 	HWND hWeChatRoot = FindWindow(NULL, L"WeChatCtl");
 	if (hWeChatRoot == NULL)
 	{
-		LogRecord(L"未查找到WeChatCtl窗口", ofs);
+		LogRecord(L"UnRegisterWeChatHelper:未查找到WeChatCtl窗口", ofs);
 		return;
 	}
 	COPYDATASTRUCT chatmsg;
@@ -148,10 +129,10 @@ void UnRegisterWeChatHelper() {
 
 	if (code == 200) {
 		isRegisterWnd = false;
-		LogRecord(L"WeChatHelper注销成功", ofs);
+		LogRecord(L"UnRegisterWeChatHelper:WeChatHelper注销成功", ofs);
 	}
 	else {
-		LogRecord(L"WeChatHelper注销失败", ofs);
+		LogRecord(L"UnRegisterWeChatHelper:WeChatHelper注销失败", ofs);
 	}
 }
 
@@ -160,7 +141,7 @@ void RegisterWeChatHelper() {
 	HWND hWeChatRoot = FindWindow(NULL, L"WeChatCtl");
 	if (hWeChatRoot == NULL)
 	{
-		LogRecord(L"未查找到WeChatCtl窗口", ofs);
+		LogRecord(L"RegisterWeChatHelper:未查找到WeChatCtl窗口", ofs);
 		return;
 	}
 	COPYDATASTRUCT chatmsg;
@@ -185,10 +166,11 @@ void RegisterWeChatHelper() {
 
 	if (code == 200) {
 		isRegisterWnd = true;
-		LogRecord(L"WeChatHelper注册成功", ofs);
+		LogRecord(L"RegisterWeChatHelper:WeChatHelper注册成功", ofs);
 	}
 	else {
-		LogRecord(L"WeChatHelper注册失败", ofs);
+		isRegisterWnd = false;
+		LogRecord(L"RegisterWeChatHelper:WeChatHelper注册失败", ofs);
 	}
 }
 
@@ -201,6 +183,42 @@ void  CALLBACK Do_RegisterWeChatHelper(HWND   hwnd, UINT   uMsg, UINT   idEvent,
 	}
 	else {
 		RegisterWeChatHelper();
+	}
+}
+
+
+// 控制端心跳检测
+void  CALLBACK Do_CheckWeChatCtrl(HWND   hwnd, UINT   uMsg, UINT   idEvent, DWORD   dwTime)
+{
+	HWND hWeChatRoot = FindWindow(NULL, L"WeChatCtl");
+	if (hWeChatRoot == NULL)
+	{
+		// 检查失败数增加1
+		LogRecord(L"Do_CheckWeChatCtrl:检查WeChatCtl:不存在", ofs);
+		checkFailNum = checkFailNum + 1;
+	}
+	else {
+		LogRecord(L"Do_CheckWeChatCtrl:检查WeChatCtl:存在,重新注册WeChatHelper", ofs);
+		// 一定期限内再次恢复
+		checkFailNum = 0;
+		RegisterWeChatHelper();
+	}
+	
+	// 失败次数过多
+	if (checkFailNum > 10) {
+		LogRecord(L"Do_CheckWeChatCtrl:检查WeChatCtl:失败次数过多,开始进行DLL卸载", ofs);
+
+		checkFailNum = 0;
+		KillTimer(hwnd, 2);
+		LogRecord(L"Do_CheckWeChatCtrl:复原所有的HOOK点", ofs);
+		if (sWeChatHookPoint->enable_WX_ReciveMsg_Hook) {
+			LogRecord(L"Do_CheckWeChatCtrl:复原WX_ReciveMsg_Hook", ofs);
+			UnHOOK_ReciveMsg();
+		}
+
+		LogRecord(L"Do_CheckWeChatCtrl:卸载DLL", ofs);
+		HANDLE hThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)UnloadProc, NULL, 0, NULL);
+		CloseHandle(hThread);
 	}
 }
 

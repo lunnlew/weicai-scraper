@@ -227,15 +227,12 @@ appServer.route(function(self) {
     console.log(req.body)
     let action = req.query.act || ''
     switch (action) {
-      case "startWechatHelper":
+      case "startMonitor":
         {
-          weChatCtl.startWechatHelper();
-          res.send({ code: 200, msg: 'proxy', data: {} })
-          break;
-        }
-      case "startAntiRevoke":
-        {
-          weChatCtl.startAntiRevoke();
+          // 启动控制端
+          weChatCtl.startWechatCtl();
+          // 开始微信进程注入
+          weChatCtl.startWechatHelperInject();
           res.send({ code: 200, msg: 'proxy', data: {} })
           break;
         }

@@ -25,6 +25,9 @@ socket.addEventListener('message', function(event) {
   if (data.type == 'export_status') {
     store.dispatch('toggleLoading', data.data)
   }
+  if (data.type == 'wechatRegister') {
+    store.dispatch('wechatRegister', data.data)
+  }
 });
 
 
