@@ -16,6 +16,13 @@ struct WeChatMessage
 	wchar_t content[1];	//消息内容
 };
 
+// WeChatHookReg
+struct WeChatHookReg
+{
+	DWORD pProcessId;
+	wchar_t WeChatHelperName[50];
+};
+
 //====消息状态类消息表示====
 
 //====动作请求类消息表示====
@@ -30,4 +37,4 @@ struct WeChatMessage
 
 void sendWeChatMessage(WeChatMessage *msg);
 
-extern std::vector<std::string> wehcatHelpers;
+extern std::vector<WeChatHookReg> wehcatHelpers;

@@ -48,6 +48,18 @@ std::string Wchar_tToString(wchar_t *wchar)
 	return szDst;
 }
 
+//string转wchar_t
+wchar_t * StringToWchar_t(const std::string & str)
+{
+	int nwLen = ::MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, NULL, 0);
+
+	wchar_t * pwBuf = new wchar_t[nwLen + 1];//一定要加1，不然会出现尾巴 
+	ZeroMemory(pwBuf, nwLen * 2 + 2);
+
+	::MultiByteToWideChar(CP_ACP, 0, str.c_str(), str.length(), pwBuf, nwLen);
+
+	return pwBuf;
+}
 
 void replace_str(std::string& str, const std::string& before, const std::string& after)
 {
@@ -136,12 +148,4 @@ TCHAR* CharToTchar(const char* str)
 
 	return retStr;
 
-}
-
-std::string ListToString(std::vector<std::string> list){
-	std::stringstream ss;
-
-	std::copy(list.begin(), list.end(), std::ostream_iterator<std::string>(ss, ";"));
-
-	return ss.str();
 }

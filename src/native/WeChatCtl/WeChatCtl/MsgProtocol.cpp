@@ -8,6 +8,29 @@
 using json = nlohmann::json;
 
 
+std::string ListToString(std::vector<std::string> list) {
+	std::stringstream ss;
+
+	std::copy(list.begin(), list.end(), std::ostream_iterator<std::string>(ss, ";"));
+
+	return ss.str();
+}
+
+std::string HelperListToString(std::vector<struct WeChatHookReg> list) {
+	std::string res;
+	std::vector<struct WeChatHookReg>::iterator it;
+	for (it = list.begin(); it != list.end();)
+	{
+		res += std::to_string(it->pProcessId);
+		res += ":";
+		res += Wchar_tToString(it->WeChatHelperName);
+		res += ";";
+		++it;
+	}
+	res += '\0';
+	return res;
+}
+
 void sendWeChatMessage(WeChatMessage *msg)
 {
 	json o;

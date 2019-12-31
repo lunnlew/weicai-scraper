@@ -2,6 +2,7 @@
 #include <nan.h>
 #include <TlHelp32.h>
 
+std::vector<DWORD> wehcatPids;
 
 /*
 * 获取文件的版本信息
@@ -63,6 +64,39 @@ BOOL CheckProcessExists(LPCSTR ProcessName) {
 }
 /*
 * 根据进程名称获得进程ID
+*/
+std::vector<DWORD> FindProcessPidListByName(LPCSTR ProcessName)
+{
+	//PROCESSENTRY32结构体，保存进程具体信息
+	PROCESSENTRY32 pe32 = { 0 };
+	pe32.dwSize = sizeof(pe32);
+
+	//获得系统进程快照的句柄
+	HANDLE hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+	if (hProcessSnap == INVALID_HANDLE_VALUE)
+	{
+		printf("CreateToolhelp32Snapshot error.\n");
+		return wehcatPids;
+	}
+	//首先获得第一个进程
+	BOOL bProcess = Process32First(hProcessSnap, &pe32);
+	//循环获得所有进程
+	while (bProcess)
+	{
+		//打印进程名和进程ID
+		if (strcmp(ProcessName, pe32.szExeFile) == 0)
+		{
+				wehcatPids.push_back(pe32.th32ProcessID);
+		}
+		bProcess = Process32Next(hProcessSnap, &pe32);
+	}
+	CloseHandle(hProcessSnap);
+
+	return wehcatPids;
+}
+
+/*
+* 根据进程名称获得进程ID列表
 */
 DWORD FindProcessPidByName(LPCSTR ProcessName)
 {
@@ -136,7 +170,7 @@ BOOL CheckProcessDllExists(DWORD dwProcessid, LPCSTR DllName) {
 
 
 /*
-* 根据进程名称及模块名称获得dll模块基地址
+* 根据进程ID及模块名称获得dll模块基地址
 */
 LPVOID FindDllAddressByProcssIdAndDllName(DWORD dwProcessid, LPCSTR DllName) {
 	HANDLE hModuleSnap = INVALID_HANDLE_VALUE;

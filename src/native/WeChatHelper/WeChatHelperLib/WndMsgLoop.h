@@ -9,6 +9,8 @@ extern LPCWSTR WeChatHelper;
 extern HWND hWnd;
 extern HMODULE dlModule;
 extern DWORD checkFailNum;
+extern DWORD pProcessId;
+
 
 void InitWindow(HMODULE hModule);
 void UnloadProc(HMODULE hModule);

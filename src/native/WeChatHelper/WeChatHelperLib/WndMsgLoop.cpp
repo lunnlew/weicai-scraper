@@ -21,6 +21,7 @@ LPCWSTR WeChatHelper;
 HWND hWnd;
 HMODULE dlModule;
 DWORD checkFailNum;
+DWORD pProcessId;
 
 // 初始化消息循环窗口
 void InitWindow(HMODULE hModule)
@@ -107,17 +108,29 @@ void UnRegisterWeChatHelper() {
 		LogRecord(L"UnRegisterWeChatHelper:未查找到WeChatCtl窗口", ofs);
 		return;
 	}
+
+	const wchar_t* c = StringToWchar_t(LPCWSTRtoString(WeChatHelper));
+
+	//分配长度
+	DWORD len = sizeof(WeChatHookReg) + sizeof(wchar_t*)*wcslen(c) + 1;
+	WeChatHookReg *msg = (WeChatHookReg *)malloc(len);
+
 	COPYDATASTRUCT chatmsg;
 	chatmsg.dwData = WM_UnRegWeChatHelper;// 保存一个数值, 可以用来作标志等
-	std::string s = LPCWSTRtoString(WeChatHelper);
-	chatmsg.cbData = s.length() + 1;// 待发送的数据的长
-	chatmsg.lpData = (char*)s.c_str();// 待发送的数据的起始地址
+
+	msg->pProcessId = pProcessId;
+	wcscpy_s(msg->WeChatHelperName, wcslen(c) + 1, c);
+
+	chatmsg.cbData = len;// 待发送的数据的长
+	chatmsg.lpData = msg;// 待发送的数据的起始地址
+
 	SendMessage(hWeChatRoot, WM_COPYDATA, NULL, (LPARAM)&chatmsg);
 
 	// 尝试注销
 	json o;
 	o["WeChatHelperName"] = stringToUTF8(LPCWSTRtoString(WeChatHelper));
 	o["Act"] = "UnRegisterWeChatHelper";
+	o["ProcessId"] = pProcessId;
 	HttpRequest httpReq("127.0.0.1", 6877);
 	std::string res = httpReq.HttpPost("/wechatRegister", o.dump());
 	std::string body = httpReq.getBody(res);
@@ -144,17 +157,29 @@ void RegisterWeChatHelper() {
 		LogRecord(L"RegisterWeChatHelper:未查找到WeChatCtl窗口", ofs);
 		return;
 	}
+
+	const wchar_t* c = StringToWchar_t(LPCWSTRtoString(WeChatHelper));
+
+	//分配长度
+	DWORD len = sizeof(WeChatHookReg) + sizeof(wchar_t*)*wcslen(c) + 1;
+	WeChatHookReg *msg = (WeChatHookReg *)malloc(len);
+
 	COPYDATASTRUCT chatmsg;
 	chatmsg.dwData = WM_RegWeChatHelper;// 保存一个数值, 可以用来作标志等
-	std::string s = LPCWSTRtoString(WeChatHelper);
-	chatmsg.cbData = s.length() + 1;// 待发送的数据的长
-	chatmsg.lpData = (char*)s.c_str();// 待发送的数据的起始地址
+
+	msg->pProcessId = pProcessId;
+	wcscpy_s(msg->WeChatHelperName, wcslen(c) + 1, c);
+
+	chatmsg.cbData = len;// 待发送的数据的长
+	chatmsg.lpData = msg;// 待发送的数据的起始地址
+
 	SendMessage(hWeChatRoot, WM_COPYDATA, NULL, (LPARAM)&chatmsg);
 
 	// 尝试注册
 	json o;
 	o["WeChatHelperName"] = stringToUTF8(LPCWSTRtoString(WeChatHelper));
 	o["Act"] = "RegisterWeChatHelper";
+	o["ProcessId"] = pProcessId;
 	HttpRequest httpReq("127.0.0.1", 6877);
 	std::string res = httpReq.HttpPost("/wechatRegister", o.dump());
 	std::string body = httpReq.getBody(res);

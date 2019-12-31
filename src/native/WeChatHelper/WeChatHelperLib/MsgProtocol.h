@@ -22,7 +22,15 @@ struct WeChatHookPoint
 
 };
 
+// WeChatHookReg
+struct WeChatHookReg
+{
+	DWORD pProcessId;
+	wchar_t WeChatHelperName[1];
+};
+
 extern WeChatHookPoint *sWeChatHookPoint;
+extern WeChatHookReg *sWeChatHookReg;
 
 //====消息状态类消息表示====
 

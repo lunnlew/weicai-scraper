@@ -16,13 +16,14 @@ VOID __declspec(dllexport) test()
 extern "C"  __declspec(dllexport) VOID sendCtlMsg(int MsgType) {
 	std::string WeChatHelperName = "WeChatHelper";
 	if (wehcatHelpers.size() > 0) {
-		WeChatHelperName = wehcatHelpers[0];
+		WeChatHookReg *wr = &(WeChatHookReg)wehcatHelpers[0];
+		WeChatHelperName = Wchar_tToString(wr->WeChatHelperName);
 	}
 	LogRecord(L"wehcatHelpers size:", ofs);
 	LogRecord(CharToTchar(std::to_string(wehcatHelpers.size()).c_str()), ofs);
 
 	LogRecord(L"wehcatHelpers list:", ofs);
-	LogRecord(CharToTchar(ListToString(wehcatHelpers).c_str()), ofs);
+	LogRecord(CharToTchar(HelperListToString(wehcatHelpers).c_str()), ofs);
 
 	HWND hWnd = FindWindow(NULL, StringToLPCWSTR(WeChatHelperName));
 	if (hWnd == NULL)

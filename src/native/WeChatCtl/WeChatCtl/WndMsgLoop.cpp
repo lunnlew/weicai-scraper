@@ -7,7 +7,7 @@
 #include "StringTool.h"
 #include "LogRecord.h"
 
-std::vector<std::string> wehcatHelpers;
+std::vector<WeChatHookReg> wehcatHelpers;
 
 // 初始化消息循环窗口
 void InitWindow(HMODULE hModule)
@@ -91,25 +91,41 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		}
 		case WM_RegWeChatHelper: {
 			LogRecord(L"收到WM_RegWeChatHelper指令", ofs);
-			std::string s = (char*)malloc(pCopyData->cbData);
-			s = (char*)pCopyData->lpData;
-			wehcatHelpers.push_back(s);
+
+			WeChatHookReg *msg = (WeChatHookReg *)malloc(pCopyData->cbData);
+			msg = (WeChatHookReg*)pCopyData->lpData;
+
+			bool isex = false;
+			std::vector<WeChatHookReg>::iterator it;
+			for (it = wehcatHelpers.begin(); it != wehcatHelpers.end();)
+			{
+				if (strcmp(Wchar_tToString(it->WeChatHelperName).c_str() , Wchar_tToString(msg->WeChatHelperName).c_str()))
+					isex = true;
+				else
+					++it;
+			}
+
+			if (!isex) {
+				wehcatHelpers.push_back(*msg);
+			}
 
 			LogRecord(L"wehcatHelpers size:", ofs);
 			LogRecord(CharToTchar(std::to_string(wehcatHelpers.size()).c_str()), ofs);
 
 			LogRecord(L"wehcatHelpers list:", ofs);
-			LogRecord(CharToTchar(ListToString(wehcatHelpers).c_str()), ofs);
+			LogRecord(CharToTchar(HelperListToString(wehcatHelpers).c_str()), ofs);
 			break;
 		}
 		case WM_UnRegWeChatHelper: {
 			LogRecord(L"收到WM_UnRegWeChatHelper指令", ofs);
-			std::string s = (char*)malloc(pCopyData->cbData);
-			s = (char*)pCopyData->lpData;
-			std::vector<std::string>::iterator it;
+
+			WeChatHookReg *msg = (WeChatHookReg *)malloc(pCopyData->cbData);
+			msg = (WeChatHookReg*)pCopyData->lpData;
+
+			std::vector<WeChatHookReg>::iterator it;
 			for (it=wehcatHelpers.begin(); it!=wehcatHelpers.end();)
 			{
-				if (*it==s)
+				if (strcmp(Wchar_tToString(it->WeChatHelperName).c_str(), Wchar_tToString(msg->WeChatHelperName).c_str()))
 					it = wehcatHelpers.erase(it);
 				else
 					++it; 
@@ -119,7 +135,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			LogRecord(CharToTchar(std::to_string(wehcatHelpers.size()).c_str()), ofs);
 
 			LogRecord(L"wehcatHelpers list:", ofs);
-			LogRecord(CharToTchar(ListToString(wehcatHelpers).c_str()), ofs);
+			LogRecord(CharToTchar(HelperListToString(wehcatHelpers).c_str()), ofs);
 			break;
 		}
 		default:

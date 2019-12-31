@@ -18,6 +18,7 @@ DWORD ReciveMsg_dwParam = 0;
 DWORD ReciveMsg_RetAddr = 0;
 
 WeChatHookPoint * sWeChatHookPoint = new WeChatHookPoint();
+WeChatHookReg *sWeChatHookReg = new WeChatHookReg();
 
 void HOOK_ReciveMsg() {
 	if (sWeChatHookPoint->enable_WX_ReciveMsg_Hook) {
