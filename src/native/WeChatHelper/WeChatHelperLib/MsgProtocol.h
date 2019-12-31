@@ -13,6 +13,17 @@ struct WeChatMessage
 	wchar_t content[1];	//消息内容
 };
 
+// hook状态
+struct WeChatHookPoint
+{
+	//====接收消息HOOK====
+	bool enable_WX_ReciveMsg_Hook = false;
+	CHAR WX_ReciveMsg_Hook[5] = { 0 };
+
+};
+
+extern WeChatHookPoint *sWeChatHookPoint;
+
 //====消息状态类消息表示====
 
 //====动作请求类消息表示====
@@ -25,22 +36,10 @@ struct WeChatMessage
 #define WM_UnRegWeChatHelper 506 // WeChatHelper注销
 
 
-//====代码覆写类HOOK====
+//====接收消息HOOK====
 void HOOK_ReciveMsg();
-void HOOK_AntiRevoke();
-void HOOK_SaveQrCode();
-
-//====代码执行类HOOK====
-// 显示登陆二维码
-void WX_CallShowQrCode();
-// 卸载WX_SaveQrCode
-void WX_SaveQrCode_Unhook(DWORD dwHookOffset);
-void invokeSaveImg();
-void SaveImg(DWORD qrcode);
-// 检查是否登录
-void CheckIsLogin();
-
+void UnHOOK_ReciveMsg();
 void RecieveWxMesage();
 void SendWxMessage();
-
 std::wstring GetMsgByAddress(DWORD memAddress);
+

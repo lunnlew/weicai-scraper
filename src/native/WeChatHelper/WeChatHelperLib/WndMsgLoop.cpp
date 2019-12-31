@@ -9,11 +9,8 @@
 #include "HttpRequest.h"
 #include "json.hpp"
 
-
-
 #pragma comment(lib, "rpcrt4.lib")
 #include <rpc.h>
-
 
 using json = nlohmann::json;
 
@@ -22,11 +19,13 @@ using namespace std;
 DWORD isRegisterWnd;
 LPCWSTR WeChatHelper;
 HWND hWnd;
+HMODULE dlModule;
 
 // 初始化消息循环窗口
 void InitWindow(HMODULE hModule)
 {
 	LogRecord(L"InitWindow", ofs);
+	dlModule = hModule;
 
 	UUID uuid;
 	UuidCreate(&uuid);
@@ -43,6 +42,31 @@ void InitWindow(HMODULE hModule)
 	RpcStringFreeA((RPC_CSTR*)&str);
 
 	RegisterWindow(hModule);
+}
+
+void UnloadProc(HMODULE hModule) {
+	LogRecord(L"进行卸载dll", ofs);
+	FreeLibraryAndExitThread(dlModule, 0);
+}
+
+// 卸载注册
+void  CALLBACK Do_UnloadProc(HWND   hwnd, UINT   uMsg, UINT   idEvent, DWORD   dwTime)
+{
+	//控制窗口
+	HWND hWeChatRoot = FindWindow(NULL, L"WeChatCtl");
+	if (hWeChatRoot == NULL)
+	{
+		LogRecord(L"未查找到WeChatCtl窗口,开始进行DLL卸载", ofs);
+		LogRecord(L"复原所有的HOOK点", ofs);
+		if (sWeChatHookPoint->enable_WX_ReciveMsg_Hook) {
+			LogRecord(L"复原WX_ReciveMsg_Hook", ofs);
+			UnHOOK_ReciveMsg();
+		}
+
+		HANDLE hThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)UnloadProc, NULL, 0, NULL);
+		CloseHandle(hThread);
+		return;
+	}
 }
 
 // 注册窗口及消息循环
@@ -77,7 +101,8 @@ void RegisterWindow(HMODULE hModule)
 	);
 
 
-	SetTimer(hWnd, 1, 1000, Do_RegisterWeChatHelper);
+	SetTimer(hWnd, 1, 1*1000, Do_RegisterWeChatHelper);
+	SetTimer(hWnd, 2, 60*1000, Do_UnloadProc);
 
 	//4  更新显示窗口
 	ShowWindow(hWnd, SW_HIDE);
@@ -192,7 +217,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		{
 		case WM_CheckIsLogin: {
 			LogRecord(L"收到WM_CheckIsLogin指令", ofs);
-			CheckIsLogin();
 			break;
 		}
 		case WM_HookReciveMsg: {
@@ -202,13 +226,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		}
 		case WM_HookAntiRevoke: {
 			LogRecord(L"收到WM_HookAntiRevoke指令", ofs);
-			HOOK_AntiRevoke();
 			break;
 		}
 		case WM_ShowQrCode: {
 			LogRecord(L"收到WM_ShowQrCode指令", ofs);
-			WX_CallShowQrCode();
-			HOOK_SaveQrCode();
 			break;
 		}
 		default:
