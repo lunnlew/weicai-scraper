@@ -99,13 +99,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			msg = (WeChatHookReg*)pCopyData->lpData;
 
 			bool isex = false;
-			std::vector<WeChatHookReg>::iterator it;
-			for (it = wehcatHelpers.begin(); it != wehcatHelpers.end();)
+			for (std::vector<WeChatHookReg>::iterator it = wehcatHelpers.begin(); it != wehcatHelpers.end();)
 			{
-				if (strcmp(Wchar_tToString(it->WeChatHelperName).c_str() , Wchar_tToString(msg->WeChatHelperName).c_str())==0)
+				if (strcmp(Wchar_tToString(it->WeChatHelperName).c_str(), Wchar_tToString(msg->WeChatHelperName).c_str()) == 0) {
 					isex = true;
-				else
-					++it;
+				}
+				++it;
 			}
 
 			if (!isex) {

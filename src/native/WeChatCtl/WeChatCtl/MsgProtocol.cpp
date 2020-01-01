@@ -18,8 +18,7 @@ std::string ListToString(std::vector<std::string> list) {
 
 std::string HelperListToString(std::vector<struct WeChatHookReg> list) {
 	std::string res;
-	std::vector<struct WeChatHookReg>::iterator it;
-	for (it = list.begin(); it != list.end();)
+	for (std::vector<struct WeChatHookReg>::iterator it = list.begin(); it != list.end();)
 	{
 		res += std::to_string(it->pProcessId);
 		res += ":";
