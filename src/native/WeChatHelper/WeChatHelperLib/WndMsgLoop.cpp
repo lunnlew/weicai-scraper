@@ -193,7 +193,6 @@ void  CALLBACK Do_RegisterWeChatHelper(HWND   hwnd, UINT   uMsg, UINT   idEvent,
 	}
 }
 
-
 // ¿ØÖÆ¶ËÐÄÌø¼ì²â
 void  CALLBACK Do_CheckWeChatCtrl(HWND   hwnd, UINT   uMsg, UINT   idEvent, DWORD   dwTime)
 {
