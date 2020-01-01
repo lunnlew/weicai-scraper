@@ -132,6 +132,9 @@ export default {
       }, {
         'name': '公众号',
         'view': 'ListView/accounts'
+      }, {
+        'name': 'PC微信',
+        'view': 'WechatView/index'
       }],
       menusScraper: [{
         'name': '提交链接',

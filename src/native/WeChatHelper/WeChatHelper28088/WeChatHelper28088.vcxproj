@@ -150,16 +150,21 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\WeChatHelperLib\HookOffset.h" />
+    <ClInclude Include="..\WeChatHelperLib\HttpRequest.h" />
+    <ClInclude Include="..\WeChatHelperLib\json.hpp" />
     <ClInclude Include="..\WeChatHelperLib\LogRecord.h" />
     <ClInclude Include="..\WeChatHelperLib\MsgProtocol.h" />
+    <ClInclude Include="..\WeChatHelperLib\StringTool.h" />
     <ClInclude Include="..\WeChatHelperLib\WCProcess.h" />
     <ClInclude Include="..\WeChatHelperLib\WndMsgLoop.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\WeChatHelperLib\HttpRequest.cpp" />
     <ClCompile Include="..\WeChatHelperLib\LogRecord.cpp" />
     <ClCompile Include="..\WeChatHelperLib\MsgProtocol.cpp" />
+    <ClCompile Include="..\WeChatHelperLib\StringTool.cpp" />
     <ClCompile Include="..\WeChatHelperLib\WCProcess.cpp" />
     <ClCompile Include="..\WeChatHelperLib\WndMsgLoop.cpp" />
     <ClCompile Include="dllmain.cpp" />

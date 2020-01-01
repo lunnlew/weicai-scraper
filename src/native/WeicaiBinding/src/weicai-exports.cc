@@ -266,19 +266,24 @@ void Exp_startCtrlClient(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 */
 void Exp_sendCtlMsg(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 	
-	if (info.Length() != 1) {
-		Nan::ThrowTypeError("必须且仅支持一个参数\n");
+	if (info.Length() != 2) {
+		Nan::ThrowTypeError("必须且仅支持两个参数\n");
 		return;
 	}
-	if (!info[0]->IsNumber()) {
+	if (!info[0]->IsString()) {
+		Nan::ThrowTypeError("参数必须是字符串类型\n");
+		return;
+	}
+	if (!info[1]->IsNumber()) {
 		Nan::ThrowTypeError("参数必须是数字类型\n");
 		return;
 	}
-
 	if (hDLL!=NULL) {
-		typedef void(*sendCtlMsg)(int);
+		typedef void(*sendCtlMsg)(const char*, int);
 		sendCtlMsg func=(sendCtlMsg)GetProcAddress(hDLL,"sendCtlMsg");
-		func(info[0]->NumberValue());
+		v8::Local<v8::String> wName = v8::Local<v8::String>::Cast(info[0]);
+		v8::String::Utf8Value utfwName(wName);
+		func(std::string(*utfwName).c_str(), info[1]->NumberValue());
 		info.GetReturnValue().Set(Nan::New(true));
 	}else{
 		info.GetReturnValue().Set(Nan::New(false));

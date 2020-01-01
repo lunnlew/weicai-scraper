@@ -227,15 +227,12 @@ appServer.route(function(self) {
     console.log(req.body)
     let action = req.query.act || ''
     switch (action) {
-      case "startWechatHelper":
+      case "startMonitor":
         {
-          weChatCtl.startWechatHelper();
-          res.send({ code: 200, msg: 'proxy', data: {} })
-          break;
-        }
-      case "startAntiRevoke":
-        {
-          weChatCtl.startAntiRevoke();
+          // 启动控制端
+          weChatCtl.startWechatCtl();
+          // 开始微信进程注入
+          weChatCtl.startWechatHelperInject();
           res.send({ code: 200, msg: 'proxy', data: {} })
           break;
         }
@@ -245,6 +242,25 @@ appServer.route(function(self) {
           break
         }
     }
+  })
+})
+
+appServer.route(function(self) {
+  self.app.all('/wechatRegister', async function(req, res) {
+    console.log('wechatRegister')
+    console.log(req.body)
+
+    setTimeout(function() {
+      WeicaiBinding.sendCtlMsg(req.body.WeChatHelperName, 502)
+    }, 200)
+
+    if (self.ws['wcclient']) {
+      self.ws['wcclient'].send(JSON.stringify({
+        'type': "wechatRegister",
+        'data': req.body
+      }))
+    }
+    res.send({ code: 200, msg: '', data: {} })
   })
 })
 

@@ -4,11 +4,13 @@
 // 窗口消息循环
 #include "WndMsgLoop.h"
 
+
 //在使用Debug远程调试DLL必须要有__declspec函数 导出
 DLLAPI void test()
 {
 	OutputDebugStringA("__declspec(dllexport) test() \r\n");
 }
+
 
 BOOL APIENTRY DllMain(HMODULE hModule,
 	DWORD  ul_reason_for_call,
@@ -18,12 +20,16 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 	switch (ul_reason_for_call)
 	{
 	case DLL_PROCESS_ATTACH: {
+		pProcessId = GetCurrentProcessId();
 		CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)InitWindow, hModule, 0, NULL);
 		break;
 	}
 	case DLL_THREAD_ATTACH:
+		break;
 	case DLL_THREAD_DETACH:
+		break;
 	case DLL_PROCESS_DETACH:
+		UnRegisterWeChatHelper();
 		break;
 	}
 	return TRUE;

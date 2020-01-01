@@ -5,55 +5,37 @@
       <div class="pageHeaderRight"></div>
     </div>
     <div class="PageContent">
-      <div class="Page">
-        <Tabs value="name1">
-          <TabPane label="监控设置" name="name1">
-            <span class="label">启用监控模式</span>
-            <i-switch size="large" v-model="boolSwitchMonitor" @on-change="switchMonitorChange">
-              <span slot="open">开启</span>
-              <span slot="close">关闭</span>
-            </i-switch>
-            <!-- <span class="label">启用消息防撤回</span>
-            <i-switch size="large" v-model="boolSwitchAntiRevoke" @on-change="switchAntiRevokeChange">
-              <span slot="open">开启</span>
-              <span slot="close">关闭</span>
-            </i-switch> -->
-          </TabPane>
-        </Tabs>
+      <div class="PageScroller">
+        <div class="ListContainer">
+          <Table stripe :columns="columns" :data="list">
+            <template slot-scope="{ row, index }" slot="action">
+              <Button type="error" size="small">删除</Button>
+            </template>
+          </Table>
+        </div>
       </div>
     </div>
   </div>
 </template>
 <script>
 export default {
-  name: 'MonitorView',
+  name: 'wechatView',
   components: {},
   props: [],
   data: () => {
-    return {}
-  },
-  methods: {
-    switchMonitorChange(status) {
-      this.$store.dispatch('switchMonitor', status)
-    },
-    switchAntiRevokeChange(status) {
-      this.$store.dispatch('switchAntiRevoke', status)
+    return {
+      columns: [{
+        title: '窗口对象',
+        key: 'WeChatHelperName'
+      }]
     }
   },
+  methods: {},
   mounted() {},
   watch: {},
   computed: {
-    boolSwitchMonitor: {
-      get: function() {
-        return this.$store.state.ListView.boolSwitchMonitor
-      },
-      set: function(v) {}
-    },
-    boolSwitchAntiRevoke: {
-      get: function() {
-        return this.$store.state.ListView.boolSwitchAntiRevoke
-      },
-      set: function(v) {}
+    list() {
+      return this.$store.state.wechatView.list
     }
   }
 }
@@ -112,6 +94,57 @@ export default {
   flex-grow: 1;
 }
 
+.infoWrapper {
+  display: block;
+  position: absolute;
+  z-index: 1000;
+  top: 0;
+  bottom: 0;
+  left: 60%;
+  right: 0;
+  background-color: rgba(102, 102, 102, 0.37);
+  overflow: hidden;
+  -webkit-box-shadow: -3px 0px 6px 0px rgba(128, 128, 128, 0.56);
+  -moz-box-shadow: -3px 0px 6px 0px rgba(128, 128, 128, 0.56);
+  box-shadow: -3px 0px 6px 0px rgba(128, 128, 128, 0.56);
+  will-change: left;
+}
+
+.relativeWrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.contentWrapper {
+  color: #1a1a1a;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.content {
+  background: #fff;
+  overflow: auto;
+  width: 100%;
+  height: 100%;
+  position: relative;
+
+  padding: 5px 15px;
+  height: 100%;
+  word-wrap: break-word;
+
+  .btns {
+    border-radius: 0 0 3px 3px;
+    padding: 2px 5px;
+    position: absolute;
+    top: 5px;
+    right: 0;
+    color: #b2b2b2;
+    cursor: pointer;
+  }
+}
 
 .PageScroller {
   position: absolute;
@@ -148,20 +181,16 @@ export default {
   }
 }
 
-
-.Page {
-
-  font-size: 13px;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  height: 100%;
-
+.ListContainer {
   perspective: 500px;
   padding: 0px 30px 50px 30px;
   background-color: #fff;
+}
 
+.ListItem {}
+
+.ivu-tabs {
+  word-break: break-word;
 }
 
 </style>

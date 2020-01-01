@@ -54,9 +54,6 @@ const mutations = {
   },
   switchMonitor(state, enable) {
     state.boolSwitchMonitor = enable;
-  },
-  switchAntiRevoke(state, enable) {
-    state.boolSwitchAntiRevoke = enable;
   }
 }
 
@@ -111,15 +108,9 @@ const actions = {
   },
   switchMonitor({ commit }, enable) {
     wechatAct({
-      'act': enable ? 'startWechatHelper' : 'closeWechatHelper'
+      'act': enable ? 'startMonitor' : 'closeMonitor'
     }).then(result => {})
     commit('switchMonitor', enable)
-  },
-  switchAntiRevoke({ commit }, enable) {
-    wechatAct({
-      'act': enable ? 'startAntiRevoke' : 'closeAntiRevoke'
-    }).then(result => {})
-    commit('switchAntiRevoke', enable)
   }
 }
 

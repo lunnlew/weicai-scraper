@@ -14,3 +14,6 @@
 
 
 // 在此处引用程序需要的其他标头
+
+// 导出定义
+#define DLLAPI _declspec(dllexport)

@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <vector>
 
 # define WeChatMessageA(size) (WeChatMessage*) std::malloc(size)
 
@@ -15,6 +16,13 @@ struct WeChatMessage
 	wchar_t content[1];	//消息内容
 };
 
+// WeChatHookReg
+struct WeChatHookReg
+{
+	DWORD pProcessId;
+	wchar_t WeChatHelperName[50];
+};
+
 //====消息状态类消息表示====
 
 //====动作请求类消息表示====
@@ -23,6 +31,10 @@ struct WeChatMessage
 #define WM_ShowQrCode 1		// 取得微信登陆二维码
 #define WM_CheckIsLogin 501	// 检查是否登录
 #define WM_ReciveMsg 503	// 消息接收
+#define WM_RegWeChatHelper 505 // WeChatHelper注册
+#define WM_UnRegWeChatHelper 506 // WeChatHelper注销
 
 
 void sendWeChatMessage(WeChatMessage *msg);
+
+extern std::vector<WeChatHookReg> wehcatHelpers;

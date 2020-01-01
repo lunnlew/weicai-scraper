@@ -3,7 +3,8 @@
 // 窗口消息循环
 #include "WndMsgLoop.h"
 #include "MsgProtocol.h"
-
+#include "LogRecord.h"
+#include "StringTool.h"
 
 //在使用Debug远程调试DLL必须要有__declspec函数 导出
 VOID __declspec(dllexport) test()
@@ -12,11 +13,22 @@ VOID __declspec(dllexport) test()
 }
 
 // 发送控制消息到WeChatHelper
-extern "C"  __declspec(dllexport) VOID sendCtlMsg(int MsgType) {
-	HWND hWnd = FindWindow(NULL, L"WeChatHelper");
+extern "C"  __declspec(dllexport) VOID sendCtlMsg(const char* wName, int MsgType) {
+	std::string WeChatHelperName = "WeChatHelper";
+	if (wehcatHelpers.size() > 0) {
+		WeChatHookReg *wr = &(WeChatHookReg)wehcatHelpers[0];
+		WeChatHelperName = Wchar_tToString(wr->WeChatHelperName);
+	}
+	LogRecord(L"wehcatHelpers size:", ofs);
+	LogRecord(CharToTchar(std::to_string(wehcatHelpers.size()).c_str()), ofs);
+
+	LogRecord(L"wehcatHelpers list:", ofs);
+	LogRecord(CharToTchar(HelperListToString(wehcatHelpers).c_str()), ofs);
+
+	HWND hWnd = FindWindow(NULL, StringToLPCWSTR(WeChatHelperName));
 	if (hWnd == NULL)
 	{
-		OutputDebugStringA("未查找到WeChatHelper窗口");
+		LogRecord(L"未查找到WeChatHelper窗口", ofs);
 		return;
 	}
 	COPYDATASTRUCT chatmsg;
@@ -38,8 +50,11 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 		break;
 	}
 	case DLL_THREAD_ATTACH:
+		break;
 	case DLL_THREAD_DETACH:
+		break;
 	case DLL_PROCESS_DETACH:
+		FreeLibraryAndExitThread(hModule, 0);
 		break;
 	}
 	return TRUE;
