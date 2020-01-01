@@ -13,7 +13,7 @@ VOID __declspec(dllexport) test()
 }
 
 // 发送控制消息到WeChatHelper
-extern "C"  __declspec(dllexport) VOID sendCtlMsg(int MsgType) {
+extern "C"  __declspec(dllexport) VOID sendCtlMsg(const char* wName, int MsgType) {
 	std::string WeChatHelperName = "WeChatHelper";
 	if (wehcatHelpers.size() > 0) {
 		WeChatHookReg *wr = &(WeChatHookReg)wehcatHelpers[0];
