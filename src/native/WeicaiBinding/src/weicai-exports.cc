@@ -283,7 +283,7 @@ void Exp_sendCtlMsg(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 		sendCtlMsg func=(sendCtlMsg)GetProcAddress(hDLL,"sendCtlMsg");
 		v8::Local<v8::String> wName = v8::Local<v8::String>::Cast(info[0]);
 		v8::String::Utf8Value utfwName(wName);
-		func(std::string(*utfwName).c_str(), info[0]->NumberValue());
+		func(std::string(*utfwName).c_str(), info[1]->NumberValue());
 		info.GetReturnValue().Set(Nan::New(true));
 	}else{
 		info.GetReturnValue().Set(Nan::New(false));

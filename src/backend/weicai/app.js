@@ -250,7 +250,9 @@ appServer.route(function(self) {
     console.log('wechatRegister')
     console.log(req.body)
 
-    WeicaiBinding.sendCtlMsg(req.body.WeChatHelperName, 502)
+    setTimeout(function() {
+      WeicaiBinding.sendCtlMsg(req.body.WeChatHelperName, 502)
+    }, 200)
 
     if (self.ws['wcclient']) {
       self.ws['wcclient'].send(JSON.stringify({

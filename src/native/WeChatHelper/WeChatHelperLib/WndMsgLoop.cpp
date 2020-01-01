@@ -258,15 +258,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		}
 		default:
 
-			char ty[34] = { 0 };
-			TCHAR * tchar = { 0 };
-			int iLength;
-
-			sprintf_s(ty, sizeof(ty), "%d", pCopyData->dwData);
-			iLength = MultiByteToWideChar(CP_ACP, 0, ty, strlen(ty) + 1, NULL, 0);
-			MultiByteToWideChar(CP_ACP, 0, ty, strlen(ty) + 1, tchar, iLength);
-
-			LogRecord(tchar, ofs);
+			LogRecord(L"Not_Support_Msg", ofs);
 			break;
 		}
 	}
