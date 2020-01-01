@@ -32,24 +32,19 @@ std::string HttpRequest::HttpGet(std::string req)
 		int errNo = connect(clientSocket, (sockaddr*)&ServerAddr, sizeof(ServerAddr));
 		if (errNo == 0)
 		{
-			//  "GET /[req] HTTP/1.1\r\n"  
-			//  "Connection:Keep-Alive\r\n"
-			//  "Accept-Encoding:gzip, deflate\r\n"  
-			//  "Accept-Language:zh-CN,en,*\r\n"
-			//  "User-Agent:Mozilla/5.0\r\n\r\n";
 			std::string strSend = " HTTP/1.1\r\n"
 				"Cookie:16888\r\n\r\n";
 			strSend = "GET " + req + strSend;
 
 			// 发送
 			errNo = send(clientSocket, strSend.c_str(), strSend.length(), 0);
-			if (errNo > 0)
+			if (errNo <= 0)
 			{
-				//cout << "发送成功" << endl;
-			}
-			else
-			{
-				std::cout << "errNo:" << errNo << std::endl;
+				//关闭套接字
+				closesocket(clientSocket);
+				// socket环境清理
+				::WSACleanup();
+
 				return ret;
 			}
 
@@ -58,25 +53,27 @@ std::string HttpRequest::HttpGet(std::string req)
 			errNo = recv(clientSocket, bufRecv, 3069, 0);
 			if (errNo > 0)
 			{
-				ret = bufRecv;// 如果接收成功，则返回接收的数据内容  
-			}
-			else
-			{
-				std::cout << "errNo:" << errNo << std::endl;
-				return ret;
+				// 如果接收成功，则返回接收的数据内容  
+				//关闭套接字
+				closesocket(clientSocket);
+				// socket环境清理
+				::WSACleanup();
+				return bufRecv;
 			}
 		}
 		else
 		{
 			errNo = WSAGetLastError();
-			std::cout << "errNo:" << errNo << std::endl;
 		}
+
+		//关闭套接字
+		closesocket(clientSocket);
 		// socket环境清理
 		::WSACleanup();
 	}
 	catch (...)
 	{
-		return "";
+		;
 	}
 	return ret;
 }
@@ -89,10 +86,14 @@ std::string HttpRequest::HttpPost(std::string req, std::string data)
 	{
 		// 开始进行socket初始化;
 		WSADATA wData;
-		::WSAStartup(MAKEWORD(2, 2), &wData);
 
-		SOCKET clientSocket = socket(AF_INET, 1, 0);
+		if (WSAStartup(MAKEWORD(1, 1), &wData) != 0) {
+			return ret;
+		}
+		SOCKET clientSocket = socket(AF_INET, SOCK_STREAM, 0);
 		struct sockaddr_in ServerAddr = { 0 };
+		ZeroMemory((char *)&ServerAddr, sizeof(ServerAddr));
+
 		ServerAddr.sin_addr.s_addr = inet_addr(m_ip.c_str());
 		ServerAddr.sin_port = htons(m_port);
 		ServerAddr.sin_family = AF_INET;
@@ -103,58 +104,54 @@ std::string HttpRequest::HttpPost(std::string req, std::string data)
 			char len[10] = { 0 };
 			sprintf_s(len, "%d", data.length());
 			std::string strLen = len;
-
-			//  "POST /[req] HTTP/1.1\r\n"
-			//  "Connection:Keep-Alive\r\n"
-			//  "Accept-Encoding:gzip, deflate\r\n"
-			//  "Accept-Language:zh-CN,en,*\r\n"
-			//  "Content-Length:[len]\r\n"
-			//  "Content-Type:application/x-www-form-urlencoded; charset=UTF-8\r\n"
-			//  "User-Agent:Mozilla/5.0\r\n\r\n"
-			//  "[data]\r\n\r\n";
 			std::string strSend = " HTTP/1.1\r\n"
 				"Cookie:16888\r\n"
 				"Content-Type:application/json\r\n"
 				"Charset:utf-8\r\n"
 				"Content-Length:";
 			strSend = "POST " + req + strSend + strLen + "\r\n\r\n" + data;
-
 			// 发送
 			errNo = send(clientSocket, strSend.c_str(), strSend.length(), 0);
-			if (errNo > 0)
+			if (errNo <= 0)
 			{
-				//cout<<"发送成功\n";
-			}
-			else
-			{
-				std::cout << "errNo:" << errNo << std::endl;
+				// 发送失败
+				//关闭套接字
+				closesocket(clientSocket);
+				// socket环境清理
+				::WSACleanup();
 				return ret;
 			}
 
 			// 接收
 			char bufRecv[3069] = { 0 };
 			errNo = recv(clientSocket, bufRecv, 3069, 0);
+
 			if (errNo > 0)
 			{
-				ret = bufRecv;// 如果接收成功，则返回接收的数据内容
-			}
-			else
-			{
-				std::cout << "errNo:" << errNo << std::endl;
-				return ret;
+				// 如果接收成功，则返回接收的数据内容
+
+				//关闭套接字
+				closesocket(clientSocket);
+				// socket环境清理
+				::WSACleanup();
+				return  bufRecv;
 			}
 		}
 		else
 		{
 			errNo = WSAGetLastError();
 		}
+
+		//关闭套接字
+		closesocket(clientSocket);
 		// socket环境清理
 		::WSACleanup();
 	}
 	catch (...)
 	{
-		return "";
+		;
 	}
+
 	return ret;
 }
 

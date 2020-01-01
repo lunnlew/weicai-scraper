@@ -22,6 +22,7 @@ public:
 
 	// 根据key从Response获取Header中的内容
 	static std::string getHeader(std::string respose, std::string key);
+	static std::string getBody(std::string respose);
 
 private:
 	std::string         m_ip;

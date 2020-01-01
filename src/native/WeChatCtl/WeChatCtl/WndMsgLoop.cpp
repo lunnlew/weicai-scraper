@@ -6,8 +6,11 @@
 #include "MsgProtocol.h"
 #include "StringTool.h"
 #include "LogRecord.h"
+#include "HttpRequest.h"
+#include "json.hpp"
 
 std::vector<WeChatHookReg> wehcatHelpers;
+using json = nlohmann::json;
 
 // 初始化消息循环窗口
 void InitWindow(HMODULE hModule)
@@ -99,7 +102,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			std::vector<WeChatHookReg>::iterator it;
 			for (it = wehcatHelpers.begin(); it != wehcatHelpers.end();)
 			{
-				if (strcmp(Wchar_tToString(it->WeChatHelperName).c_str() , Wchar_tToString(msg->WeChatHelperName).c_str()))
+				if (strcmp(Wchar_tToString(it->WeChatHelperName).c_str() , Wchar_tToString(msg->WeChatHelperName).c_str())==0)
 					isex = true;
 				else
 					++it;
@@ -125,11 +128,33 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			std::vector<WeChatHookReg>::iterator it;
 			for (it=wehcatHelpers.begin(); it!=wehcatHelpers.end();)
 			{
-				if (strcmp(Wchar_tToString(it->WeChatHelperName).c_str(), Wchar_tToString(msg->WeChatHelperName).c_str()))
+				if (strcmp(Wchar_tToString(it->WeChatHelperName).c_str(), Wchar_tToString(msg->WeChatHelperName).c_str())==0)
 					it = wehcatHelpers.erase(it);
 				else
 					++it; 
 			}
+
+			// 尝试注销
+			json o;
+			o["WeChatHelperName"] = stringToUTF8(LPCWSTRtoString(msg->WeChatHelperName));
+			o["Act"] = "UnRegisterWeChatHelper";
+			o["ProcessId"] = msg->pProcessId;
+			HttpRequest httpReq("127.0.0.1", 6877);
+			std::string res = httpReq.HttpPost("/wechatRegister", o.dump());
+			std::string body = httpReq.getBody(res);
+			int code = 201;
+			if (body != "") {
+				auto bd = json::parse(body);
+				code = bd["code"].get<int>();
+			}
+
+			if (code == 200) {
+				LogRecord(L"UnRegisterWeChatHelper:WeChatHelper注销成功", ofs);
+			}
+			else {
+				LogRecord(L"UnRegisterWeChatHelper:WeChatHelper注销失败", ofs);
+			}
+
 
 			LogRecord(L"wehcatHelpers size:", ofs);
 			LogRecord(CharToTchar(std::to_string(wehcatHelpers.size()).c_str()), ofs);

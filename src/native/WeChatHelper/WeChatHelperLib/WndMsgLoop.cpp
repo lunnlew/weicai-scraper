@@ -116,7 +116,7 @@ void UnRegisterWeChatHelper() {
 	WeChatHookReg *msg = (WeChatHookReg *)malloc(len);
 
 	COPYDATASTRUCT chatmsg;
-	chatmsg.dwData = WM_UnRegWeChatHelper;// 保存一个数值, 可以用来作标志等
+	chatmsg.dwData = WM_UnRegWeChatHelper;
 
 	msg->pProcessId = pProcessId;
 	wcscpy_s(msg->WeChatHelperName, wcslen(c) + 1, c);
@@ -126,27 +126,9 @@ void UnRegisterWeChatHelper() {
 
 	SendMessage(hWeChatRoot, WM_COPYDATA, NULL, (LPARAM)&chatmsg);
 
-	// 尝试注销
-	json o;
-	o["WeChatHelperName"] = stringToUTF8(LPCWSTRtoString(WeChatHelper));
-	o["Act"] = "UnRegisterWeChatHelper";
-	o["ProcessId"] = pProcessId;
-	HttpRequest httpReq("127.0.0.1", 6877);
-	std::string res = httpReq.HttpPost("/wechatRegister", o.dump());
-	std::string body = httpReq.getBody(res);
-	int code = 201;
-	if (body != "") {
-		auto bd = json::parse(body);
-		code = bd["code"].get<int>();
-	}
+	isRegisterWnd = false;
 
-	if (code == 200) {
-		isRegisterWnd = false;
-		LogRecord(L"UnRegisterWeChatHelper:WeChatHelper注销成功", ofs);
-	}
-	else {
-		LogRecord(L"UnRegisterWeChatHelper:WeChatHelper注销失败", ofs);
-	}
+	// 未知原因，如果在此处使用sock发送的话，无法发送。
 }
 
 void RegisterWeChatHelper() {

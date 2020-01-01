@@ -1,6 +1,7 @@
 #pragma once
 #include <atlbase.h>  
 #include <string>
+#include <vector>
 
 #pragma comment(lib, "version.lib")
 
