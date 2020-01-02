@@ -3,6 +3,7 @@
     <div class="pageHeader">
       <div class="pageHeaderLeft">
         <Button type="primary" :loading="loadingOpen" @click="newWechat">新开微信</Button>
+        <Button type="primary" @click="closeAllWechat">全部关闭</Button>
       </div>
       <div class="pageHeaderRight"></div>
     </div>
@@ -38,6 +39,9 @@ export default {
   methods: {
     newWechat() {
       this.$store.dispatch('newWechat')
+    },
+    closeAllWechat() {
+      this.$store.dispatch('closeAllWechat')
     }
   },
   mounted() {},

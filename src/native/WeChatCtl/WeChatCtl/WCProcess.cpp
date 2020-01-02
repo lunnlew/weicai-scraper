@@ -152,3 +152,22 @@ BOOL ProcessDllInject(DWORD dwProcessid, LPCSTR DllPath, LPCSTR DllName) {
 
 	return true;
 }
+
+bool closeAllProcess(const wchar_t *ProcessName)
+{
+	char debugInfo[0x1000] = { 0 };
+	HANDLE ProcesssAll = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
+	PROCESSENTRY32 proessInfo = { 0 };
+	proessInfo.dwSize = sizeof(PROCESSENTRY32);
+	do
+	{
+		if (wcscmp(ProcessName, proessInfo.szExeFile) == 0) {
+			HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, false, proessInfo.th32ProcessID);
+			if (hProcess != NULL) {
+				TerminateProcess(hProcess, 0);
+			}
+		}
+	} while (Process32Next(ProcesssAll, &proessInfo));
+
+	return true;
+}

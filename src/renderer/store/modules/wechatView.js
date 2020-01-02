@@ -35,6 +35,11 @@ const actions = {
     }).then(result => {
       commit('newWechatState', data)
     })
+  },
+  closeAllWechat({ commit }, data) {
+    wechatAct({
+      'act': 'closeAllWechat'
+    }).then(result => {})
   }
 }
 

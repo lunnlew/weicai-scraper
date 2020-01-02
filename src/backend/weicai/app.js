@@ -242,6 +242,12 @@ appServer.route(function(self) {
           res.send({ code: 200, msg: '新开完成', data: {} })
           break
         }
+      case 'closeAllWechat':
+        {
+          weChatCtl.closeAllWechat()
+          res.send({ code: 200, msg: '关闭完成', data: {} })
+          break
+        }
       default:
         {
           res.send({ code: 200, msg: '未支持操作', data: {} })

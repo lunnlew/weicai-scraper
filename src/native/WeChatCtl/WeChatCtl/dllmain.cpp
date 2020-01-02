@@ -44,6 +44,10 @@ extern "C"  __declspec(dllexport) bool openNewWechat(const char* dllpath, const 
 	LogRecord(CharToTchar(std::to_string(ret).c_str()), ofs);
 	return ret;
 }
+// 关闭微信
+extern "C"  __declspec(dllexport) bool closeAllWechat() {
+	return closeAllProcess(L"WeChat.exe");
+}
 
 BOOL APIENTRY DllMain(HMODULE hModule,
 	DWORD  ul_reason_for_call,

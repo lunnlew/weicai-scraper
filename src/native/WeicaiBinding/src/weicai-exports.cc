@@ -319,6 +319,17 @@ void Exp_openNewWechat(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 	}
 }
 
+
+void Exp_closeAllWechat(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+	if (hDLL!=NULL) {
+		typedef bool(*closeAllWechat)();
+		closeAllWechat func=(closeAllWechat)GetProcAddress(hDLL,"closeAllWechat");
+		info.GetReturnValue().Set(Nan::New(func()));
+	}else{
+		info.GetReturnValue().Set(Nan::New(false));
+	}
+}
+
 void Init(v8::Local<v8::Object> exports) {
 	v8::Local<v8::Context> context = exports->CreationContext();
 
@@ -361,6 +372,12 @@ void Init(v8::Local<v8::Object> exports) {
 	exports->Set(context,
 		Nan::New("sendCtlMsg").ToLocalChecked(),
 		Nan::New<v8::FunctionTemplate>(Exp_sendCtlMsg)
+		->GetFunction(context)
+		.ToLocalChecked());
+	
+	exports->Set(context,
+		Nan::New("closeAllWechat").ToLocalChecked(),
+		Nan::New<v8::FunctionTemplate>(Exp_closeAllWechat)
 		->GetFunction(context)
 		.ToLocalChecked());
 
