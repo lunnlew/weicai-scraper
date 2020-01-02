@@ -111,7 +111,7 @@ int PatchWeChat()
     DWORD Num = GetProcIds(L"WeChat.exe", Pids);
     if (Num == 0)
     {
-        return ret;
+        return ERROR_SUCCESS;
     }
 
     if (!ZwQuerySystemInformation)

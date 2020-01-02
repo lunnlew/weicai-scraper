@@ -23,13 +23,9 @@ const mutations = {
 const actions = {
   wechatRegister({ commit }, data) {
     if (data.Act == 'RegisterWeChatHelper') {
-      commit('updateWechatList', {
-        "WeChatHelperName": data['WeChatHelperName']
-      })
+      commit('updateWechatList', data)
     } else {
-      commit('removeWechatItem', {
-        "WeChatHelperName": data['WeChatHelperName']
-      })
+      commit('removeWechatItem', data)
     }
   },
   newWechat({ commit }, data) {

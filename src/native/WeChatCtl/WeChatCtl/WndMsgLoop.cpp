@@ -127,7 +127,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		}
 		case WM_UnRegWeChatHelper: {
 			LogRecord(L"收到WM_UnRegWeChatHelper指令", ofs);
-
 			WeChatHookReg *msg = (WeChatHookReg *)malloc(pCopyData->cbData);
 			msg = (WeChatHookReg*)pCopyData->lpData;
 

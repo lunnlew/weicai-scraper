@@ -27,6 +27,9 @@ export default {
   data: () => {
     return {
       columns: [{
+        title: '进程ID',
+        key: 'ProcessId'
+      }, {
         title: '窗口对象',
         key: 'WeChatHelperName'
       }]

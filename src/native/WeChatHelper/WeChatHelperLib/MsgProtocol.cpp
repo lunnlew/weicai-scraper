@@ -155,6 +155,9 @@ void SendWxMessage()
 	case 0x22:
 		memcpy(msg->typeStr, L"语音", sizeof(L"语音"));
 		break;
+	case 0x23:
+		memcpy(msg->typeStr, L"邮箱提醒", sizeof(L"邮箱提醒"));
+		break;
 	case 0x25:
 		memcpy(msg->typeStr, L"好友确认", sizeof(L"好友确认"));
 		break;
