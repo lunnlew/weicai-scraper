@@ -233,12 +233,18 @@ appServer.route(function(self) {
           weChatCtl.startWechatCtl();
           // 开始微信进程注入
           weChatCtl.startWechatHelperInject();
-          res.send({ code: 200, msg: 'proxy', data: {} })
+          res.send({ code: 200, msg: '启动控制端完成', data: {} })
           break;
+        }
+      case 'newWechat':
+        {
+          weChatCtl.openNewWechat()
+          res.send({ code: 200, msg: '新开完成', data: {} })
+          break
         }
       default:
         {
-          res.send({ code: 200, msg: 'proxy', data: {} })
+          res.send({ code: 200, msg: '未支持操作', data: {} })
           break
         }
     }
@@ -376,19 +382,6 @@ appServer.route(function(self) {
       default:
         {
           res.send({ code: 200, msg: 'proxy', data: {} })
-          break
-        }
-    }
-  })
-})
-
-appServer.route(function(self) {
-  self.app.all('/wechatCtl', async function(req, res) {
-    let action = req.query.act || ''
-    switch (action) {
-      default:
-        {
-          res.send({ code: 201, msg: '未知操作', data: {} })
           break
         }
     }

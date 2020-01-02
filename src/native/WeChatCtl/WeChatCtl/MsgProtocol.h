@@ -33,6 +33,7 @@ struct WeChatHookReg
 #define WM_ReciveMsg 503	// 消息接收
 #define WM_RegWeChatHelper 505 // WeChatHelper注册
 #define WM_UnRegWeChatHelper 506 // WeChatHelper注销
+#define WM_OpenWeChat 507 //多开微信
 
 
 void sendWeChatMessage(WeChatMessage *msg);

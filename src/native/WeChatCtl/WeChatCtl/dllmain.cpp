@@ -5,6 +5,8 @@
 #include "MsgProtocol.h"
 #include "LogRecord.h"
 #include "StringTool.h"
+#include "WCProcess.h"
+#include "openwechat.h"
 
 //在使用Debug远程调试DLL必须要有__declspec函数 导出
 VOID __declspec(dllexport) test()
@@ -21,10 +23,6 @@ extern "C"  __declspec(dllexport) VOID sendCtlMsg(const char* wName, int MsgType
 	}
 	LogRecord(L"wehcatHelpers size:", ofs);
 	LogRecord(CharToTchar(std::to_string(wehcatHelpers.size()).c_str()), ofs);
-
-	LogRecord(L"wehcatHelpers list:", ofs);
-	LogRecord(CharToTchar(HelperListToString(wehcatHelpers).c_str()), ofs);
-
 	HWND hWnd = FindWindow(NULL, StringToLPCWSTR(WeChatHelperName));
 	if (hWnd == NULL)
 	{
@@ -36,6 +34,15 @@ extern "C"  __declspec(dllexport) VOID sendCtlMsg(const char* wName, int MsgType
 	chatmsg.cbData = 0;
 	chatmsg.lpData = NULL;
 	SendMessage(hWnd, WM_COPYDATA, NULL, (LPARAM)&chatmsg);
+}
+
+// 新开微信
+extern "C"  __declspec(dllexport) bool openNewWechat(const char* dllpath, const char* dllname) {
+	DWORD pid = WXOpenWechat();
+	LogRecord(CharToTchar(std::to_string(pid).c_str()), ofs);
+	bool ret = ProcessDllInject(pid, dllpath, dllname);
+	LogRecord(CharToTchar(std::to_string(ret).c_str()), ofs);
+	return ret;
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule,

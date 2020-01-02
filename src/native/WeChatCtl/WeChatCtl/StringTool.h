@@ -3,6 +3,7 @@
 #include "stdafx.h"
 #include <string>
 #include <vector>
+#include "MsgProtocol.h"
 
 void TcharToChar(const TCHAR * tchar, char * _char);
 void CharToTchar(const char * _char, TCHAR * tchar);

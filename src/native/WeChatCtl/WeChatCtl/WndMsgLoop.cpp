@@ -1,4 +1,4 @@
-#include "stdafx.h"
+Ôªø#include "stdafx.h"
 #include "stdio.h"
 
 #include "WndMsgLoop.h"
@@ -8,24 +8,26 @@
 #include "LogRecord.h"
 #include "HttpRequest.h"
 #include "json.hpp"
+#include "WCProcess.h"
+#include "openwechat.h"
 
 std::vector<WeChatHookReg> wehcatHelpers;
 using json = nlohmann::json;
 
-// ≥ı ºªØœ˚œ¢—≠ª∑¥∞ø⁄
+// ÂàùÂßãÂåñÊ∂àÊÅØÂæ™ÁéØÁ™óÂè£
 void InitWindow(HMODULE hModule)
 {
 	RegisterWindow(hModule);
 }
 
-// ◊¢≤·¥∞ø⁄º∞œ˚œ¢—≠ª∑
+// Ê≥®ÂÜåÁ™óÂè£ÂèäÊ∂àÊÅØÂæ™ÁéØ
 void RegisterWindow(HMODULE hModule)
 {
-	LogRecord(L" ’µΩRegisterWindowMsgLoop÷∏¡Ó", ofs);
-	//1  …Ëº∆“ª∏ˆ¥∞ø⁄¿‡
+	LogRecord(L"Êî∂Âà∞RegisterWindowMsgLoopÊåá‰ª§", ofs);
+	//1  ËÆæËÆ°‰∏Ä‰∏™Á™óÂè£Á±ª
 	WNDCLASS wnd;
-	wnd.style = CS_VREDRAW | CS_HREDRAW;	//∑Á∏Ò
-	wnd.lpfnWndProc = WndProc;	//¥∞ø⁄œ˚œ¢ªÿµ˜∫Ø ˝÷∏’Î.
+	wnd.style = CS_VREDRAW | CS_HREDRAW;	//È£éÊ†º
+	wnd.lpfnWndProc = WndProc;	//Á™óÂè£Ê∂àÊÅØÂõûË∞ÉÂáΩÊï∞ÊåáÈíà.
 	wnd.cbClsExtra = NULL;
 	wnd.cbWndExtra = NULL;
 	wnd.hInstance = hModule;
@@ -34,78 +36,77 @@ void RegisterWindow(HMODULE hModule)
 	wnd.hbrBackground = (HBRUSH)COLOR_WINDOW;
 	wnd.lpszMenuName = NULL;
 	wnd.lpszClassName = TEXT("WeChatCtl");
-	//2  ◊¢≤·¥∞ø⁄¿‡
+	//2  Ê≥®ÂÜåÁ™óÂè£Á±ª
 	RegisterClass(&wnd);
-	//3  ¥¥Ω®¥∞ø⁄
+	//3  ÂàõÂª∫Á™óÂè£
 	HWND hWnd = CreateWindow(
-		TEXT("WeChatCtl"),	//¥∞ø⁄¿‡√˚
-		TEXT("WeChatCtl"),	//¥∞ø⁄√˚
-		WS_OVERLAPPEDWINDOW,	//¥∞ø⁄∑Á∏Ò
-		10, 10, 500, 300,	//¥∞ø⁄Œª÷√
-		NULL,	//∏∏¥∞ø⁄æ‰±˙
-		NULL,	//≤Àµ•æ‰±˙
-		hModule,	// µ¿˝æ‰±˙
-		NULL	//¥´µ›WM_CREATEœ˚œ¢ ±µƒ∏Ωº”≤Œ ˝
+		TEXT("WeChatCtl"),	//Á™óÂè£Á±ªÂêç
+		TEXT("WeChatCtl"),	//Á™óÂè£Âêç
+		WS_OVERLAPPEDWINDOW,	//Á™óÂè£È£éÊ†º
+		10, 10, 500, 300,	//Á™óÂè£‰ΩçÁΩÆ
+		NULL,	//Áà∂Á™óÂè£Âè•ÊüÑ
+		NULL,	//ËèúÂçïÂè•ÊüÑ
+		hModule,	//ÂÆû‰æãÂè•ÊüÑ
+		NULL	//‰º†ÈÄíWM_CREATEÊ∂àÊÅØÊó∂ÁöÑÈôÑÂä†ÂèÇÊï∞
 	);
-	//4  ∏¸–¬œ‘ æ¥∞ø⁄
+	//4  Êõ¥Êñ∞ÊòæÁ§∫Á™óÂè£
 	ShowWindow(hWnd, SW_HIDE);
 	UpdateWindow(hWnd);
-	//5  œ˚œ¢—≠ª∑£®œ˚œ¢±√£©
+	//5  Ê∂àÊÅØÂæ™ÁéØÔºàÊ∂àÊÅØÊ≥µÔºâ
 	MSG  msg = {};
-	//	5.1ªÒ»°œ˚œ¢
+	//	5.1Ëé∑ÂèñÊ∂àÊÅØ
 	while (GetMessage(&msg, 0, 0, 0))
 	{
-		//	5.2∑≠“Îœ˚œ¢
+		//	5.2ÁøªËØëÊ∂àÊÅØ
 		TranslateMessage(&msg);
-		//	5.3◊™∑¢µΩœ˚œ¢ªÿµ˜∫Ø ˝
+		//	5.3ËΩ¨ÂèëÂà∞Ê∂àÊÅØÂõûË∞ÉÂáΩÊï∞
 		DispatchMessage(&msg);
 	}
 }
 
 
-// ¥∞ø⁄œ˚œ¢ªÿµ˜
+// Á™óÂè£Ê∂àÊÅØÂõûË∞É
 LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
-	// Ωˆ¥¶¿ÌWM_COPYDATA¿‡œ˚œ¢
+	// ‰ªÖÂ§ÑÁêÜWM_COPYDATAÁ±ªÊ∂àÊÅØ
 	if (Message == WM_COPYDATA)
 	{
-		LogRecord(L" ’µΩWM_COPYDATA¿‡œ˚œ¢", ofs);
+		LogRecord(L"Êî∂Âà∞WM_COPYDATAÁ±ªÊ∂àÊÅØ", ofs);
 		COPYDATASTRUCT *pCopyData = (COPYDATASTRUCT*)lParam;
 		switch (pCopyData->dwData)
 		{
 		case WM_CheckIsLogin: {
-			LogRecord(L" ’µΩWM_CheckIsLogin÷∏¡Ó", ofs);
+			LogRecord(L"Êî∂Âà∞WM_CheckIsLoginÊåá‰ª§", ofs);
 			break;
 		}
 		case WM_HookReciveMsg: {
-			LogRecord(L" ’µΩWM_HookReciveMsg÷∏¡Ó", ofs);
+			LogRecord(L"Êî∂Âà∞WM_HookReciveMsgÊåá‰ª§", ofs);
 			break;
 		}
 		case WM_ReciveMsg: {
-			LogRecord(L" ’µΩWM_ReciveMsg÷∏¡Ó", ofs);
+			LogRecord(L"Êî∂Âà∞WM_ReciveMsgÊåá‰ª§", ofs);
 			WeChatMessage *msg = (WeChatMessage *)malloc(pCopyData->cbData);
 			msg = (WeChatMessage*)pCopyData->lpData;
 			sendWeChatMessage(msg);
 			break;
 		}
 		case WM_ShowQrCode: {
-			LogRecord(L" ’µΩWM_ShowQrCode÷∏¡Ó", ofs);
+			LogRecord(L"Êî∂Âà∞WM_ShowQrCodeÊåá‰ª§", ofs);
 			break;
 		}
 		case WM_RegWeChatHelper: {
-			LogRecord(L" ’µΩWM_RegWeChatHelper÷∏¡Ó", ofs);
+			LogRecord(L"Êî∂Âà∞WM_RegWeChatHelperÊåá‰ª§", ofs);
 
 			WeChatHookReg *msg = (WeChatHookReg *)malloc(pCopyData->cbData);
 			msg = (WeChatHookReg*)pCopyData->lpData;
 
 			bool isex = false;
-			std::vector<WeChatHookReg>::iterator it;
-			for (it = wehcatHelpers.begin(); it != wehcatHelpers.end();)
+			for (std::vector<WeChatHookReg>::iterator it = wehcatHelpers.begin(); it != wehcatHelpers.end();)
 			{
-				if (strcmp(Wchar_tToString(it->WeChatHelperName).c_str() , Wchar_tToString(msg->WeChatHelperName).c_str())==0)
+				if (strcmp(Wchar_tToString(it->WeChatHelperName).c_str(), Wchar_tToString(msg->WeChatHelperName).c_str()) == 0) {
 					isex = true;
-				else
-					++it;
+				}
+				++it;
 			}
 
 			if (!isex) {
@@ -114,13 +115,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 
 			LogRecord(L"wehcatHelpers size:", ofs);
 			LogRecord(CharToTchar(std::to_string(wehcatHelpers.size()).c_str()), ofs);
-
-			LogRecord(L"wehcatHelpers list:", ofs);
-			LogRecord(CharToTchar(HelperListToString(wehcatHelpers).c_str()), ofs);
+			break;
+		}
+		case WM_OpenWeChat: {
+			LogRecord(L"Êî∂Âà∞WM_OpenWeChatÊåá‰ª§", ofs);
+			DWORD pid = WXOpenWechat();
+			LogRecord(CharToTchar(std::to_string(pid).c_str()), ofs);
+			bool ret = ProcessDllInject(pid, "", "");
+			LogRecord(CharToTchar(std::to_string(ret).c_str()), ofs);
 			break;
 		}
 		case WM_UnRegWeChatHelper: {
-			LogRecord(L" ’µΩWM_UnRegWeChatHelper÷∏¡Ó", ofs);
+			LogRecord(L"Êî∂Âà∞WM_UnRegWeChatHelperÊåá‰ª§", ofs);
 
 			WeChatHookReg *msg = (WeChatHookReg *)malloc(pCopyData->cbData);
 			msg = (WeChatHookReg*)pCopyData->lpData;
@@ -134,7 +140,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 					++it; 
 			}
 
-			// ≥¢ ‘◊¢œ˙
+			// Â∞ùËØïÊ≥®ÈîÄ
 			json o;
 			o["WeChatHelperName"] = stringToUTF8(LPCWSTRtoString(msg->WeChatHelperName));
 			o["Act"] = "UnRegisterWeChatHelper";
@@ -149,18 +155,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			}
 
 			if (code == 200) {
-				LogRecord(L"UnRegisterWeChatHelper:WeChatHelper◊¢œ˙≥…π¶", ofs);
+				LogRecord(L"UnRegisterWeChatHelper:WeChatHelperÊ≥®ÈîÄÊàêÂäü", ofs);
 			}
 			else {
-				LogRecord(L"UnRegisterWeChatHelper:WeChatHelper◊¢œ˙ ß∞‹", ofs);
+				LogRecord(L"UnRegisterWeChatHelper:WeChatHelperÊ≥®ÈîÄÂ§±Ë¥•", ofs);
 			}
 
 
 			LogRecord(L"wehcatHelpers size:", ofs);
 			LogRecord(CharToTchar(std::to_string(wehcatHelpers.size()).c_str()), ofs);
-
-			LogRecord(L"wehcatHelpers list:", ofs);
-			LogRecord(CharToTchar(HelperListToString(wehcatHelpers).c_str()), ofs);
 			break;
 		}
 		default:
@@ -168,4 +171,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		}
 	}
 	return DefWindowProc(hWnd, Message, wParam, lParam);
+}
+int WXOpenWechat()
+{
+	int ret = -1;
+	DWORD pid = 0;
+
+	ret = OpenWeChat(&pid);
+
+	return pid;
 }
