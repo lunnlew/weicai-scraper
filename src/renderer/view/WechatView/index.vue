@@ -1,7 +1,9 @@
 <template>
   <div class="ContainerView">
     <div class="pageHeader">
-      <div class="pageHeaderLeft"></div>
+      <div class="pageHeaderLeft">
+        <Button type="primary" :loading="loadingOpen" @click="newWechat">新开微信</Button>
+      </div>
       <div class="pageHeaderRight"></div>
     </div>
     <div class="PageContent">
@@ -30,12 +32,19 @@ export default {
       }]
     }
   },
-  methods: {},
+  methods: {
+    newWechat() {
+      this.$store.dispatch('newWechat')
+    }
+  },
   mounted() {},
   watch: {},
   computed: {
     list() {
       return this.$store.state.wechatView.list
+    },
+    loadingOpen() {
+      return this.$store.state.wechatView.loadingOpen
     }
   }
 }

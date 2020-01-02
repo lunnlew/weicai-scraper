@@ -1,7 +1,8 @@
 import { wechatAct } from '@/api/source'
 
 const state = {
-  list: []
+  list: [],
+  loadingOpen: false
 }
 
 const mutations = {
@@ -13,6 +14,9 @@ const mutations = {
   },
   removeWechatItem(state, data) {
     state.list = state.list.filter(element => element.WeChatHelperName !== data.WeChatHelperName)
+  },
+  newWechatState(state, data) {
+    state.loadingOpen = !state.loadingOpen
   }
 }
 
@@ -27,6 +31,14 @@ const actions = {
         "WeChatHelperName": data['WeChatHelperName']
       })
     }
+  },
+  newWechat({ commit }, data) {
+    commit('newWechatState', data)
+    wechatAct({
+      'act': 'newWechat'
+    }).then(result => {
+      commit('newWechatState', data)
+    })
   }
 }
 

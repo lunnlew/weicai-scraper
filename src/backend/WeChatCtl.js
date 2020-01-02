@@ -40,6 +40,15 @@ class WeChatCtl extends events.EventEmitter {
       console.log('加载控制端失败')
     }
   }
+  async openNewWechat() {
+    const self = this
+    let ret = self.weicaiNative.openNewWechat(p_WeChatDll_dir, "WeChatHelper.dll")
+    if (ret) {
+      console.log('新开微信成功')
+    } else {
+      console.log('新开微信失败')
+    }
+  }
   async startWechatHelperInject() {
     const self = this
     self.WeChatHelperWorker = child_process.fork(WeChatHelperWorkerPath, [], {

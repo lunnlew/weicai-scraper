@@ -290,6 +290,35 @@ void Exp_sendCtlMsg(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 	}
 }
 
+
+void Exp_openNewWechat(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+	
+	if (info.Length() != 2) {
+		Nan::ThrowTypeError("必须且仅支持两个参数\n");
+		return;
+	}
+	if (!info[0]->IsString()) {
+		Nan::ThrowTypeError("参数必须是字符串类型\n");
+		return;
+	}
+	if (!info[1]->IsString()) {
+		Nan::ThrowTypeError("参数必须是字符串类型\n");
+		return;
+	}
+	if (hDLL!=NULL) {
+		typedef bool(*openNewWechat)(const char*, const char*);
+		openNewWechat func=(openNewWechat)GetProcAddress(hDLL,"openNewWechat");
+		v8::Local<v8::String> dllPath = v8::Local<v8::String>::Cast(info[0]);
+		v8::String::Utf8Value utfdllPath(dllPath);
+		v8::Local<v8::String> dllName = v8::Local<v8::String>::Cast(info[1]);
+		v8::String::Utf8Value utfdllName(dllName);
+		func(std::string(*utfdllPath).c_str(), std::string(*utfdllName).c_str());
+		info.GetReturnValue().Set(Nan::New(true));
+	}else{
+		info.GetReturnValue().Set(Nan::New(false));
+	}
+}
+
 void Init(v8::Local<v8::Object> exports) {
 	v8::Local<v8::Context> context = exports->CreationContext();
 
@@ -320,6 +349,12 @@ void Init(v8::Local<v8::Object> exports) {
 	exports->Set(context,
 		Nan::New("startCtrlClient").ToLocalChecked(),
 		Nan::New<v8::FunctionTemplate>(Exp_startCtrlClient)
+		->GetFunction(context)
+		.ToLocalChecked());
+
+	exports->Set(context,
+		Nan::New("openNewWechat").ToLocalChecked(),
+		Nan::New<v8::FunctionTemplate>(Exp_openNewWechat)
 		->GetFunction(context)
 		.ToLocalChecked());
 
