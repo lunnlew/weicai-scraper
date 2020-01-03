@@ -20,6 +20,9 @@ const mutations = {
   },
   closeWechat(state, data) {
     state.list.splice(data.index, 1);
+  },
+  closeAllWechat(state, data) {
+    state.list = [];
   }
 }
 
@@ -42,7 +45,9 @@ const actions = {
   closeAllWechat({ commit }, data) {
     wechatAct({
       'act': 'closeAllWechat'
-    }).then(result => {})
+    }).then(result => {
+      commit('closeAllWechat', data)
+    })
   },
   closeWechat({ commit }, data) {
     wechatAct({
