@@ -208,6 +208,9 @@ void SendWxMessage()
 		//红包
 		memcpy(msg->typeStr, L"红包、系统消息", sizeof(L"红包、系统消息"));
 		break;
+	case 0x2712:
+		memcpy(msg->typeStr, L"撤回消息", sizeof(L"撤回消息"));
+		break;
 	default:
 		memcpy(msg->typeStr, std::to_string(msgType).c_str(), sizeof(std::to_string(msgType).c_str()));
 		break;
