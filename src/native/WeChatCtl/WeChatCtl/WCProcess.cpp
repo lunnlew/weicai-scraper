@@ -108,6 +108,7 @@ BOOL ProcessDllInject(DWORD dwProcessid, LPCSTR DllPath, LPCSTR DllName) {
 	}
 
 	char szPath[MAX_PATH] = { 0 };
+	sprintf_s(szPath, "%s\\%s", DllPath, DllName);
 
 	//打开进程
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwProcessid);
@@ -138,7 +139,7 @@ BOOL ProcessDllInject(DWORD dwProcessid, LPCSTR DllPath, LPCSTR DllName) {
 		return false;
 	}
 	//远程线程注入dll
-	LogRecord(L"远程线程注入dl", ofs);
+	LogRecord(L"远程线程注入dll", ofs);
 	HANDLE hRemoteThread = CreateRemoteThread(hProcess, NULL, 0, (LPTHREAD_START_ROUTINE)pLoadLibraryAddress, pAddress, 0, NULL);
 	if (hRemoteThread == NULL)
 	{
