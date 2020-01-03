@@ -33,6 +33,9 @@ export default {
         }, {
           title: '窗口对象',
           key: 'WeChatHelperName'
+        }, {
+          title: '登录微信名',
+          key: 'Login_WechatName'
         },
         {
           title: '操作',

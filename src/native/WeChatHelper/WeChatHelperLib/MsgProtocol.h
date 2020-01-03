@@ -29,8 +29,15 @@ struct WeChatHookReg
 	wchar_t WeChatHelperName[1];
 };
 
+// 
+struct WeChatLoginInfo
+{
+	wchar_t WechatName[100];
+};
+
 extern WeChatHookPoint *sWeChatHookPoint;
 extern WeChatHookReg *sWeChatHookReg;
+extern WeChatLoginInfo *sWeChatLoginInfo;
 
 //====消息状态类消息表示====
 
@@ -50,4 +57,5 @@ void UnHOOK_ReciveMsg();
 void RecieveWxMesage();
 void SendWxMessage();
 std::wstring GetMsgByAddress(DWORD memAddress);
+WeChatLoginInfo * GetWechatLoginInfo();
 

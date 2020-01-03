@@ -19,6 +19,7 @@ DWORD ReciveMsg_RetAddr = 0;
 
 WeChatHookPoint * sWeChatHookPoint = new WeChatHookPoint();
 WeChatHookReg *sWeChatHookReg = new WeChatHookReg();
+WeChatLoginInfo *sWeChatLoginInfo = new WeChatLoginInfo();
 
 void HOOK_ReciveMsg() {
 	if (sWeChatHookPoint->enable_WX_ReciveMsg_Hook) {
@@ -260,3 +261,17 @@ std::wstring GetMsgByAddress(DWORD memAddress)
 
 
 //====消息接收hook 结束===
+
+
+
+WeChatLoginInfo * GetWechatLoginInfo() {
+	DWORD WeChatWinBaseAddr = (DWORD)GetModuleHandle(L"WeChatWin.dll");
+	DWORD infoAddr = WeChatWinBaseAddr + offset_LoginInfoBlock;
+	char * lang = (char*)(*(DWORD*)(infoAddr + offset_LoginInfoBlock_Lang));
+	char * wechatName = (char*)(DWORD*)(infoAddr + offset_LoginInfoBlock_WechatName);
+
+	wchar_t *c= CharToTchar(wechatName);
+	wcscpy_s(sWeChatLoginInfo->WechatName, wcslen(c) + 1, c);
+
+	return sWeChatLoginInfo;
+}
