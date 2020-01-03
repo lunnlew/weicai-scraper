@@ -269,7 +269,7 @@ int OpenWeChat(DWORD* pid)
 
 	PathAppend(Path, L"WeChat.exe");
 
-    ShellExecute(NULL, L"Open", Path, NULL, NULL, SW_SHOW);
+    //ShellExecute(NULL, L"Open", Path, NULL, NULL, SW_SHOW);
 
     if (!CreateProcess(NULL, Path, NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi)) {
         ret = GetLastError();

@@ -108,6 +108,7 @@ BOOL ProcessDllInject(DWORD dwProcessid, LPCSTR DllPath, LPCSTR DllName) {
 	}
 
 	char szPath[MAX_PATH] = { 0 };
+	sprintf_s(szPath, "%s\\%s", DllPath, DllName);
 
 	//打开进程
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwProcessid);
@@ -138,7 +139,7 @@ BOOL ProcessDllInject(DWORD dwProcessid, LPCSTR DllPath, LPCSTR DllName) {
 		return false;
 	}
 	//远程线程注入dll
-	LogRecord(L"远程线程注入dl", ofs);
+	LogRecord(L"远程线程注入dll", ofs);
 	HANDLE hRemoteThread = CreateRemoteThread(hProcess, NULL, 0, (LPTHREAD_START_ROUTINE)pLoadLibraryAddress, pAddress, 0, NULL);
 	if (hRemoteThread == NULL)
 	{
@@ -150,5 +151,33 @@ BOOL ProcessDllInject(DWORD dwProcessid, LPCSTR DllPath, LPCSTR DllName) {
 	CloseHandle(hRemoteThread);
 	CloseHandle(hProcess);
 
+	return true;
+}
+
+bool closeAllProcess(const wchar_t *ProcessName)
+{
+	char debugInfo[0x1000] = { 0 };
+	HANDLE ProcesssAll = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
+	PROCESSENTRY32 proessInfo = { 0 };
+	proessInfo.dwSize = sizeof(PROCESSENTRY32);
+	do
+	{
+		if (wcscmp(ProcessName, proessInfo.szExeFile) == 0) {
+			HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, false, proessInfo.th32ProcessID);
+			if (hProcess != NULL) {
+				TerminateProcess(hProcess, 0);
+			}
+		}
+	} while (Process32Next(ProcesssAll, &proessInfo));
+
+	return true;
+}
+
+bool closeProcess(DWORD ProcessID)
+{
+	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, false, ProcessID);
+	if (hProcess != NULL) {
+		TerminateProcess(hProcess, 0);
+	}
 	return true;
 }

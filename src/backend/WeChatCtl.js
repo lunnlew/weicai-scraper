@@ -42,11 +42,39 @@ class WeChatCtl extends events.EventEmitter {
   }
   async openNewWechat() {
     const self = this
-    let ret = self.weicaiNative.openNewWechat(p_WeChatDll_dir, "WeChatHelper.dll")
+    let p_WeChatDll_name = `WeChatHelper.dll`
+    if (process.env.NODE_ENV == 'development') {
+      let wechatVersion = self.weicaiNative.GetWechatVersion().replace(/\./g, '')
+      p_WeChatDll_dir = path.join(__dirname, "../dist_electron/native")
+      p_WeChatDll_name = `WeChatHelper${wechatVersion}.dll`
+    }
+
+    let p_WeChatCtl_path = path.join(p_WeChatDll_dir, p_WeChatDll_name)
+    console.log('加载' + p_WeChatCtl_path)
+
+    let ret = self.weicaiNative.openNewWechat(p_WeChatDll_dir, p_WeChatDll_name)
     if (ret) {
       console.log('新开微信成功')
     } else {
       console.log('新开微信失败')
+    }
+  }
+  async closeAllWechat() {
+    const self = this
+    let ret = self.weicaiNative.closeAllWechat()
+    if (ret) {
+      console.log('关闭微信成功')
+    } else {
+      console.log('关闭微信失败')
+    }
+  }
+  async closeWechat(processId) {
+    const self = this
+    let ret = self.weicaiNative.closeWechatProcess(parseInt(processId))
+    if (ret) {
+      console.log('关闭微信成功')
+    } else {
+      console.log('关闭微信失败')
     }
   }
   async startWechatHelperInject() {

@@ -17,6 +17,12 @@ const mutations = {
   },
   newWechatState(state, data) {
     state.loadingOpen = !state.loadingOpen
+  },
+  closeWechat(state, data) {
+    state.list.splice(data.index, 1);
+  },
+  closeAllWechat(state, data) {
+    state.list = [];
   }
 }
 
@@ -34,6 +40,23 @@ const actions = {
       'act': 'newWechat'
     }).then(result => {
       commit('newWechatState', data)
+    })
+  },
+  closeAllWechat({ commit }, data) {
+    wechatAct({
+      'act': 'closeAllWechat'
+    }).then(result => {
+      commit('closeAllWechat', data)
+    })
+  },
+  closeWechat({ commit }, data) {
+    wechatAct({
+      'act': 'closeWechat',
+      'ProcessId': data.row.ProcessId
+    }).then(result => {
+      if (result.code == 200) {
+        commit('closeWechat', data)
+      }
     })
   }
 }
