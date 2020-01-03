@@ -58,6 +58,15 @@ class WeChatCtl extends events.EventEmitter {
       console.log('关闭微信失败')
     }
   }
+  async closeWechat(processId) {
+    const self = this
+    let ret = self.weicaiNative.closeWechatProcess(parseInt(processId))
+    if (ret) {
+      console.log('关闭微信成功')
+    } else {
+      console.log('关闭微信失败')
+    }
+  }
   async startWechatHelperInject() {
     const self = this
     self.WeChatHelperWorker = child_process.fork(WeChatHelperWorkerPath, [], {

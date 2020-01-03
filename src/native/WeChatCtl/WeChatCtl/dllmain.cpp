@@ -48,6 +48,9 @@ extern "C"  __declspec(dllexport) bool openNewWechat(const char* dllpath, const 
 extern "C"  __declspec(dllexport) bool closeAllWechat() {
 	return closeAllProcess(L"WeChat.exe");
 }
+extern "C"  __declspec(dllexport) bool closeWechatProcess(int processId) {
+	return closeProcess((DWORD)processId);
+}
 
 BOOL APIENTRY DllMain(HMODULE hModule,
 	DWORD  ul_reason_for_call,

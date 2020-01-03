@@ -12,7 +12,7 @@
         <div class="ListContainer">
           <Table stripe :columns="columns" :data="list">
             <template slot-scope="{ row, index }" slot="action">
-              <Button type="error" size="small">删除</Button>
+              <Button type="error" size="small" @click="closeWechat(row, index)">关闭</Button>
             </template>
           </Table>
         </div>
@@ -28,17 +28,30 @@ export default {
   data: () => {
     return {
       columns: [{
-        title: '进程ID',
-        key: 'ProcessId'
-      }, {
-        title: '窗口对象',
-        key: 'WeChatHelperName'
-      }]
+          title: '进程ID',
+          key: 'ProcessId'
+        }, {
+          title: '窗口对象',
+          key: 'WeChatHelperName'
+        },
+        {
+          title: '操作',
+          slot: 'action',
+          maxWidth: 250,
+          align: 'center'
+        }
+      ]
     }
   },
   methods: {
     newWechat() {
       this.$store.dispatch('newWechat')
+    },
+    closeWechat(row, index) {
+      this.$store.dispatch('closeWechat', {
+        'row': row,
+        'index': index
+      })
     },
     closeAllWechat() {
       this.$store.dispatch('closeAllWechat')

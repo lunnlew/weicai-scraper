@@ -248,6 +248,19 @@ appServer.route(function(self) {
           res.send({ code: 200, msg: '关闭完成', data: {} })
           break
         }
+
+      case 'closeWechat':
+        {
+          let ProcessId = req.query.ProcessId
+          if (ProcessId) {
+            weChatCtl.closeWechat(ProcessId)
+
+            res.send({ code: 200, msg: '关闭完成', data: {} })
+          } else {
+            res.send({ code: 201, msg: '缺少进程ID', data: {} })
+          }
+          break
+        }
       default:
         {
           res.send({ code: 200, msg: '未支持操作', data: {} })

@@ -330,6 +330,26 @@ void Exp_closeAllWechat(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 	}
 }
 
+void Exp_closeWechatProcess(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+
+	if (info.Length() != 1) {
+		Nan::ThrowTypeError("必须且仅支持一个参数\n");
+		return;
+	}
+	if (!info[0]->IsNumber()) {
+		Nan::ThrowTypeError("参数必须是数字类型\n");
+		return;
+	}
+
+	if (hDLL!=NULL) {
+		typedef bool(*closeWechatProcess)(int);
+		closeWechatProcess func=(closeWechatProcess)GetProcAddress(hDLL,"closeWechatProcess");
+		info.GetReturnValue().Set(Nan::New(func(info[0]->NumberValue())));
+	}else{
+		info.GetReturnValue().Set(Nan::New(false));
+	}
+}
+
 void Init(v8::Local<v8::Object> exports) {
 	v8::Local<v8::Context> context = exports->CreationContext();
 
@@ -374,7 +394,13 @@ void Init(v8::Local<v8::Object> exports) {
 		Nan::New<v8::FunctionTemplate>(Exp_sendCtlMsg)
 		->GetFunction(context)
 		.ToLocalChecked());
-	
+
+	exports->Set(context,
+		Nan::New("closeWechatProcess").ToLocalChecked(),
+		Nan::New<v8::FunctionTemplate>(Exp_closeWechatProcess)
+		->GetFunction(context)
+		.ToLocalChecked());
+
 	exports->Set(context,
 		Nan::New("closeAllWechat").ToLocalChecked(),
 		Nan::New<v8::FunctionTemplate>(Exp_closeAllWechat)

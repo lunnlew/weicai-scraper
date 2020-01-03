@@ -17,6 +17,9 @@ const mutations = {
   },
   newWechatState(state, data) {
     state.loadingOpen = !state.loadingOpen
+  },
+  closeWechat(state, data) {
+    state.list.splice(data.index, 1);
   }
 }
 
@@ -40,6 +43,16 @@ const actions = {
     wechatAct({
       'act': 'closeAllWechat'
     }).then(result => {})
+  },
+  closeWechat({ commit }, data) {
+    wechatAct({
+      'act': 'closeWechat',
+      'ProcessId': data.row.ProcessId
+    }).then(result => {
+      if (result.code == 200) {
+        commit('closeWechat', data)
+      }
+    })
   }
 }
 

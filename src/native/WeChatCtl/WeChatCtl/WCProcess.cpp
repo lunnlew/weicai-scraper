@@ -171,3 +171,12 @@ bool closeAllProcess(const wchar_t *ProcessName)
 
 	return true;
 }
+
+bool closeProcess(DWORD ProcessID)
+{
+	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, false, ProcessID);
+	if (hProcess != NULL) {
+		TerminateProcess(hProcess, 0);
+	}
+	return true;
+}
