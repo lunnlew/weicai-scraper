@@ -34,14 +34,14 @@ class ScreenshotQueue extends events.EventEmitter {
           let title = item.title.replace(/[|\\/?*<>:]/g, '')
           global.recorder.emitUpdate(item.msg_sn, { "html_jpg": 'html/' + title + '.png' })
 
-          self.complete = true
+        } else if (msg.event == 'complete-error') {}
 
-          setTimeout(() => {
-            self._resolveIdle()
-            self._resolveIdle = empty
-          }, 100)
+        self.complete = true
 
-        }
+        setTimeout(() => {
+          self._resolveIdle()
+          self._resolveIdle = empty
+        }, 100)
       }
     })
   }
