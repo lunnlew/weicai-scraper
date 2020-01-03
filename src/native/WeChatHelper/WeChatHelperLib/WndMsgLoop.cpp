@@ -157,11 +157,15 @@ void RegisterWeChatHelper() {
 
 	SendMessage(hWeChatRoot, WM_COPYDATA, NULL, (LPARAM)&chatmsg);
 
+	WeChatLoginInfo *sWeChatLoginInfo = GetWechatLoginInfo();
+
 	// ³¢ÊÔ×¢²á
 	json o;
 	o["WeChatHelperName"] = stringToUTF8(LPCWSTRtoString(WeChatHelper));
 	o["Act"] = "RegisterWeChatHelper";
 	o["ProcessId"] = pProcessId;
+	o["Login_WechatName"] = stringToUTF8(TcharToChar(sWeChatLoginInfo->WechatName));
+
 	HttpRequest httpReq("127.0.0.1", 6877);
 	std::string res = httpReq.HttpPost("/wechatRegister", o.dump());
 	std::string body = httpReq.getBody(res);

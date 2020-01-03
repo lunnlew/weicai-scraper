@@ -19,6 +19,7 @@ DWORD ReciveMsg_RetAddr = 0;
 
 WeChatHookPoint * sWeChatHookPoint = new WeChatHookPoint();
 WeChatHookReg *sWeChatHookReg = new WeChatHookReg();
+WeChatLoginInfo *sWeChatLoginInfo = new WeChatLoginInfo();
 
 void HOOK_ReciveMsg() {
 	if (sWeChatHookPoint->enable_WX_ReciveMsg_Hook) {
@@ -208,6 +209,9 @@ void SendWxMessage()
 		//红包
 		memcpy(msg->typeStr, L"红包、系统消息", sizeof(L"红包、系统消息"));
 		break;
+	case 0x2712:
+		memcpy(msg->typeStr, L"撤回消息", sizeof(L"撤回消息"));
+		break;
 	default:
 		memcpy(msg->typeStr, std::to_string(msgType).c_str(), sizeof(std::to_string(msgType).c_str()));
 		break;
@@ -257,3 +261,17 @@ std::wstring GetMsgByAddress(DWORD memAddress)
 
 
 //====消息接收hook 结束===
+
+
+
+WeChatLoginInfo * GetWechatLoginInfo() {
+	DWORD WeChatWinBaseAddr = (DWORD)GetModuleHandle(L"WeChatWin.dll");
+	DWORD infoAddr = WeChatWinBaseAddr + offset_LoginInfoBlock;
+	char * lang = (char*)(*(DWORD*)(infoAddr + offset_LoginInfoBlock_Lang));
+	char * wechatName = (char*)(DWORD*)(infoAddr + offset_LoginInfoBlock_WechatName);
+
+	wchar_t *c= CharToTchar(wechatName);
+	wcscpy_s(sWeChatLoginInfo->WechatName, wcslen(c) + 1, c);
+
+	return sWeChatLoginInfo;
+}

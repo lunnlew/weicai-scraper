@@ -21,6 +21,15 @@
 
 #define offset_WxAntiRevoke 0x312565			//防撤回
 
+#define offset_LoginInfoBlock 0x0 //登录用户信息块起始
+#define offset_LoginInfoBlock_Lang 0x0 // 语言
+#define offset_LoginInfoBlock_WxId 0x0 // 微信ID
+#define offset_LoginInfoBlock_Mobile 0x0 //手机号码
+#define offset_LoginInfoBlock_City 0x0 //城市
+#define offset_LoginInfoBlock_WechatName 0x0 //微信名
+#define offset_LoginInfoBlock_Country 0x0 // 国家
+#define offset_LoginInfoBlock_Avatar 0x0 // 头像
+
 #elif WECHAT_WINDLL_VERSION == 27188
 
 #define offset_LoginSign 0x13973B4	//登录标志位
@@ -41,6 +50,15 @@
 
 #define offset_WxAntiRevoke 0x26256B		//防撤回
 
+#define offset_LoginInfoBlock 0x0 //登录用户信息块起始
+#define offset_LoginInfoBlock_Lang 0x0 // 语言
+#define offset_LoginInfoBlock_WxId 0x0 // 微信ID
+#define offset_LoginInfoBlock_Mobile 0x0 //手机号码
+#define offset_LoginInfoBlock_City 0x0 //城市
+#define offset_LoginInfoBlock_WechatName 0x0 //微信名
+#define offset_LoginInfoBlock_Country 0x0 // 国家
+#define offset_LoginInfoBlock_Avatar 0x0 // 头像
+
 #elif WECHAT_WINDLL_VERSION == 27276
 
 #define offset_LoginSign 0x0	//登录标志位
@@ -60,6 +78,15 @@
 #define offset_GoToQrCode2 0x0			//跳转到二维码
 
 #define offset_WxAntiRevoke 0x0			//防撤回
+
+#define offset_LoginInfoBlock 0x0 //登录用户信息块起始
+#define offset_LoginInfoBlock_Lang 0x0 // 语言
+#define offset_LoginInfoBlock_WxId 0x0 // 微信ID
+#define offset_LoginInfoBlock_Mobile 0x0 //手机号码
+#define offset_LoginInfoBlock_City 0x0 //城市
+#define offset_LoginInfoBlock_WechatName 0x0 //微信名
+#define offset_LoginInfoBlock_Country 0x0 // 国家
+#define offset_LoginInfoBlock_Avatar 0x0 // 头像
 
 
 #elif WECHAT_WINDLL_VERSION == 27278
@@ -82,6 +109,15 @@
 
 #define offset_WxAntiRevoke 0x0			//防撤回
 
+#define offset_LoginInfoBlock 0x0 //登录用户信息块起始
+#define offset_LoginInfoBlock_Lang 0x0 // 语言
+#define offset_LoginInfoBlock_WxId 0x0 // 微信ID
+#define offset_LoginInfoBlock_Mobile 0x0 //手机号码
+#define offset_LoginInfoBlock_City 0x0 //城市
+#define offset_LoginInfoBlock_WechatName 0x0 //微信名
+#define offset_LoginInfoBlock_Country 0x0 // 国家
+#define offset_LoginInfoBlock_Avatar 0x0 // 头像
+
 
 #elif WECHAT_WINDLL_VERSION == 28088
 
@@ -102,5 +138,14 @@
 #define offset_GoToQrCode2 0x0			//跳转到二维码
 
 #define offset_WxAntiRevoke 0x28866B			//防撤回
+
+#define offset_LoginInfoBlock 0x1611300 //登录用户信息块起始
+#define offset_LoginInfoBlock_Lang 0x104 // 语言
+#define offset_LoginInfoBlock_WxId 0x3D4 // 微信ID
+#define offset_LoginInfoBlock_Mobile 0x480 //手机号码
+#define offset_LoginInfoBlock_City 0x538 //城市
+#define offset_LoginInfoBlock_WechatName 0x5B0 //微信名
+#define offset_LoginInfoBlock_Country 0x628 // 国家
+#define offset_LoginInfoBlock_Avatar 0x714 // 头像
 
 #endif
