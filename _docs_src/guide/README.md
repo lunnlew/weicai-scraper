@@ -33,7 +33,7 @@ sidebar: auto
 
 |  操作系统  |         二进制包          |
 | :----: | :-------------------: |
-| winx64 |   [微采助手-Setup-x86-0.1.6.exe](https://github.com/lunnlew/weicai-scraper/releases/download/v0.1.6/Setup-x86-0.1.6.exe)   |
+| winx64 |   [微采助手-Setup-x86-0.1.7.exe](https://github.com/lunnlew/weicai-scraper/releases/download/v0.1.7/Setup-x86-0.1.7.exe)   |
 
 
 
