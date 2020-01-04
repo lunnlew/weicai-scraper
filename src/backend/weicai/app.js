@@ -9,14 +9,22 @@ const fs = require('fs-extra')
 const json2csv = require('json2csv')
 const shell = require('electron').shell
 
+// prod模式下
+// 由于没权限直接加载c盘二进制资源，须在其他盘处理
+console.log('NODE_ENV:' + process.env.NODE_ENV)
+let p_WeChatDll_dir = 'd:/weicai-scraper/native'
+if (process.env.NODE_ENV == 'development') {
+  p_WeChatDll_dir = path.join(__dirname, "../dist_electron/native")
+} else {
+  fs.copySync(path.join(__dirname, "../native"), p_WeChatDll_dir)
+}
 
 const AppServer = require('./AppServer')
 const expressApp = require('./expressApp')
 const Recorder = require('./Recorder')
 const ProxyServer = require('./ProxyServer')
 const WeChatCtl = require('../WeChatCtl')
-const WeicaiBinding = require('../../native/WeicaiBinding/build/Release/WeicaiBinding.node')
-let weChatCtl = new WeChatCtl(WeicaiBinding)
+let weChatCtl = new WeChatCtl()
 global.recorder = new Recorder()
 let appServer = new AppServer()
 appServer.bindApp(expressApp, recorder)
@@ -224,15 +232,12 @@ var requestStrToMap = function(e) {
 
 appServer.route(function(self) {
   self.app.all('/wechatCtl', async function(req, res) {
-    console.log(req.body)
     let action = req.query.act || ''
     switch (action) {
       case "startMonitor":
         {
           // 启动控制端
           weChatCtl.startWechatCtl();
-          // 开始微信进程注入
-          weChatCtl.startWechatHelperInject();
           res.send({ code: 200, msg: '启动控制端完成', data: {} })
           break;
         }
@@ -276,7 +281,7 @@ appServer.route(function(self) {
     console.log(req.body)
 
     setTimeout(function() {
-      WeicaiBinding.sendCtlMsg(req.body.WeChatHelperName, 502)
+      weChatCtl.sendCtlMsg(req.body.WeChatHelperName, 502)
     }, 200)
 
     if (self.ws['wcclient']) {
