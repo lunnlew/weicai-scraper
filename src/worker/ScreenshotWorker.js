@@ -105,7 +105,13 @@ var pageScreenshot = async function(page, filename, callback) {
   // 取得页面文本数据
   let html = await page.content()
   const $ = cheerio.load(html, { decodeEntities: false })
-  let text = $('#js_content').html().replace(/<[^>]*>|/g, "").html()
+  let c = $('#js_content')
+  let text
+  if (c) {
+    text = c.html().replace(/<[^>]*>|/g, "").html()
+  } else {
+    text = $('.global_error_msg').innerText
+  }
   let data = {
     'text': text
   }
