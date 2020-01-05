@@ -29,10 +29,10 @@ void HOOK_ReciveMsg() {
 	}
 	else {
 		LogRecord(L"已登录", ofs);
-		if (sWeChatHookPoint->enable_WX_ReciveMsg_Hook) {
-			LogRecord(L"已经存在WX_ReciveMsg_HOOK", ofs);
-			return;
-		}
+		//if (sWeChatHookPoint->enable_WX_ReciveMsg_Hook) {
+		//	LogRecord(L"已经存在WX_ReciveMsg_HOOK", ofs);
+		//	return;
+		//}
 	}
 	DWORD WeChatWinBaseAddr = (DWORD)GetModuleHandle(L"WeChatWin.dll");
 	LogRecord(L"WeChatWin.dll 基址", ofs);
