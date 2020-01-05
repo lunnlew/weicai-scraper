@@ -22,8 +22,12 @@ WeChatHookReg *sWeChatHookReg = new WeChatHookReg();
 WeChatLoginInfo *sWeChatLoginInfo = new WeChatLoginInfo();
 
 void HOOK_ReciveMsg() {
-	if (sWeChatHookPoint->enable_WX_ReciveMsg_Hook) {
-		LogRecord(L"已经存在WX_ReciveMsg_HOOK", ofs);
+	//if (sWeChatHookPoint->enable_WX_ReciveMsg_Hook) {
+	//	LogRecord(L"已经存在WX_ReciveMsg_HOOK", ofs);
+	//	return;
+	//}
+	if (IsLogin()!=1) {
+		LogRecord(L"还未登录", ofs);
 		return;
 	}
 	DWORD WeChatWinBaseAddr = (DWORD)GetModuleHandle(L"WeChatWin.dll");
@@ -273,4 +277,11 @@ WeChatLoginInfo * GetWechatLoginInfo() {
 	wcscpy_s(sWeChatLoginInfo->WechatName, wcslen(c) + 1, c);
 
 	return sWeChatLoginInfo;
+}
+
+int IsLogin() {
+	DWORD WeChatWinBaseAddr = (DWORD)GetModuleHandle(L"WeChatWin.dll");
+	DWORD infoAddr = WeChatWinBaseAddr + offset_LoginInfoBlock;
+	int ret = (int) * (int*)(infoAddr + offset_LoginInfoBlock_IsLogin);
+	return ret;
 }

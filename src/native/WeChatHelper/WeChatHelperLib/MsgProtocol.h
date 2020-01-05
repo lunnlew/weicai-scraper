@@ -58,4 +58,4 @@ void RecieveWxMesage();
 void SendWxMessage();
 std::wstring GetMsgByAddress(DWORD memAddress);
 WeChatLoginInfo * GetWechatLoginInfo();
-
+int IsLogin();
