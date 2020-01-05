@@ -9,16 +9,6 @@ const fs = require('fs-extra')
 const json2csv = require('json2csv')
 const shell = require('electron').shell
 
-// prod模式下
-// 由于没权限直接加载c盘二进制资源，须在其他盘处理
-console.log('NODE_ENV:' + process.env.NODE_ENV)
-let p_WeChatDll_dir = 'd:/weicai-scraper/native'
-if (process.env.NODE_ENV == 'development') {
-  p_WeChatDll_dir = path.join(__dirname, "../dist_electron/native")
-} else {
-  fs.copySync(path.join(__dirname, "../native"), p_WeChatDll_dir)
-}
-
 const AppServer = require('./AppServer')
 const expressApp = require('./expressApp')
 const Recorder = require('./Recorder')

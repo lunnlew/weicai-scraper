@@ -13,13 +13,6 @@ const WeChatHelperWorkerPath = process.env.NODE_ENV === 'development' ?
 
 console.log('NODE_ENV:' + process.env.NODE_ENV)
 
-let p_WeChatDll_dir = 'd:/weicai-scraper/native'
-if (process.env.NODE_ENV == 'development') {
-  p_WeChatDll_dir = path.join(__dirname, "../dist_electron/native")
-} else {
-  fs.copySync(path.join(__dirname, "../native"), p_WeChatDll_dir)
-}
-
 class WeChatCtl extends events.EventEmitter {
   constructor() {
     super()

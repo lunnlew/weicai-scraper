@@ -7,7 +7,7 @@ let weicaiNative
 
 // 发布模式配置
 let p_WeicaiBinding = path.join(__dirname, '../native/WeicaiBinding.node').replace(/\\/g, '/')
-let p_WeChatDll_dir = 'd:/weicai-scraper/native'
+let p_WeChatDll_dir
 
 if (process.env.NODE_ENV == 'development') {
   // 开发模式
@@ -18,6 +18,7 @@ if (process.env.NODE_ENV == 'development') {
   // 发布模式
   console.log('[prod]加载' + p_WeicaiBinding)
   weicaiNative = require(p_WeicaiBinding)
+  p_WeChatDll_dir = path.join(__dirname, "../native")
 }
 let wechatVersion = weicaiNative.GetWechatVersion().replace(/\./g, '')
 
