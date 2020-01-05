@@ -22,13 +22,17 @@ WeChatHookReg *sWeChatHookReg = new WeChatHookReg();
 WeChatLoginInfo *sWeChatLoginInfo = new WeChatLoginInfo();
 
 void HOOK_ReciveMsg() {
-	//if (sWeChatHookPoint->enable_WX_ReciveMsg_Hook) {
-	//	LogRecord(L"已经存在WX_ReciveMsg_HOOK", ofs);
-	//	return;
-	//}
+	
 	if (IsLogin()!=1) {
 		LogRecord(L"还未登录", ofs);
 		return;
+	}
+	else {
+		LogRecord(L"已登录", ofs);
+		if (sWeChatHookPoint->enable_WX_ReciveMsg_Hook) {
+			LogRecord(L"已经存在WX_ReciveMsg_HOOK", ofs);
+			return;
+		}
 	}
 	DWORD WeChatWinBaseAddr = (DWORD)GetModuleHandle(L"WeChatWin.dll");
 	LogRecord(L"WeChatWin.dll 基址", ofs);
