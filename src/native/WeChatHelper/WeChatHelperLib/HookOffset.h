@@ -87,20 +87,20 @@
 #define offset_ReciveMessageParam_MsgContent 0x68 //消息主体
 #define offset_ReciveMessageParam_MsgSender 0x118 //消息的发送者
 
-#define offset_LoginInfoBlock 0x0 //登录用户信息块起始
-#define offset_LoginInfoBlock_WxId 0x0 // 微信ID
-#define offset_LoginInfoBlock_NickName 0x0 //昵称
-#define offset_LoginInfoBlock_Email 0x0 //邮箱
-#define offset_LoginInfoBlock_Mobile 0x0 //手机号码
-#define offset_LoginInfoBlock_Sex 0x0 //性别
-#define offset_LoginInfoBlock_IsLogin 0x0 //登录标志位
-#define offset_LoginInfoBlock_Province 0x0 //省份
-#define offset_LoginInfoBlock_City 0x0 //城市
-#define offset_LoginInfoBlock_Signer 0x0 //个性签名
-#define offset_LoginInfoBlock_WechatName 0x0 //微信名
-#define offset_LoginInfoBlock_Country 0x0 // 国家
-#define offset_LoginInfoBlock_Avatar 0x0 // 头像
-#define offset_LoginInfoBlock_Device 0x0 // 登陆设备
+#define offset_LoginInfoBlock 0x160F2C8 //登录用户信息块起始
+#define offset_LoginInfoBlock_WxId 0x3CC // 微信ID
+#define offset_LoginInfoBlock_NickName 0x444 //昵称
+#define offset_LoginInfoBlock_Email 0x460 //邮箱
+#define offset_LoginInfoBlock_Mobile 0x478 //手机号码
+#define offset_LoginInfoBlock_Sex 0x52C //性别
+#define offset_LoginInfoBlock_IsLogin 0x534 //登录标志位
+#define offset_LoginInfoBlock_Province 0x530 //省份
+#define offset_LoginInfoBlock_City 0x548 //城市
+#define offset_LoginInfoBlock_Signer 0x560 //个性签名
+#define offset_LoginInfoBlock_WechatName 0x5A8 //微信名
+#define offset_LoginInfoBlock_Country 0x620 // 国家
+#define offset_LoginInfoBlock_Avatar 0x70C // 头像
+#define offset_LoginInfoBlock_Device 0x880 // 登陆设备
 
 #elif WECHAT_WINDLL_VERSION == 28088
 
