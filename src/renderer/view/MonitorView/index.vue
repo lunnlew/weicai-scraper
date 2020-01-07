@@ -13,11 +13,7 @@
               <span slot="open">开启</span>
               <span slot="close">关闭</span>
             </i-switch>
-            <!-- <span class="label">启用消息防撤回</span>
-            <i-switch size="large" v-model="boolSwitchAntiRevoke" @on-change="switchAntiRevokeChange">
-              <span slot="open">开启</span>
-              <span slot="close">关闭</span>
-            </i-switch> -->
+            <Alert type="error" v-if="isNotSupportedWechatVersion">您当前安装的微信版本{{wechatState.version}}不支持</Alert>
           </TabPane>
         </Tabs>
       </div>
@@ -52,6 +48,18 @@ export default {
     boolSwitchAntiRevoke: {
       get: function() {
         return this.$store.state.ListView.boolSwitchAntiRevoke
+      },
+      set: function(v) {}
+    },
+    isNotSupportedWechatVersion: {
+      get: function() {
+        return this.$store.state.wechatView.isNotSupportedWechatVersion
+      },
+      set: function(v) {}
+    },
+    wechatState: {
+      get: function() {
+        return this.$store.state.wechatView.NotSupportedWechatVersion
       },
       set: function(v) {}
     }

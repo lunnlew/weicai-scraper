@@ -28,6 +28,9 @@ socket.addEventListener('message', function(event) {
   if (data.type == 'wechatRegister') {
     store.dispatch('wechatRegister', data.data)
   }
+  if (data.type == 'NotSupportedWechatVersion') {
+    store.dispatch('NotSupportedWechatVersion', data.data)
+  }
 });
 
 

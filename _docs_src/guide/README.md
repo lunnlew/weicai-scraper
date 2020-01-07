@@ -34,6 +34,9 @@ sidebar: auto
 |  操作系统  |         二进制包          |
 | :----: | :-------------------: |
 | winx64 |   [微采助手-Setup-x86-0.1.8.exe](https://github.com/lunnlew/weicai-scraper/releases/download/v0.1.8/Setup-x86-0.1.8.exe)   |
+### 百度源
+
+[微采助手-Setup-x86.exe](https://pan.baidu.com/s/1IB1343C4_3pa1bbwnWB0jw)
 
 
 

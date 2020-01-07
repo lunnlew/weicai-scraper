@@ -2,7 +2,9 @@ import { wechatAct } from '@/api/source'
 
 const state = {
   list: [],
-  loadingOpen: false
+  loadingOpen: false,
+  isNotSupportedWechatVersion: false,
+  NotSupportedWechatVersion: {}
 }
 
 const mutations = {
@@ -23,6 +25,10 @@ const mutations = {
   },
   closeAllWechat(state, data) {
     state.list = [];
+  },
+  NotSupportedWechatVersion(state, data) {
+    state.isNotSupportedWechatVersion = true
+    state.NotSupportedWechatVersion = data
   }
 }
 
@@ -33,6 +39,9 @@ const actions = {
     } else {
       commit('removeWechatItem', data)
     }
+  },
+  NotSupportedWechatVersion({ commit }, data) {
+    commit('NotSupportedWechatVersion', data)
   },
   newWechat({ commit }, data) {
     commit('newWechatState', data)
