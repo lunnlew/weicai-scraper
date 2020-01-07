@@ -106,9 +106,9 @@ var pageScreenshot = async function(page, filename, callback) {
   let html = await page.content()
   const $ = cheerio.load(html, { decodeEntities: false })
   let c = $('#js_content')
-  let text
-  if (c) {
-    text = c.html().replace(/<[^>]*>|/g, "").html()
+  let text = c.html()
+  if (text) {
+    text = text.replace(/<[^>]*>|/g, "")
   } else {
     text = $('.global_error_msg').innerText
   }
