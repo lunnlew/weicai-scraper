@@ -16,19 +16,27 @@ console.log('NODE_ENV:' + process.env.NODE_ENV)
 class WeChatCtl extends events.EventEmitter {
   constructor() {
     super()
-    this.WeChatHelperWorker = child_process.fork(WeChatHelperWorkerPath, [], {
+    const self = this
+    self.WeChatHelperWorker = child_process.fork(WeChatHelperWorkerPath, [], {
       cwd: process.cwd(),
       env: process.env,
       stdio: [0, 1, 2, 'ipc'],
       encoding: 'utf-8'
     })
-    this.WeChatHelperWorker.on('message', function(msg) {
+    self.WeChatHelperWorker.on('message', function(msg) {
       if (typeof msg == 'object') {
-        if (msg.event == 'WeChatHelperInjectCompleted') {
-          console.log('WeiChatWorker WeChatHelperInjectCompleted')
+        if (msg.event == 'NotSupportedWechatVersion') {
+          self.emit('NotSupportedWechatVersion', msg.data)
         }
       }
     })
+    self.WeChatHelperWorker.on('close', function(code) {
+      // TODO code=3为ipc通道退出
+      console.log('子进程已退出，退出码 ' + code);
+    });
+    self.WeChatHelperWorker.on('error', function(err) {
+      console.log(err);
+    });
   }
   async startWechatCtl() {
     const self = this

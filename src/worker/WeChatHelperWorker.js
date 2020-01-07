@@ -26,6 +26,17 @@ let p_WeChatDll_name = `WeChatHelper${wechatVersion}.dll`
 
 process.on('message', async (msg) => {
   if (typeof msg == 'object') {
+
+    if ([26852, 27188, 27276, 27278, 28088, 280106].indexOf(parseInt(wechatVersion)) == -1) {
+      process.send({
+        'event': 'NotSupportedWechatVersion',
+        'data': {
+          version: wechatVersion
+        }
+      })
+      return
+    }
+
     if (msg.event == 'startWechatCtl') {
       let p_WeChatCtl_path = path.join(p_WeChatDll_dir, "WeChatCtl.dll")
       console.log('加载' + p_WeChatCtl_path)

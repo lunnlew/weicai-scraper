@@ -227,7 +227,16 @@ appServer.route(function(self) {
       case "startMonitor":
         {
           // 启动控制端
+
+          weChatCtl.on('NotSupportedWechatVersion', (data) => {
+            console.log('NotSupportedWechatVersion')
+            self.ws['wcclient'].send(JSON.stringify({
+              'type': 'NotSupportedWechatVersion',
+              'data': data
+            }))
+          })
           weChatCtl.startWechatCtl();
+
           res.send({ code: 200, msg: '启动控制端完成', data: {} })
           break;
         }
