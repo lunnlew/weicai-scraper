@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "stdio.h"
 #include "WndMsgLoop.h"
-#include "HookOffset.h"
 #include "MsgProtocol.h"
 #include "StringTool.h"
 #include "LogRecord.h"

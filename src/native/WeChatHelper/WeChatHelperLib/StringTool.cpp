@@ -152,6 +152,16 @@ TCHAR* CharToTchar(const char* str)
 
 }
 
+wchar_t * UTF8ToUnicode(const char* str)
+{
+	int    textlen = 0;
+	wchar_t * result;
+	textlen = MultiByteToWideChar(CP_UTF8, 0, str, -1, NULL, 0);
+	result = (wchar_t *)malloc((textlen + 1) * sizeof(wchar_t));
+	memset(result, 0, (textlen + 1) * sizeof(wchar_t));
+	MultiByteToWideChar(CP_UTF8, 0, str, -1, (LPWSTR)result, textlen);
+	return    result;
+}
 
 std::string ListToString(std::vector<std::string> list) {
 	std::stringstream ss;
@@ -168,4 +178,24 @@ bool endWith(const std::string &str, const std::string &tail) {
 
 bool startWith(const std::string &str, const std::string &head) {
 	return str.compare(0, head.size(), head) == 0;
+}
+
+wchar_t* pToTchar(DWORD addr) {
+	char* pChar = { 0 };
+	wchar_t * retstr = { 0 };
+	//字符串的长度
+	DWORD len = *((DWORD*)(addr + 0x10));
+	//字符串的最大分配空间
+	DWORD capacity = *((DWORD*)(addr + 0x14));
+	//如果超过默认空间大小
+	if (capacity >= 0x10) {
+		//内容指针
+		pChar = (char*)*((DWORD *)(addr));
+	}
+	else{
+		// 原始内容
+		pChar = (char*)(DWORD*)(addr);
+	}
+	retstr  = UTF8ToUnicode(pChar);
+	return retstr;
 }

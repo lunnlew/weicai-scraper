@@ -14,6 +14,8 @@ void replace_str(std::string& str, const std::string& before, const std::string&
 std::string Wchar_tToString(wchar_t *wchar);
 wchar_t * StringToWchar_t(const std::string & str);
 std::string stringToUTF8(const std::string & str);
+wchar_t * UTF8ToUnicode(const char* str);
 std::string ListToString(std::vector<std::string> list);
 bool endWith(const std::string &str, const std::string &tail);
 bool startWith(const std::string &str, const std::string &head);
+wchar_t* pToTchar(DWORD addr);

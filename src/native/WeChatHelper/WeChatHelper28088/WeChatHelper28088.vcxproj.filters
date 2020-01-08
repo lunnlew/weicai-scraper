@@ -21,9 +21,6 @@
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\WeChatHelperLib\HookOffset.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\WeChatHelperLib\LogRecord.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -46,6 +43,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="WechatOffset28088.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -76,6 +76,12 @@
     </ClCompile>
     <ClCompile Include="..\WeChatHelperLib\StringTool.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="WechatOffset20888.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\WeChatHelperLib\WechatOffset.cpp">
+      <Filter>头文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
