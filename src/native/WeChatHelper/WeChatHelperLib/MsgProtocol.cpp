@@ -275,9 +275,8 @@ std::wstring GetMsgByAddress(DWORD memAddress)
 WeChatLoginInfo * GetWechatLoginInfo() {
 	DWORD WeChatWinBaseAddr = (DWORD)GetModuleHandle(L"WeChatWin.dll");
 	DWORD infoAddr = WeChatWinBaseAddr + offset_LoginInfoBlock;
-	char * wechatName = (char*)(DWORD*)(infoAddr + offset_LoginInfoBlock_WechatName);
-
-	wchar_t *c= CharToTchar(wechatName);
+	
+	wchar_t *c= pToTchar(infoAddr + offset_LoginInfoBlock_WechatName);
 	wcscpy_s(sWeChatLoginInfo->WechatName, wcslen(c) + 1, c);
 
 	return sWeChatLoginInfo;
