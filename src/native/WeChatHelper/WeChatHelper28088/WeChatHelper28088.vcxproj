@@ -149,7 +149,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\WeChatHelperLib\HookOffset.h" />
     <ClInclude Include="..\WeChatHelperLib\HttpRequest.h" />
     <ClInclude Include="..\WeChatHelperLib\json.hpp" />
     <ClInclude Include="..\WeChatHelperLib\LogRecord.h" />
@@ -160,6 +159,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="WechatOffset28088.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\WeChatHelperLib\HttpRequest.cpp" />
@@ -167,6 +167,7 @@
     <ClCompile Include="..\WeChatHelperLib\MsgProtocol.cpp" />
     <ClCompile Include="..\WeChatHelperLib\StringTool.cpp" />
     <ClCompile Include="..\WeChatHelperLib\WCProcess.cpp" />
+    <ClCompile Include="..\WeChatHelperLib\WechatOffset.cpp" />
     <ClCompile Include="..\WeChatHelperLib\WndMsgLoop.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -176,6 +177,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="WeChatHelper28088.cpp" />
+    <ClCompile Include="WechatOffset20888.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WeChatHelper28088.rc" />

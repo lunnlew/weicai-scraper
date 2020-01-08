@@ -4,7 +4,6 @@
 #include <shlwapi.h>
 #include "MsgProtocol.h"
 #include "StringTool.h"
-#include "HookOffset.h"
 #include "LogRecord.h"
 #include "HttpRequest.h"
 #include "json.hpp"
@@ -39,8 +38,8 @@ void HOOK_ReciveMsg() {
 	LogRecord(char2TCAHR(std::to_string(WeChatWinBaseAddr).c_str()), ofs);
 
 	//计算需要HOOK的地址
-	DWORD dwHookAddr = WeChatWinBaseAddr + offset_ReciveMessage;
-	ReciveMsg_dwParam = WeChatWinBaseAddr + offset_ReciveMessageParam;
+	DWORD dwHookAddr = WeChatWinBaseAddr + sWechatOffset->offsetReciveMessage;
+	ReciveMsg_dwParam = WeChatWinBaseAddr + sWechatOffset->offsetReciveMessageParam;
 	ReciveMsg_RetAddr = dwHookAddr + 5;
 
 	LogRecord(L"ReciveMsg_HOOK 地址", ofs);
@@ -77,7 +76,7 @@ void UnHOOK_ReciveMsg()
 	LogRecord(L"UnHOOK_ReciveMsg", ofs);
 	DWORD WeChatWinBaseAddr = (DWORD)GetModuleHandle(L"WeChatWin.dll");
 	//计算需要HOOK的地址
-	DWORD dwHookAddr = WeChatWinBaseAddr + offset_ReciveMessage;
+	DWORD dwHookAddr = WeChatWinBaseAddr + sWechatOffset->offsetReciveMessage;
 
 	// 原属性
 	DWORD OldProtext = 0;
@@ -131,15 +130,15 @@ void SendWxMessage()
 	//信息块的位置
 	DWORD** msgAddress = (DWORD * *)ReciveMsg_esp;
 	//消息类型
-	DWORD msgType = *((DWORD*)(**msgAddress + offset_ReciveMessageParam_MsgType));
+	DWORD msgType = *((DWORD*)(**msgAddress + sWechatOffset->offsetReciveMessageParam_MsgType));
 	//消息来源类型
-	DWORD msgSource = *((DWORD*)(**msgAddress + offset_ReciveMessageParam_MsgSourceType));
+	DWORD msgSource = *((DWORD*)(**msgAddress + sWechatOffset->offsetReciveMessageParam_MsgSourceType));
 	//消息发送者
-	LPVOID pSender = *((LPVOID *)(**msgAddress + offset_ReciveMessageParam_MsgSender));
+	LPVOID pSender = *((LPVOID *)(**msgAddress + sWechatOffset->offsetReciveMessageParam_MsgSender));
 	//消息接收者
-	LPVOID pWxid = *((LPVOID *)(**msgAddress + offset_ReciveMessageParam_MsgReciver));
+	LPVOID pWxid = *((LPVOID *)(**msgAddress + sWechatOffset->offsetReciveMessageParam_MsgReciver));
 	//完整的消息内容
-	std::wstring msgContent = GetMsgByAddress(**msgAddress + offset_ReciveMessageParam_MsgContent);
+	std::wstring msgContent = GetMsgByAddress(**msgAddress + sWechatOffset->offsetReciveMessageParam_MsgContent);
 	const wchar_t* c = msgContent.c_str();
 
 	//分配长度
@@ -274,17 +273,29 @@ std::wstring GetMsgByAddress(DWORD memAddress)
 
 WeChatLoginInfo * GetWechatLoginInfo() {
 	DWORD WeChatWinBaseAddr = (DWORD)GetModuleHandle(L"WeChatWin.dll");
-	DWORD infoAddr = WeChatWinBaseAddr + offset_LoginInfoBlock;
-	
-	wchar_t *c= pToTchar(infoAddr + offset_LoginInfoBlock_WechatName);
-	wcscpy_s(sWeChatLoginInfo->WechatName, wcslen(c) + 1, c);
+	DWORD infoAddr = WeChatWinBaseAddr + sWechatOffset->offsetLoginInfoBlock;
+
+	wchar_t *wxid = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_WxId);
+	wchar_t *wxname = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_WechatName);
+	wchar_t *email = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Email);
+	wchar_t *mobile = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Mobile);
+	DWORD sex = *((DWORD*)(infoAddr + sWechatOffset->offsetLoginInfoBlock_Sex));
+	DWORD islogin = *((DWORD*)(infoAddr + sWechatOffset->offsetLoginInfoBlock_IsLogin));
+	wchar_t *province = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Province);
+	wchar_t *city = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_City);
+	wchar_t *signer = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Signer);
+	wchar_t *country = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Country);
+	wchar_t *avatar = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Avatar);
+	wchar_t *device = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Device);
+
+	wcscpy_s(sWeChatLoginInfo->WechatName, wcslen(wxname) + 1, wxname);
 
 	return sWeChatLoginInfo;
 }
 
 int IsLogin() {
 	DWORD WeChatWinBaseAddr = (DWORD)GetModuleHandle(L"WeChatWin.dll");
-	DWORD infoAddr = WeChatWinBaseAddr + offset_LoginInfoBlock;
-	int ret = (int) * (int*)(infoAddr + offset_LoginInfoBlock_IsLogin);
+	DWORD infoAddr = WeChatWinBaseAddr + sWechatOffset->offsetLoginInfoBlock;
+	int ret = (int) * (int*)(infoAddr + sWechatOffset->offsetLoginInfoBlock_IsLogin);
 	return ret;
 }
