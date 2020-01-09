@@ -21,7 +21,13 @@ WeChatHookReg *sWeChatHookReg = new WeChatHookReg();
 WeChatLoginInfo *sWeChatLoginInfo = new WeChatLoginInfo();
 
 void HOOK_ReciveMsg() {
-	
+	LogRecord(L"HOOK_ReciveMsg", ofs);
+
+	if (sWechatOffset->offsetReciveMessage == 0x0) {
+		LogRecord(L"未支持 ReciveMsg_HOOK", ofs);
+		return;
+	}
+
 	if (IsLogin()!=1) {
 		LogRecord(L"还未登录", ofs);
 		return;
@@ -68,12 +74,18 @@ void HOOK_ReciveMsg() {
 }
 void UnHOOK_ReciveMsg()
 {
+	LogRecord(L"UnHOOK_ReciveMsg", ofs);
+
+	if (sWechatOffset->offsetReciveMessage == 0x0) {
+		LogRecord(L"未支持 ReciveMsg_HOOK", ofs);
+		return;
+	}
+
 	if (!sWeChatHookPoint->enable_WX_ReciveMsg_Hook) {
 		LogRecord(L"WX_ReciveMsg_HOOK不存在", ofs);
 		return;
 	}
 
-	LogRecord(L"UnHOOK_ReciveMsg", ofs);
 	DWORD WeChatWinBaseAddr = (DWORD)GetModuleHandle(L"WeChatWin.dll");
 	//计算需要HOOK的地址
 	DWORD dwHookAddr = WeChatWinBaseAddr + sWechatOffset->offsetReciveMessage;
@@ -298,4 +310,20 @@ int IsLogin() {
 	DWORD infoAddr = WeChatWinBaseAddr + sWechatOffset->offsetLoginInfoBlock;
 	int ret = (int) * (int*)(infoAddr + sWechatOffset->offsetLoginInfoBlock_IsLogin);
 	return ret;
+}
+
+void HOOK_AntiRevoke()
+{
+	LogRecord(L"执行 HOOK_AntiRevoke", ofs);
+	if (sWechatOffset->offsetAntiRevoke == 0x0) {
+		LogRecord(L"未支持 HOOK_AntiRevoke", ofs);
+		return;
+	}
+	unsigned char fix[1] = { 0xEB };
+	DWORD dwPathcAddr = (DWORD)GetModuleHandle(L"WeChatWin.dll") + sWechatOffset->offsetAntiRevoke;
+	DWORD dwOldAttr = 0;
+
+	VirtualProtect((LPVOID)dwPathcAddr, 1, PAGE_EXECUTE_READWRITE, &dwOldAttr);
+	memcpy((LPVOID)dwPathcAddr, fix, 1);
+	VirtualProtect((LPVOID)dwPathcAddr, 5, dwOldAttr, &dwOldAttr);
 }

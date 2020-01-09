@@ -27,4 +27,6 @@ public:
 	DWORD offsetLoginInfoBlock_Country; // 国家
 	DWORD offsetLoginInfoBlock_Avatar; // 头像
 	DWORD offsetLoginInfoBlock_Device; // 登陆设备
+
+	DWORD offsetAntiRevoke; //消息撤回hook
 };

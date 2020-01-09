@@ -26,6 +26,8 @@ WechatOffset27188::WechatOffset27188()
 	offsetLoginInfoBlock_Country = 0x680;
 	offsetLoginInfoBlock_Avatar = 0x76C;
 	offsetLoginInfoBlock_Device = 0x8E0;
+
+	offsetAntiRevoke = 0x3218BA;
 }
 
 

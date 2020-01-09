@@ -59,3 +59,4 @@ void SendWxMessage();
 std::wstring GetMsgByAddress(DWORD memAddress);
 WeChatLoginInfo * GetWechatLoginInfo();
 int IsLogin();
+void HOOK_AntiRevoke();

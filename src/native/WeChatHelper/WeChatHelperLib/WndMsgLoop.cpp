@@ -249,6 +249,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		case WM_HookReciveMsg: {
 			LogRecord(L" ’µΩWM_HookReciveMsg÷∏¡Ó", ofs);
 			HOOK_ReciveMsg();
+			HOOK_AntiRevoke();
 			break;
 		}
 		case WM_HookAntiRevoke: {

@@ -26,6 +26,8 @@ WechatOffset::WechatOffset()
 	offsetLoginInfoBlock_Country = 0;
 	offsetLoginInfoBlock_Avatar = 0;
 	offsetLoginInfoBlock_Device = 0;
+
+	offsetAntiRevoke = 0;
 }
 
 
