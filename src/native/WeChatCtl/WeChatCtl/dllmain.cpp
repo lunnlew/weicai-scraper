@@ -16,13 +16,15 @@ VOID __declspec(dllexport) test()
 
 // 发送控制消息到WeChatHelper
 extern "C"  __declspec(dllexport) VOID sendCtlMsg(const char* wName, int MsgType) {
+	LogRecord(L"sendCtlMsg", ofs);
 	std::string WeChatHelperName = "WeChatHelper";
-	if (wehcatHelpers.size() > 0) {
-		WeChatHookReg *wr = &(WeChatHookReg)wehcatHelpers[0];
-		WeChatHelperName = Wchar_tToString(wr->WeChatHelperName);
-	}
-	LogRecord(L"wehcatHelpers size:", ofs);
-	LogRecord(CharToTchar(std::to_string(wehcatHelpers.size()).c_str()), ofs);
+	WeChatHelperName = wName;
+
+	LogRecord(L"WeChatHelperName", ofs);
+	LogRecord(CharToTchar(WeChatHelperName.c_str()), ofs);
+	LogRecord(L"MsgType", ofs);
+	LogRecord(CharToTchar(std::to_string(MsgType).c_str()), ofs);
+
 	HWND hWnd = FindWindow(NULL, StringToLPCWSTR(WeChatHelperName));
 	if (hWnd == NULL)
 	{
