@@ -223,6 +223,8 @@ void  CALLBACK Do_CheckWeChatCtrl(HWND   hwnd, UINT   uMsg, UINT   idEvent, DWOR
 		if (sWeChatHookPoint->enable_WX_ReciveMsg_Hook) {
 			LogRecord(L"Do_CheckWeChatCtrl:¸´Ô­WX_ReciveMsg_Hook", ofs);
 			UnHOOK_ReciveMsg();
+			LogRecord(L"Do_CheckWeChatCtrl:¸´Ô­UnHOOK_GetFriendList", ofs);
+			UnHOOK_GetFriendList();
 		}
 
 		LogRecord(L"Do_CheckWeChatCtrl:Ð¶ÔØDLL", ofs);

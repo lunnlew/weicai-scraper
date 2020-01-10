@@ -79,3 +79,4 @@ void HOOK_AntiRevoke();
 void HOOK_GetFriendList();
 void GetUserListInfo();
 void SendUserListInfo();
+void UnHOOK_GetFriendList();

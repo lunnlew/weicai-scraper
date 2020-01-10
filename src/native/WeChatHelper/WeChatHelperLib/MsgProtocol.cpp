@@ -429,3 +429,35 @@ void SendUserListInfo()
 	chatmsg.lpData = user;
 	SendMessage(hWeChatRoot, WM_COPYDATA, NULL, (LPARAM)&chatmsg);
 }
+
+
+void UnHOOK_GetFriendList()
+{
+	LogRecord(L"UnHOOK_GetFriendList", ofs);
+
+	LogRecord(L"GetFriendList", ofs);
+	if (!sWeChatHookPoint->enable_GetFriendList_Hook) {
+		LogRecord(L"不存在GetFriendList_HOOK", ofs);
+		return;
+	}
+	if (sWechatOffset->offsetGetFriendListCall == 0x0) {
+		LogRecord(L"未支持 GetFriendList_HOOK", ofs);
+		return;
+	}
+
+	DWORD WeChatWinBaseAddr = (DWORD)GetModuleHandle(L"WeChatWin.dll");
+	//计算需要HOOK的地址
+	DWORD dwHookAddr = WeChatWinBaseAddr + sWechatOffset->offsetGetFriendList;
+
+	// 原属性
+	DWORD OldProtext = 0;
+
+	// 更改可读写
+	VirtualProtect((LPVOID*)dwHookAddr, 5, PAGE_EXECUTE_READWRITE, &OldProtext);
+
+	// 还原原始指令
+	memcpy((LPVOID*)dwHookAddr, sWeChatHookPoint->GetFriendList_Hook, 5);
+
+	// 属性还原
+	VirtualProtect((LPVOID*)dwHookAddr, 5, OldProtext, &OldProtext);
+}
