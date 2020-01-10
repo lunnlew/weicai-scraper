@@ -29,4 +29,7 @@ public:
 	DWORD offsetLoginInfoBlock_Device; // 登陆设备
 
 	DWORD offsetAntiRevoke; //消息撤回hook
+
+	DWORD offsetGetFriendListCall; //好友列表
+	DWORD offsetGetFriendList; //好友列表
 };

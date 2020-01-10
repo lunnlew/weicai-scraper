@@ -131,12 +131,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			msg = (WeChatHookReg*)pCopyData->lpData;
 
 			std::vector<WeChatHookReg>::iterator it;
-			for (it=wehcatHelpers.begin(); it!=wehcatHelpers.end();)
+			for (it = wehcatHelpers.begin(); it != wehcatHelpers.end();)
 			{
-				if (strcmp(Wchar_tToString(it->WeChatHelperName).c_str(), Wchar_tToString(msg->WeChatHelperName).c_str())==0)
+				if (strcmp(Wchar_tToString(it->WeChatHelperName).c_str(), Wchar_tToString(msg->WeChatHelperName).c_str()) == 0)
 					it = wehcatHelpers.erase(it);
 				else
-					++it; 
+					++it;
 			}
 
 			// 尝试注销
@@ -145,7 +145,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			o["Act"] = "UnRegisterWeChatHelper";
 			o["ProcessId"] = msg->pProcessId;
 			HttpRequest httpReq("127.0.0.1", 6877);
-			std::string res = httpReq.HttpPost("/wechatRegister", o.dump());
+			std::string res = httpReq.HttpPost("/wechatRobot", o.dump());
 			std::string body = httpReq.getBody(res);
 			int code = 201;
 			if (body != "") {
@@ -163,6 +163,32 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 
 			LogRecord(L"wehcatHelpers size:", ofs);
 			LogRecord(CharToTchar(std::to_string(wehcatHelpers.size()).c_str()), ofs);
+			break;
+		}
+		case WM_GetFriendList: {
+			LogRecord(L"收到WM_GetFriendList指令", ofs);
+			UserInfo *user = new UserInfo;
+			user = (UserInfo*)pCopyData->lpData;
+
+			json o;
+			o["Act"] = "GetFriendList";
+			o["UserId"] = stringToUTF8(LPCWSTRtoString(user->UserId));
+			HttpRequest httpReq("127.0.0.1", 6877);
+			std::string res = httpReq.HttpPost("/wechatRobot", o.dump());
+			std::string body = httpReq.getBody(res);
+			int code = 201;
+			if (body != "") {
+				auto bd = json::parse(body);
+				code = bd["code"].get<int>();
+			}
+
+			if (code == 200) {
+				LogRecord(L"提交信息成功", ofs);
+			}
+			else {
+				LogRecord(L"提交信息失败", ofs);
+			}
+
 			break;
 		}
 		default:

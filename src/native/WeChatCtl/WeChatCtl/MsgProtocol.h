@@ -23,6 +23,14 @@ struct WeChatHookReg
 	wchar_t WeChatHelperName[50];
 };
 
+struct UserInfo
+{
+	wchar_t UserId[80];
+	wchar_t UserNumber[80];
+	wchar_t UserRemark[80];
+	wchar_t UserNickName[80];
+};
+
 //====消息状态类消息表示====
 
 //====动作请求类消息表示====
@@ -34,6 +42,7 @@ struct WeChatHookReg
 #define WM_RegWeChatHelper 505 // WeChatHelper注册
 #define WM_UnRegWeChatHelper 506 // WeChatHelper注销
 #define WM_OpenWeChat 507 //多开微信
+#define WM_GetFriendList 508	// 好友列表接收
 
 
 void sendWeChatMessage(WeChatMessage *msg);

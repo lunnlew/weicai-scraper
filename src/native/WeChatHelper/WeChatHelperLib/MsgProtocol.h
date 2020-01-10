@@ -20,6 +20,10 @@ struct WeChatHookPoint
 	bool enable_WX_ReciveMsg_Hook = false;
 	CHAR WX_ReciveMsg_Hook[5] = { 0 };
 
+	//====读取好友列表HOOK====
+	bool enable_GetFriendList_Hook = false;
+	CHAR GetFriendList_Hook[5] = { 0 };
+
 };
 
 // WeChatHookReg
@@ -33,6 +37,14 @@ struct WeChatHookReg
 struct WeChatLoginInfo
 {
 	wchar_t WechatName[100];
+};
+
+struct UserInfo
+{
+	wchar_t UserId[80];
+	wchar_t UserNumber[80];
+	wchar_t UserRemark[80];
+	wchar_t UserNickName[80];
 };
 
 extern WeChatHookPoint *sWeChatHookPoint;
@@ -49,7 +61,11 @@ extern WeChatLoginInfo *sWeChatLoginInfo;
 #define WM_ReciveMsg 503	// 消息接收
 #define WM_RegWeChatHelper 505 // WeChatHelper注册
 #define WM_UnRegWeChatHelper 506 // WeChatHelper注销
+#define WM_OpenWeChat 507 //多开微信
+#define WM_GetFriendList 508	// 好友列表接收
 
+int IsLogin();
+WeChatLoginInfo * GetWechatLoginInfo();
 
 //====接收消息HOOK====
 void HOOK_ReciveMsg();
@@ -57,6 +73,9 @@ void UnHOOK_ReciveMsg();
 void RecieveWxMesage();
 void SendWxMessage();
 std::wstring GetMsgByAddress(DWORD memAddress);
-WeChatLoginInfo * GetWechatLoginInfo();
-int IsLogin();
+
 void HOOK_AntiRevoke();
+
+void HOOK_GetFriendList();
+void GetUserListInfo();
+void SendUserListInfo();

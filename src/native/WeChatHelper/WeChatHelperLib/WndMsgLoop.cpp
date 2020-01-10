@@ -166,7 +166,7 @@ void RegisterWeChatHelper() {
 	o["Login_WechatName"] = stringToUTF8(TcharToChar(sWeChatLoginInfo->WechatName));
 
 	HttpRequest httpReq("127.0.0.1", 6877);
-	std::string res = httpReq.HttpPost("/wechatRegister", o.dump());
+	std::string res = httpReq.HttpPost("/wechatRobot", o.dump());
 	std::string body = httpReq.getBody(res);
 	int code = 201;
 	if (body != "") {
@@ -250,6 +250,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			LogRecord(L" ’µΩWM_HookReciveMsg÷∏¡Ó", ofs);
 			HOOK_ReciveMsg();
 			HOOK_AntiRevoke();
+			HOOK_GetFriendList();
 			break;
 		}
 		case WM_HookAntiRevoke: {

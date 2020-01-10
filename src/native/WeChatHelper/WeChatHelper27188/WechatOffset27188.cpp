@@ -28,6 +28,9 @@ WechatOffset27188::WechatOffset27188()
 	offsetLoginInfoBlock_Device = 0x8E0;
 
 	offsetAntiRevoke = 0x3218BA;
+
+	offsetGetFriendList = 0x4418B5;
+	offsetGetFriendListCall = 0x4A4B70;
 }
 
 
