@@ -297,6 +297,7 @@ appServer.route(function(self) {
         }
       case "ReciveMsg":
         {
+          let body = req.body
           if (body.typeStr == '公众号推送') {
             // 要解析的推送内容
             let xml = body.content
