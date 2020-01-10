@@ -29,7 +29,7 @@ WechatOffset208111::WechatOffset208111()
 
 	offsetAntiRevoke = 0x34EEC2;
 
-	offsetGetFriendList = 0x5158D;
+	offsetGetFriendList = 0x518CB;
 	offsetGetFriendListCall = 0x4DCF50;
 }
 

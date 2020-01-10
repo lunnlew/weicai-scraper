@@ -398,7 +398,7 @@ __declspec(naked) void GetUserListInfo()
 }
 
 void SendUserListInfo()
-{;
+{
 	std::wstring wxid1 = GetMsgByAddress(dwFriendList_esi + 0x10);
 	//std::wstring wxName = GetMsgByAddress(dwFriendList_esi + 0x8C);
 	//std::wstring v1 = GetMsgByAddress(dwFriendList_esi + 0x58);
@@ -414,6 +414,9 @@ void SendUserListInfo()
 	//swprintf_s(user->UserNumber, L"%s", (wchar_t*)pUserNumber);
 	//swprintf_s(user->UserNickName, L"%s", (wchar_t*)pUserNick);
 	//swprintf_s(user->UserRemark, L"%s", (wchar_t*)pUserReMark);
+
+	LogRecord(user->UserId, ofs);
+	return;
 
 	//¿ØÖÆ´°¿Ú
 	HWND hWeChatRoot = FindWindow(NULL, L"WeChatCtl");
