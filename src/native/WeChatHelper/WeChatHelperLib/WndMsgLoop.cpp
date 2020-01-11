@@ -239,7 +239,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 	// 仅处理WM_COPYDATA类消息
 	if (Message == WM_COPYDATA)
 	{
-		LogRecord(L"收到WM_COPYDATA类消息", ofs);
+		LogRecord(L"收到WM_COPYDATA类消息-开始", ofs);
 		COPYDATASTRUCT *pCopyData = (COPYDATASTRUCT*)lParam;
 		LogRecord(L"switch type", ofs);
 		switch (pCopyData->dwData)
@@ -269,5 +269,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			break;
 		}
 	}
+	LogRecord(L"收到WM_COPYDATA类消息-结束", ofs);
 	return DefWindowProc(hWnd, Message, wParam, lParam);
 }

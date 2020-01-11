@@ -1,5 +1,7 @@
 #pragma once
 #include <string>
+#include <vector>
+
 
 //消息结构体
 struct WeChatMessage
@@ -50,6 +52,7 @@ struct UserInfo
 extern WeChatHookPoint *sWeChatHookPoint;
 extern WeChatHookReg *sWeChatHookReg;
 extern WeChatLoginInfo *sWeChatLoginInfo;
+extern std::vector<std::wstring> vUserList;
 
 //====消息状态类消息表示====
 
@@ -72,7 +75,6 @@ void HOOK_ReciveMsg();
 void UnHOOK_ReciveMsg();
 void RecieveWxMesage();
 void SendWxMessage();
-std::wstring GetMsgByAddress(DWORD memAddress);
 
 void HOOK_AntiRevoke();
 

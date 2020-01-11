@@ -19,6 +19,7 @@ DWORD ReciveMsg_RetAddr = 0;
 WeChatHookPoint * sWeChatHookPoint = new WeChatHookPoint();
 WeChatHookReg *sWeChatHookReg = new WeChatHookReg();
 WeChatLoginInfo *sWeChatLoginInfo = new WeChatLoginInfo();
+std::vector<std::wstring> vUserList;
 
 void HOOK_ReciveMsg() {
 	LogRecord(L"HOOK_ReciveMsg", ofs);
@@ -148,8 +149,9 @@ void SendWxMessage()
 	LPVOID pSender = *((LPVOID *)(**msgAddress + sWechatOffset->offsetReciveMessageParam_MsgSender));
 	//消息接收者
 	LPVOID pWxid = *((LPVOID *)(**msgAddress + sWechatOffset->offsetReciveMessageParam_MsgReciver));
+	DWORD tl = 0;
 	//完整的消息内容
-	std::wstring msgContent = GetMsgByAddress(**msgAddress + sWechatOffset->offsetReciveMessageParam_MsgContent);
+	std::wstring msgContent = GetMsgByAddress(**msgAddress + sWechatOffset->offsetReciveMessageParam_MsgContent, tl);
 	const wchar_t* c = msgContent.c_str();
 
 	//分配长度
@@ -264,13 +266,14 @@ void SendWxMessage()
 	SendMessage(hWeChatRoot, WM_COPYDATA, NULL, (LPARAM)&chatmsg);
 }
 
-std::wstring GetMsgByAddress(DWORD memAddress)
+std::wstring GetMsgByAddress(DWORD addr, DWORD &clen)
 {
 	std::wstring tmp;
-	DWORD msgLength = *(DWORD*)(memAddress + 4);
-	if (msgLength > 0) {
-		WCHAR* msg = new WCHAR[msgLength + 1]{ 0 };
-		wmemcpy_s(msg, msgLength + 1, (WCHAR*)(*(DWORD*)memAddress), msgLength + 1);
+	DWORD len = *(DWORD*)(addr + 4);
+	clen += len;
+	if (len > 0) {
+		WCHAR* msg = new WCHAR[len + 1]{ 0 };
+		wmemcpy_s(msg, len + 1, (WCHAR*)(*(DWORD*)addr), len + 1);
 		tmp = msg;
 		delete[]msg;
 	}
@@ -285,19 +288,19 @@ std::wstring GetMsgByAddress(DWORD memAddress)
 WeChatLoginInfo * GetWechatLoginInfo() {
 	DWORD WeChatWinBaseAddr = (DWORD)GetModuleHandle(L"WeChatWin.dll");
 	DWORD infoAddr = WeChatWinBaseAddr + sWechatOffset->offsetLoginInfoBlock;
-
-	wchar_t *wxid = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_WxId);
-	wchar_t *wxname = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_WechatName);
-	wchar_t *email = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Email);
-	wchar_t *mobile = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Mobile);
+	DWORD tl = 0;
+	wchar_t *wxid = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_WxId, tl);
+	wchar_t *wxname = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_WechatName, tl);
+	wchar_t *email = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Email, tl);
+	wchar_t *mobile = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Mobile, tl);
 	DWORD sex = *((DWORD*)(infoAddr + sWechatOffset->offsetLoginInfoBlock_Sex));
 	DWORD islogin = *((DWORD*)(infoAddr + sWechatOffset->offsetLoginInfoBlock_IsLogin));
-	wchar_t *province = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Province);
-	wchar_t *city = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_City);
-	wchar_t *signer = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Signer);
-	wchar_t *country = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Country);
-	wchar_t *avatar = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Avatar);
-	wchar_t *device = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Device);
+	wchar_t *province = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Province, tl);
+	wchar_t *city = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_City, tl);
+	wchar_t *signer = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Signer, tl);
+	wchar_t *country = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Country, tl);
+	wchar_t *avatar = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Avatar, tl);
+	wchar_t *device = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Device, tl);
 
 	wcscpy_s(sWeChatLoginInfo->WechatName, wcslen(wxname) + 1, wxname);
 
@@ -399,24 +402,46 @@ __declspec(naked) void GetUserListInfo()
 
 void SendUserListInfo()
 {
-	std::wstring wxid1 = GetMsgByAddress(dwFriendList_esi + 0x10);
+	return;
+	DWORD tl = 0;
+	std::wstring wxid1 = GetMsgByAddress(dwFriendList_esi + 0x10,tl);
 	//std::wstring wxName = GetMsgByAddress(dwFriendList_esi + 0x8C);
 	//std::wstring v1 = GetMsgByAddress(dwFriendList_esi + 0x58);
 	//std::wstring nickName = GetMsgByAddress(dwFriendList_esi + 0x8C);
 
+	std::vector<std::wstring>::iterator it;
+	DWORD ishas = 0;
+	for (it = vUserList.begin(); it != vUserList.end();)
+	{
+		if (strcmp(Wchar_tToString((wchar_t *)it->c_str()).c_str(), Wchar_tToString((wchar_t *)wxid1.c_str()).c_str()) == 0) {
+			ishas = 1;
+			break;
+		}
+			++it;
+	}
+	if (ishas == 1) {
+		return;
+	}
+	else {
+		vUserList.push_back(wxid1);
+	}
+
+	//OutputDebugString(StringToLPCWSTR(std::to_string(vUserList.size())));
+
+
+	// TODO 需要更改定义长度问题
 	UserInfo *user = new UserInfo;
 	LPVOID pUserWxid = *((LPVOID *)(dwFriendList_esi + 0x10));
 	//LPVOID pUserNumber = *((LPVOID *)(dwFriendList_esi + 0x44));
 	//LPVOID pUserNick = *((LPVOID *)(dwFriendList_esi + 0x8C));
 	//LPVOID pUserReMark = *((LPVOID *)(dwFriendList_esi + 0x78));
 
-	swprintf_s(user->UserId, L"%s", (wchar_t*)pUserWxid);
+	//swprintf_s(user->UserId, L"%s", (wchar_t*)pUserWxid);
 	//swprintf_s(user->UserNumber, L"%s", (wchar_t*)pUserNumber);
 	//swprintf_s(user->UserNickName, L"%s", (wchar_t*)pUserNick);
 	//swprintf_s(user->UserRemark, L"%s", (wchar_t*)pUserReMark);
 
-	LogRecord(user->UserId, ofs);
-	return;
+	//OutputDebugString(user->UserId);
 
 	//控制窗口
 	HWND hWeChatRoot = FindWindow(NULL, L"WeChatCtl");
@@ -430,9 +455,8 @@ void SendUserListInfo()
 	chatmsg.dwData = WM_GetFriendList;
 	chatmsg.cbData = sizeof(UserInfo);
 	chatmsg.lpData = user;
-	SendMessage(hWeChatRoot, WM_COPYDATA, NULL, (LPARAM)&chatmsg);
+	//SendMessage(hWeChatRoot, WM_COPYDATA, NULL, (LPARAM)&chatmsg);
 }
-
 
 void UnHOOK_GetFriendList()
 {

@@ -180,11 +180,12 @@ bool startWith(const std::string &str, const std::string &head) {
 	return str.compare(0, head.size(), head) == 0;
 }
 
-wchar_t* pToTchar(DWORD addr) {
+wchar_t* pToTchar(DWORD addr, DWORD &clen) {
 	char* pChar = { 0 };
 	wchar_t * retstr = { 0 };
 	//字符串的长度
 	DWORD len = *((DWORD*)(addr + 0x10));
+	clen += len;
 	//字符串的最大分配空间
 	DWORD capacity = *((DWORD*)(addr + 0x14));
 	//如果超过默认空间大小
