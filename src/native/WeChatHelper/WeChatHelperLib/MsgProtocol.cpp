@@ -331,89 +331,78 @@ void HOOK_AntiRevoke()
 }
 
 
-
-
-DWORD dwFriendListCallAdd;
-DWORD dwFriendList_esi;
-DWORD FriendListCall_RetAddr;
-void HOOK_GetFriendList() {
-	LogRecord(L"GetFriendList", ofs);
-	if (sWeChatHookPoint->enable_GetFriendList_Hook) {
-		LogRecord(L"已经存在GetFriendList_HOOK", ofs);
+DWORD GetItemInfoCall_RetAddr;
+DWORD GetItemInfoCall_Add;
+DWORD dwItemInfo_eax;
+void HOOK_GetItemInfo() {
+	LogRecord(L"HOOK_GetItemInfo", ofs);
+	if (sWeChatHookPoint->enable_GetItemInfo_Hook) {
+		LogRecord(L"已经存在HOOK_GetItemInfo", ofs);
 		return;
 	}
-	if (sWechatOffset->offsetGetFriendListCall == 0x0) {
-		LogRecord(L"未支持 GetFriendList_HOOK", ofs);
+	if (sWechatOffset->offsetInfoCall == 0x0) {
+		LogRecord(L"未支持HOOK_GetItemInfo", ofs);
 		return;
-	}
-	if (IsLogin() != 1) {
-		LogRecord(L"还未登录", ofs);
-		return;
-	}
-	else {
-		LogRecord(L"已登录", ofs);
 	}
 
 	DWORD WeChatWinBaseAddr = (DWORD)GetModuleHandle(L"WeChatWin.dll");
-	DWORD dwHookAddr = WeChatWinBaseAddr + sWechatOffset->offsetGetFriendList;
-	dwFriendListCallAdd = WeChatWinBaseAddr + sWechatOffset->offsetGetFriendListCall;
-	FriendListCall_RetAddr = dwHookAddr + 5;
+	DWORD dwHookAddr = WeChatWinBaseAddr + sWechatOffset->offsetInfoCall;
+	GetItemInfoCall_Add = WeChatWinBaseAddr + sWechatOffset->offsetInfoCallAdd;
+	GetItemInfoCall_RetAddr = dwHookAddr + 5;
 
 	//组装数据
 	BYTE bJmpCode[5] = { 0xE9 };
-	*(DWORD*)&bJmpCode[1] = (DWORD)GetUserListInfo - dwHookAddr - 5;
+	*(DWORD*)&bJmpCode[1] = (DWORD)GetItemInfo - dwHookAddr - 5;
 
 	//保存当前位置的指令,在unhook的时候使用。
-	bool r = ReadProcessMemory(GetCurrentProcess(), (LPVOID)dwHookAddr, sWeChatHookPoint->GetFriendList_Hook, 5, 0);
+	bool r = ReadProcessMemory(GetCurrentProcess(), (LPVOID)dwHookAddr, sWeChatHookPoint->GetItemInfo_Hook, 5, 0);
 
 	//覆盖指令 B9 E8CF895C //mov ecx,0x5C89CFE8
 	bool w = WriteProcessMemory(GetCurrentProcess(), (LPVOID)dwHookAddr, bJmpCode, 5, 0);
 
 	if (r&&w) {
-		sWeChatHookPoint->enable_GetFriendList_Hook = true;
-		LogRecord(L"GetFriendList_HOOK成功", ofs);
+		sWeChatHookPoint->enable_GetItemInfo_Hook = true;
+		LogRecord(L"HOOK_GetItemInfo成功", ofs);
 	}
 	else {
-		LogRecord(L"GetFriendList_HOOK失败", ofs);
+		LogRecord(L"HOOK_GetItemInfo失败", ofs);
 	}
 }
-__declspec(naked) void GetUserListInfo()
+__declspec(naked) void GetItemInfo()
 {
 	__asm
 	{
-		mov dwFriendList_esi, esi
+		// 执行被覆盖的指令
+		call GetItemInfoCall_Add;
+
+		// 保存信息地址
+		mov dwItemInfo_eax, eax
 
 		pushad
 		pushf
 	}
 
-	SendUserListInfo();
+	SendItemInfo();
 
 	__asm
 	{
 		popf
 		popad
 
-		call dwFriendListCallAdd
-
-		jmp FriendListCall_RetAddr
+		//跳回被HOOK指令的下一条指令
+		jmp GetItemInfoCall_RetAddr
 	}
 }
 
-void SendUserListInfo()
+void SendItemInfo()
 {
-	return;
 	DWORD tl = 0;
-	std::wstring wxid1 = GetMsgByAddress(dwFriendList_esi + 0x10,tl);
-	//std::wstring wxName = GetMsgByAddress(dwFriendList_esi + 0x8C);
-	//std::wstring v1 = GetMsgByAddress(dwFriendList_esi + 0x58);
-	//std::wstring nickName = GetMsgByAddress(dwFriendList_esi + 0x8C);
-
+	std::wstring wxid = GetMsgByAddress(dwItemInfo_eax + 0x10, tl);
 	std::vector<std::wstring>::iterator it;
 	DWORD ishas = 0;
 	for (it = vUserList.begin(); it != vUserList.end();)
 	{
-		if (strcmp(Wchar_tToString((wchar_t *)it->c_str()).c_str(), Wchar_tToString((wchar_t *)wxid1.c_str()).c_str()) == 0) {
+		if (strcmp(Wchar_tToString((wchar_t *)it->c_str()).c_str(), Wchar_tToString((wchar_t *)wxid.c_str()).c_str()) == 0) {
 			ishas = 1;
 			break;
 		}
@@ -423,25 +412,30 @@ void SendUserListInfo()
 		return;
 	}
 	else {
-		vUserList.push_back(wxid1);
+		vUserList.push_back(wxid);
 	}
 
-	//OutputDebugString(StringToLPCWSTR(std::to_string(vUserList.size())));
-
-
-	// TODO 需要更改定义长度问题
 	UserInfo *user = new UserInfo;
-	LPVOID pUserWxid = *((LPVOID *)(dwFriendList_esi + 0x10));
-	//LPVOID pUserNumber = *((LPVOID *)(dwFriendList_esi + 0x44));
-	//LPVOID pUserNick = *((LPVOID *)(dwFriendList_esi + 0x8C));
-	//LPVOID pUserReMark = *((LPVOID *)(dwFriendList_esi + 0x78));
+	LPVOID pUserWxid = *((LPVOID *)(dwItemInfo_eax + 0x10));
+	LPVOID pUserWxname = *((LPVOID *)(dwItemInfo_eax + 0x44));
+	LPVOID pUserWxv1 = *((LPVOID *)(dwItemInfo_eax + 0x58));
+	LPVOID pUserRealname = *((LPVOID *)(dwItemInfo_eax + 0x78));
+	LPVOID pUserNickname = *((LPVOID *)(dwItemInfo_eax + 0x8C));
+	LPVOID pUserFNickname = *((LPVOID *)(dwItemInfo_eax + 0xCC));
+	LPVOID pUserPNickname = *((LPVOID *)(dwItemInfo_eax + 0xE0));
+	LPVOID pUserFRealname = *((LPVOID *)(dwItemInfo_eax + 0xF4));
+	LPVOID pUserPRealname = *((LPVOID *)(dwItemInfo_eax + 0x108));
 
-	//swprintf_s(user->UserId, L"%s", (wchar_t*)pUserWxid);
-	//swprintf_s(user->UserNumber, L"%s", (wchar_t*)pUserNumber);
-	//swprintf_s(user->UserNickName, L"%s", (wchar_t*)pUserNick);
-	//swprintf_s(user->UserRemark, L"%s", (wchar_t*)pUserReMark);
-
-	//OutputDebugString(user->UserId);
+	swprintf_s(user->wxid, L"%s", (wchar_t*)pUserWxid);
+	swprintf_s(user->wxname, L"%s", (wchar_t*)pUserWxname);
+	swprintf_s(user->wxv1, L"%s", (wchar_t*)pUserWxv1);
+	swprintf_s(user->realname, L"%s", (wchar_t*)pUserRealname);
+	swprintf_s(user->nickname, L"%s", (wchar_t*)pUserNickname);
+	swprintf_s(user->f_nickname, L"%s", (wchar_t*)pUserFNickname);
+	swprintf_s(user->p_nickname, L"%s", (wchar_t*)pUserPNickname);
+	swprintf_s(user->f_realname, L"%s", (wchar_t*)pUserFRealname);
+	swprintf_s(user->p_realname, L"%s", (wchar_t*)pUserPRealname);
+	user->sex = 0;
 
 	//控制窗口
 	HWND hWeChatRoot = FindWindow(NULL, L"WeChatCtl");
@@ -455,15 +449,15 @@ void SendUserListInfo()
 	chatmsg.dwData = WM_GetFriendList;
 	chatmsg.cbData = sizeof(UserInfo);
 	chatmsg.lpData = user;
-	//SendMessage(hWeChatRoot, WM_COPYDATA, NULL, (LPARAM)&chatmsg);
+	SendMessage(hWeChatRoot, WM_COPYDATA, NULL, (LPARAM)&chatmsg);
 }
 
-void UnHOOK_GetFriendList()
+void UnHOOK_GetItemInfo()
 {
 	LogRecord(L"UnHOOK_GetFriendList", ofs);
 
 	LogRecord(L"GetFriendList", ofs);
-	if (!sWeChatHookPoint->enable_GetFriendList_Hook) {
+	if (!sWeChatHookPoint->enable_GetItemInfo_Hook) {
 		LogRecord(L"不存在GetFriendList_HOOK", ofs);
 		return;
 	}
@@ -483,7 +477,7 @@ void UnHOOK_GetFriendList()
 	VirtualProtect((LPVOID*)dwHookAddr, 5, PAGE_EXECUTE_READWRITE, &OldProtext);
 
 	// 还原原始指令
-	memcpy((LPVOID*)dwHookAddr, sWeChatHookPoint->GetFriendList_Hook, 5);
+	memcpy((LPVOID*)dwHookAddr, sWeChatHookPoint->GetItemInfo_Hook, 5);
 
 	// 属性还原
 	VirtualProtect((LPVOID*)dwHookAddr, 5, OldProtext, &OldProtext);

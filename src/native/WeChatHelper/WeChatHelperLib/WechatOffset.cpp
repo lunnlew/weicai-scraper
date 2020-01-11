@@ -31,6 +31,9 @@ WechatOffset::WechatOffset()
 
 	offsetGetFriendList = 0;
 	offsetGetFriendListCall = 0;
+
+	offsetInfoCall = 0;
+	offsetInfoCallAdd = 0;
 }
 
 

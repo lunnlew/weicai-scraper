@@ -22,9 +22,9 @@ struct WeChatHookPoint
 	bool enable_WX_ReciveMsg_Hook = false;
 	CHAR WX_ReciveMsg_Hook[5] = { 0 };
 
-	//====读取好友列表HOOK====
-	bool enable_GetFriendList_Hook = false;
-	CHAR GetFriendList_Hook[5] = { 0 };
+	//====读取信息HOOK====
+	bool enable_GetItemInfo_Hook = false;
+	CHAR GetItemInfo_Hook[5] = { 0 };
 
 };
 
@@ -43,10 +43,16 @@ struct WeChatLoginInfo
 
 struct UserInfo
 {
-	wchar_t UserId[80];
-	wchar_t UserNumber[80];
-	wchar_t UserRemark[80];
-	wchar_t UserNickName[80];
+	wchar_t wxid[120]; // 微信ID
+	wchar_t wxname[120]; // 微信号
+	wchar_t wxv1[120]; //v1_
+	wchar_t realname[120]; // 姓名
+	wchar_t nickname[120]; // 昵称
+	DWORD sex; // 性别
+	wchar_t f_nickname[80]; // 昵称首字母
+	wchar_t p_nickname[200]; // 昵称拼音
+	wchar_t f_realname[80]; // 姓名首字母
+	wchar_t p_realname[200]; // 姓名拼音
 };
 
 extern WeChatHookPoint *sWeChatHookPoint;
@@ -78,7 +84,7 @@ void SendWxMessage();
 
 void HOOK_AntiRevoke();
 
-void HOOK_GetFriendList();
-void GetUserListInfo();
-void SendUserListInfo();
-void UnHOOK_GetFriendList();
+void HOOK_GetItemInfo();
+void GetItemInfo();
+void SendItemInfo();
+void UnHOOK_GetItemInfo();

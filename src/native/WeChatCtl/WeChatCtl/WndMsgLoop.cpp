@@ -172,7 +172,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 
 			json o;
 			o["Act"] = "GetFriendList";
-			o["UserId"] = stringToUTF8(LPCWSTRtoString(user->UserId));
+			o["wxid"] = stringToUTF8(LPCWSTRtoString(user->wxid));
+			o["wxname"] = stringToUTF8(LPCWSTRtoString(user->wxname));
+			o["wxv1"] = stringToUTF8(LPCWSTRtoString(user->wxv1));
+			o["sex"] = std::to_string(user->sex);
+			o["realname"] = stringToUTF8(LPCWSTRtoString(user->realname));
+			o["nickname"] = stringToUTF8(LPCWSTRtoString(user->nickname));
+
 			HttpRequest httpReq("127.0.0.1", 6877);
 			std::string res = httpReq.HttpPost("/wechatRobot", o.dump());
 			std::string body = httpReq.getBody(res);

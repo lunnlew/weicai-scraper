@@ -224,7 +224,7 @@ void  CALLBACK Do_CheckWeChatCtrl(HWND   hwnd, UINT   uMsg, UINT   idEvent, DWOR
 			LogRecord(L"Do_CheckWeChatCtrl:复原WX_ReciveMsg_Hook", ofs);
 			UnHOOK_ReciveMsg();
 			LogRecord(L"Do_CheckWeChatCtrl:复原UnHOOK_GetFriendList", ofs);
-			UnHOOK_GetFriendList();
+			UnHOOK_GetItemInfo();
 		}
 
 		LogRecord(L"Do_CheckWeChatCtrl:卸载DLL", ofs);
@@ -252,7 +252,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			LogRecord(L"收到WM_HookReciveMsg指令", ofs);
 			HOOK_ReciveMsg();
 			HOOK_AntiRevoke();
-			HOOK_GetFriendList();
+			HOOK_GetItemInfo();
 			break;
 		}
 		case WM_HookAntiRevoke: {

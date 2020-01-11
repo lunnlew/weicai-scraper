@@ -32,4 +32,7 @@ public:
 
 	DWORD offsetGetFriendListCall; //好友列表
 	DWORD offsetGetFriendList; //好友列表
+
+	DWORD offsetInfoCall;//获取群聊,好友,公众号基本信息
+	DWORD offsetInfoCallAdd;//原始call地址
 };
