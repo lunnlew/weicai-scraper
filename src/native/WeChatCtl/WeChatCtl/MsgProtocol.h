@@ -36,6 +36,7 @@ struct UserInfo
 	wchar_t f_realname[80]; // 姓名首字母
 	wchar_t p_realname[200]; // 姓名拼音
 	DWORD type; // 类型
+	DWORD unflag;
 };
 
 //====消息状态类消息表示====

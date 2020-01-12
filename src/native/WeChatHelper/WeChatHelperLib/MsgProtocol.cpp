@@ -440,6 +440,7 @@ void SendItemInfo()
 	swprintf_s(user->f_realname, L"%s", (wchar_t*)pUserFRealname);
 	swprintf_s(user->p_realname, L"%s", (wchar_t*)pUserPRealname);
 	user->sex = 0;
+	user->unflag = unflag;
 	if (unflag == 0x0) {
 		// ºÃÓÑ ÈºÁÄ
 		user->type = 1;
