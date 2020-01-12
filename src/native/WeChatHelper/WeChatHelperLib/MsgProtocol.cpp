@@ -19,20 +19,26 @@ DWORD ReciveMsg_RetAddr = 0;
 WeChatHookPoint * sWeChatHookPoint = new WeChatHookPoint();
 WeChatHookReg *sWeChatHookReg = new WeChatHookReg();
 WeChatLoginInfo *sWeChatLoginInfo = new WeChatLoginInfo();
+std::vector<std::wstring> vUserList;
 
 void HOOK_ReciveMsg() {
-	
+	LogRecord(L"HOOK_ReciveMsg", ofs);
+	if (sWeChatHookPoint->enable_WX_ReciveMsg_Hook) {
+		LogRecord(L"已经存在WX_ReciveMsg_HOOK", ofs);
+		return;
+	}
+	if (sWechatOffset->offsetReciveMessage == 0x0) {
+		LogRecord(L"未支持 ReciveMsg_HOOK", ofs);
+		return;
+	}
 	if (IsLogin()!=1) {
 		LogRecord(L"还未登录", ofs);
 		return;
 	}
 	else {
 		LogRecord(L"已登录", ofs);
-		//if (sWeChatHookPoint->enable_WX_ReciveMsg_Hook) {
-		//	LogRecord(L"已经存在WX_ReciveMsg_HOOK", ofs);
-		//	return;
-		//}
 	}
+
 	DWORD WeChatWinBaseAddr = (DWORD)GetModuleHandle(L"WeChatWin.dll");
 	LogRecord(L"WeChatWin.dll 基址", ofs);
 	LogRecord(char2TCAHR(std::to_string(WeChatWinBaseAddr).c_str()), ofs);
@@ -68,12 +74,18 @@ void HOOK_ReciveMsg() {
 }
 void UnHOOK_ReciveMsg()
 {
+	LogRecord(L"UnHOOK_ReciveMsg", ofs);
+
+	if (sWechatOffset->offsetReciveMessage == 0x0) {
+		LogRecord(L"未支持 ReciveMsg_HOOK", ofs);
+		return;
+	}
+
 	if (!sWeChatHookPoint->enable_WX_ReciveMsg_Hook) {
 		LogRecord(L"WX_ReciveMsg_HOOK不存在", ofs);
 		return;
 	}
 
-	LogRecord(L"UnHOOK_ReciveMsg", ofs);
 	DWORD WeChatWinBaseAddr = (DWORD)GetModuleHandle(L"WeChatWin.dll");
 	//计算需要HOOK的地址
 	DWORD dwHookAddr = WeChatWinBaseAddr + sWechatOffset->offsetReciveMessage;
@@ -137,8 +149,9 @@ void SendWxMessage()
 	LPVOID pSender = *((LPVOID *)(**msgAddress + sWechatOffset->offsetReciveMessageParam_MsgSender));
 	//消息接收者
 	LPVOID pWxid = *((LPVOID *)(**msgAddress + sWechatOffset->offsetReciveMessageParam_MsgReciver));
+	DWORD tl = 0;
 	//完整的消息内容
-	std::wstring msgContent = GetMsgByAddress(**msgAddress + sWechatOffset->offsetReciveMessageParam_MsgContent);
+	std::wstring msgContent = GetMsgByAddress(**msgAddress + sWechatOffset->offsetReciveMessageParam_MsgContent, tl);
 	const wchar_t* c = msgContent.c_str();
 
 	//分配长度
@@ -253,13 +266,14 @@ void SendWxMessage()
 	SendMessage(hWeChatRoot, WM_COPYDATA, NULL, (LPARAM)&chatmsg);
 }
 
-std::wstring GetMsgByAddress(DWORD memAddress)
+std::wstring GetMsgByAddress(DWORD addr, DWORD &clen)
 {
 	std::wstring tmp;
-	DWORD msgLength = *(DWORD*)(memAddress + 4);
-	if (msgLength > 0) {
-		WCHAR* msg = new WCHAR[msgLength + 1]{ 0 };
-		wmemcpy_s(msg, msgLength + 1, (WCHAR*)(*(DWORD*)memAddress), msgLength + 1);
+	DWORD len = *(DWORD*)(addr + 4);
+	clen += len;
+	if (len > 0) {
+		WCHAR* msg = new WCHAR[len + 1]{ 0 };
+		wmemcpy_s(msg, len + 1, (WCHAR*)(*(DWORD*)addr), len + 1);
 		tmp = msg;
 		delete[]msg;
 	}
@@ -274,19 +288,19 @@ std::wstring GetMsgByAddress(DWORD memAddress)
 WeChatLoginInfo * GetWechatLoginInfo() {
 	DWORD WeChatWinBaseAddr = (DWORD)GetModuleHandle(L"WeChatWin.dll");
 	DWORD infoAddr = WeChatWinBaseAddr + sWechatOffset->offsetLoginInfoBlock;
-
-	wchar_t *wxid = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_WxId);
-	wchar_t *wxname = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_WechatName);
-	wchar_t *email = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Email);
-	wchar_t *mobile = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Mobile);
+	DWORD tl = 0;
+	wchar_t *wxid = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_WxId, tl);
+	wchar_t *wxname = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_WechatName, tl);
+	wchar_t *email = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Email, tl);
+	wchar_t *mobile = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Mobile, tl);
 	DWORD sex = *((DWORD*)(infoAddr + sWechatOffset->offsetLoginInfoBlock_Sex));
 	DWORD islogin = *((DWORD*)(infoAddr + sWechatOffset->offsetLoginInfoBlock_IsLogin));
-	wchar_t *province = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Province);
-	wchar_t *city = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_City);
-	wchar_t *signer = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Signer);
-	wchar_t *country = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Country);
-	wchar_t *avatar = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Avatar);
-	wchar_t *device = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Device);
+	wchar_t *province = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Province, tl);
+	wchar_t *city = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_City, tl);
+	wchar_t *signer = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Signer, tl);
+	wchar_t *country = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Country, tl);
+	wchar_t *avatar = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Avatar, tl);
+	wchar_t *device = pToTchar(infoAddr + sWechatOffset->offsetLoginInfoBlock_Device, tl);
 
 	wcscpy_s(sWeChatLoginInfo->WechatName, wcslen(wxname) + 1, wxname);
 
@@ -298,4 +312,187 @@ int IsLogin() {
 	DWORD infoAddr = WeChatWinBaseAddr + sWechatOffset->offsetLoginInfoBlock;
 	int ret = (int) * (int*)(infoAddr + sWechatOffset->offsetLoginInfoBlock_IsLogin);
 	return ret;
+}
+
+void HOOK_AntiRevoke()
+{
+	LogRecord(L"执行 HOOK_AntiRevoke", ofs);
+	if (sWechatOffset->offsetAntiRevoke == 0x0) {
+		LogRecord(L"未支持 HOOK_AntiRevoke", ofs);
+		return;
+	}
+	unsigned char fix[1] = { 0xEB };
+	DWORD dwPathcAddr = (DWORD)GetModuleHandle(L"WeChatWin.dll") + sWechatOffset->offsetAntiRevoke;
+	DWORD dwOldAttr = 0;
+
+	VirtualProtect((LPVOID)dwPathcAddr, 1, PAGE_EXECUTE_READWRITE, &dwOldAttr);
+	memcpy((LPVOID)dwPathcAddr, fix, 1);
+	VirtualProtect((LPVOID)dwPathcAddr, 5, dwOldAttr, &dwOldAttr);
+}
+
+
+DWORD GetItemInfoCall_RetAddr;
+DWORD GetItemInfoCall_Add;
+DWORD dwItemInfo_eax;
+void HOOK_GetItemInfo() {
+	LogRecord(L"HOOK_GetItemInfo", ofs);
+	if (sWeChatHookPoint->enable_GetItemInfo_Hook) {
+		LogRecord(L"已经存在HOOK_GetItemInfo", ofs);
+		return;
+	}
+	if (sWechatOffset->offsetInfoCall == 0x0) {
+		LogRecord(L"未支持HOOK_GetItemInfo", ofs);
+		return;
+	}
+
+	DWORD WeChatWinBaseAddr = (DWORD)GetModuleHandle(L"WeChatWin.dll");
+	DWORD dwHookAddr = WeChatWinBaseAddr + sWechatOffset->offsetInfoCall;
+	GetItemInfoCall_Add = WeChatWinBaseAddr + sWechatOffset->offsetInfoCallAdd;
+	GetItemInfoCall_RetAddr = dwHookAddr + 5;
+
+	//组装数据
+	BYTE bJmpCode[5] = { 0xE9 };
+	*(DWORD*)&bJmpCode[1] = (DWORD)GetItemInfo - dwHookAddr - 5;
+
+	//保存当前位置的指令,在unhook的时候使用。
+	bool r = ReadProcessMemory(GetCurrentProcess(), (LPVOID)dwHookAddr, sWeChatHookPoint->GetItemInfo_Hook, 5, 0);
+
+	//覆盖指令 B9 E8CF895C //mov ecx,0x5C89CFE8
+	bool w = WriteProcessMemory(GetCurrentProcess(), (LPVOID)dwHookAddr, bJmpCode, 5, 0);
+
+	if (r&&w) {
+		sWeChatHookPoint->enable_GetItemInfo_Hook = true;
+		LogRecord(L"HOOK_GetItemInfo成功", ofs);
+	}
+	else {
+		LogRecord(L"HOOK_GetItemInfo失败", ofs);
+	}
+}
+__declspec(naked) void GetItemInfo()
+{
+	__asm
+	{
+		// 执行被覆盖的指令
+		call GetItemInfoCall_Add;
+
+		// 保存信息地址
+		mov dwItemInfo_eax, eax
+
+		pushad
+		pushf
+	}
+
+	SendItemInfo();
+
+	__asm
+	{
+		popf
+		popad
+
+		//跳回被HOOK指令的下一条指令
+		jmp GetItemInfoCall_RetAddr
+	}
+}
+
+void SendItemInfo()
+{
+	DWORD tl = 0;
+	std::wstring wxid = GetMsgByAddress(dwItemInfo_eax + 0x10, tl);
+	std::vector<std::wstring>::iterator it;
+	DWORD ishas = 0;
+	for (it = vUserList.begin(); it != vUserList.end();)
+	{
+		if (strcmp(Wchar_tToString((wchar_t *)it->c_str()).c_str(), Wchar_tToString((wchar_t *)wxid.c_str()).c_str()) == 0) {
+			ishas = 1;
+			break;
+		}
+			++it;
+	}
+	if (ishas == 1) {
+		return;
+	}
+	else {
+		vUserList.push_back(wxid);
+	}
+
+	UserInfo *user = new UserInfo;
+	LPVOID pUserWxid = *((LPVOID *)(dwItemInfo_eax + 0x10));
+	LPVOID pUserWxname = *((LPVOID *)(dwItemInfo_eax + 0x44));
+	LPVOID pUserWxv1 = *((LPVOID *)(dwItemInfo_eax + 0x58));
+	DWORD unflag = *((DWORD*)(dwItemInfo_eax + 0x74));
+	LPVOID pUserRealname = *((LPVOID *)(dwItemInfo_eax + 0x78));
+	DWORD unflag1 = *((DWORD*)(dwItemInfo_eax + 0x78));
+
+	LPVOID pUserNickname = *((LPVOID *)(dwItemInfo_eax + 0x8C));
+	DWORD accflag = *((DWORD*)(dwItemInfo_eax + 0xC8));
+	LPVOID pUserFNickname = *((LPVOID *)(dwItemInfo_eax + 0xCC));
+	LPVOID pUserPNickname = *((LPVOID *)(dwItemInfo_eax + 0xE0));
+	LPVOID pUserFRealname = *((LPVOID *)(dwItemInfo_eax + 0xF4));
+	LPVOID pUserPRealname = *((LPVOID *)(dwItemInfo_eax + 0x108));
+
+	swprintf_s(user->wxid, L"%s", (wchar_t*)pUserWxid);
+	swprintf_s(user->wxname, L"%s", (wchar_t*)pUserWxname);
+	swprintf_s(user->wxv1, L"%s", (wchar_t*)pUserWxv1);
+	swprintf_s(user->realname, L"%s", (wchar_t*)pUserRealname);
+	swprintf_s(user->nickname, L"%s", (wchar_t*)pUserNickname);
+	swprintf_s(user->f_nickname, L"%s", (wchar_t*)pUserFNickname);
+	swprintf_s(user->p_nickname, L"%s", (wchar_t*)pUserPNickname);
+	swprintf_s(user->f_realname, L"%s", (wchar_t*)pUserFRealname);
+	swprintf_s(user->p_realname, L"%s", (wchar_t*)pUserPRealname);
+	user->sex = 0;
+	if (unflag == 0x0) {
+		// 好友 群聊
+		user->type = 1;
+	}
+	else {
+		if (unflag1 == 0x0) {
+			// 公众号
+			user->type = 2;
+		}
+	}
+
+	//控制窗口
+	HWND hWeChatRoot = FindWindow(NULL, L"WeChatCtl");
+	if (hWeChatRoot == NULL)
+	{
+		LogRecord(L"未查找到WeChatCtl窗口", ofs);
+		return;
+	}
+
+	COPYDATASTRUCT chatmsg;
+	chatmsg.dwData = WM_GetFriendList;
+	chatmsg.cbData = sizeof(UserInfo);
+	chatmsg.lpData = user;
+	SendMessage(hWeChatRoot, WM_COPYDATA, NULL, (LPARAM)&chatmsg);
+}
+
+void UnHOOK_GetItemInfo()
+{
+	LogRecord(L"UnHOOK_GetFriendList", ofs);
+
+	LogRecord(L"GetFriendList", ofs);
+	if (!sWeChatHookPoint->enable_GetItemInfo_Hook) {
+		LogRecord(L"不存在GetFriendList_HOOK", ofs);
+		return;
+	}
+	if (sWechatOffset->offsetGetFriendListCall == 0x0) {
+		LogRecord(L"未支持 GetFriendList_HOOK", ofs);
+		return;
+	}
+
+	DWORD WeChatWinBaseAddr = (DWORD)GetModuleHandle(L"WeChatWin.dll");
+	//计算需要HOOK的地址
+	DWORD dwHookAddr = WeChatWinBaseAddr + sWechatOffset->offsetGetFriendList;
+
+	// 原属性
+	DWORD OldProtext = 0;
+
+	// 更改可读写
+	VirtualProtect((LPVOID*)dwHookAddr, 5, PAGE_EXECUTE_READWRITE, &OldProtext);
+
+	// 还原原始指令
+	memcpy((LPVOID*)dwHookAddr, sWeChatHookPoint->GetItemInfo_Hook, 5);
+
+	// 属性还原
+	VirtualProtect((LPVOID*)dwHookAddr, 5, OldProtext, &OldProtext);
 }

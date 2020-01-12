@@ -27,4 +27,12 @@ public:
 	DWORD offsetLoginInfoBlock_Country; // 国家
 	DWORD offsetLoginInfoBlock_Avatar; // 头像
 	DWORD offsetLoginInfoBlock_Device; // 登陆设备
+
+	DWORD offsetAntiRevoke; //消息撤回hook
+
+	DWORD offsetGetFriendListCall; //好友列表
+	DWORD offsetGetFriendList; //好友列表
+
+	DWORD offsetInfoCall;//获取群聊,好友,公众号基本信息
+	DWORD offsetInfoCallAdd;//原始call地址
 };

@@ -275,110 +275,112 @@ appServer.route(function(self) {
 })
 
 appServer.route(function(self) {
-  self.app.all('/wechatRegister', async function(req, res) {
-    console.log('wechatRegister')
-    console.log(req.body)
-
-    setTimeout(function() {
-      weChatCtl.sendCtlMsg(req.body.WeChatHelperName, 502)
-    }, 200)
-
-    if (self.ws['wcclient']) {
-      self.ws['wcclient'].send(JSON.stringify({
-        'type': "wechatRegister",
-        'data': req.body
-      }))
-    }
-    res.send({ code: 200, msg: '', data: {} })
-  })
-})
-
-appServer.route(function(self) {
   self.app.all('/wechatRobot', async function(req, res) {
     console.log('wechatRobot')
     console.log(req.body)
-    let body = req.body
-    if (body.typeStr == '公众号推送') {
-      // 要解析的推送内容
-      let xml = body.content
-      var xml2js = require('xml2js');
-      //xml->json
-      //xml2js默认会把子子节点的值变为一个数组, explicitArray设置为false
-      var xmlParser = new xml2js.Parser({ explicitArray: false, ignoreAttrs: true })
-      //json->xml
-      var jsonBuilder = new xml2js.Builder();
-      // xml -> json
-      xmlParser.parseString(xml, async function(err, result) {
-        if (typeof result == 'undefined') {
-          return
-        }
+    let action = req.body.Act
+    switch (action) {
+      case "RegisterWeChatHelper":
+      case "UnRegisterWeChatHelper":
+        {
+          setTimeout(function() {
+            weChatCtl.sendCtlMsg(req.body.WeChatHelperName, 502)
+          }, 200)
 
-        let appmsg = result['msg']['appmsg']
-
-        // 不是公众号推送消息跳过
-
-        //5公众号推送,21应用消息
-        if (appmsg.type != 5) {
-          return
-        }
-
-        //将返回的结果再次格式化
-        //<category type="20"> 为公众号文章推送数据
-
-        let citems = appmsg['mmreader']['category']['item']
-        let items = []
-        if (!citems.hasOwnProperty('length')) {
-          items.push(citems)
-        } else {
-          items = citems
-        }
-
-        for (let item of items) {
-          let publisher = appmsg['mmreader']['publisher']
-          let rs = requestStrToMap(item.url.split('?')[1])
-          let uniacc = {
-            // 公众号名称
-            nickname: publisher.nickname,
-            // 公众号标识
-            biz: rs['__biz'],
-            // 公众号id
-            username: publisher.username,
-            // 公众号头像
-            headimg: '',
+          if (self.ws['wcclient']) {
+            self.ws['wcclient'].send(JSON.stringify({
+              'type': "wechatRegister",
+              'data': req.body
+            }))
           }
-          let list = await self.recorder.findItems({ 'is_uniacc': { $exists: true }, 'username': uniacc.username })
-
-          if (list && list.length) {
-            let luniacc = list[0]
-            await self.recorder.updateItems({ _id: luniacc._id }, Object.assign(luniacc, uniacc))
-          } else {
-            let current_time = Math.round(new Date() / 1000)
-            await self.recorder.insertItems(Object.assign({
-              'is_uniacc': true,
-              'create_time': current_time,
-              'history_duplicate_count': 0,
-              'history_end_time': current_time
-            }, uniacc))
-          }
-
-          let art = {
-            msg_sn: rs['sn'],
-            msg_biz: rs['__biz'],
-            msg_mid: rs['mid'],
-            msg_idx: rs['idx'],
-            title: item.title,
-            msg_desc: item.digest,
-            cover: item.cover,
-            content_url: item.url,
-            comment_id: '',
-            copyright_stat: 0,
-            author: item['sources']['source']['name'],
-            publish_time: item.pub_time
-          }
-          self.recorder.emitSave(art)
+          break
         }
-      });
+      case "ReciveMsg":
+        {
+          let body = req.body
+          if (body.typeStr == '公众号推送') {
+            // 要解析的推送内容
+            let xml = body.content
+            var xml2js = require('xml2js');
+            //xml->json
+            //xml2js默认会把子子节点的值变为一个数组, explicitArray设置为false
+            var xmlParser = new xml2js.Parser({ explicitArray: false, ignoreAttrs: true })
+            //json->xml
+            var jsonBuilder = new xml2js.Builder();
+            // xml -> json
+            xmlParser.parseString(xml, async function(err, result) {
+              if (typeof result == 'undefined') {
+                return
+              }
 
+              let appmsg = result['msg']['appmsg']
+
+              // 不是公众号推送消息跳过
+
+              //5公众号推送,21应用消息
+              if (appmsg.type != 5) {
+                return
+              }
+
+              //将返回的结果再次格式化
+              //<category type="20"> 为公众号文章推送数据
+
+              let citems = appmsg['mmreader']['category']['item']
+              let items = []
+              if (!citems.hasOwnProperty('length')) {
+                items.push(citems)
+              } else {
+                items = citems
+              }
+
+              for (let item of items) {
+                let publisher = appmsg['mmreader']['publisher']
+                let rs = requestStrToMap(item.url.split('?')[1])
+                let uniacc = {
+                  // 公众号名称
+                  nickname: publisher.nickname,
+                  // 公众号标识
+                  biz: rs['__biz'],
+                  // 公众号id
+                  username: publisher.username,
+                  // 公众号头像
+                  headimg: '',
+                }
+                let list = await self.recorder.findItems({ 'is_uniacc': { $exists: true }, 'username': uniacc.username })
+
+                if (list && list.length) {
+                  let luniacc = list[0]
+                  await self.recorder.updateItems({ _id: luniacc._id }, Object.assign(luniacc, uniacc))
+                } else {
+                  let current_time = Math.round(new Date() / 1000)
+                  await self.recorder.insertItems(Object.assign({
+                    'is_uniacc': true,
+                    'create_time': current_time,
+                    'history_duplicate_count': 0,
+                    'history_end_time': current_time
+                  }, uniacc))
+                }
+
+                let art = {
+                  msg_sn: rs['sn'],
+                  msg_biz: rs['__biz'],
+                  msg_mid: rs['mid'],
+                  msg_idx: rs['idx'],
+                  title: item.title,
+                  msg_desc: item.digest,
+                  cover: item.cover,
+                  content_url: item.url,
+                  comment_id: '',
+                  copyright_stat: 0,
+                  author: item['sources']['source']['name'],
+                  publish_time: item.pub_time
+                }
+                self.recorder.emitSave(art)
+              }
+            });
+          }
+          break
+        }
     }
     res.send({ code: 200, msg: '', data: {} })
   })

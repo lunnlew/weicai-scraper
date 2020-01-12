@@ -23,6 +23,21 @@ struct WeChatHookReg
 	wchar_t WeChatHelperName[50];
 };
 
+struct UserInfo
+{
+	wchar_t wxid[120]; // 微信ID
+	wchar_t wxname[120]; // 微信号
+	wchar_t wxv1[120]; //v1_
+	wchar_t realname[120]; // 姓名
+	wchar_t nickname[120]; // 昵称
+	DWORD sex; // 性别
+	wchar_t f_nickname[80]; // 昵称首字母
+	wchar_t p_nickname[200]; // 昵称拼音
+	wchar_t f_realname[80]; // 姓名首字母
+	wchar_t p_realname[200]; // 姓名拼音
+	DWORD type; // 类型
+};
+
 //====消息状态类消息表示====
 
 //====动作请求类消息表示====
@@ -34,6 +49,7 @@ struct WeChatHookReg
 #define WM_RegWeChatHelper 505 // WeChatHelper注册
 #define WM_UnRegWeChatHelper 506 // WeChatHelper注销
 #define WM_OpenWeChat 507 //多开微信
+#define WM_GetFriendList 508	// 好友列表接收
 
 
 void sendWeChatMessage(WeChatMessage *msg);

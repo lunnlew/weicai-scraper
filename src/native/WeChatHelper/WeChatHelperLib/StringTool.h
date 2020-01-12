@@ -18,4 +18,5 @@ wchar_t * UTF8ToUnicode(const char* str);
 std::string ListToString(std::vector<std::string> list);
 bool endWith(const std::string &str, const std::string &tail);
 bool startWith(const std::string &str, const std::string &head);
-wchar_t* pToTchar(DWORD addr);
+wchar_t* pToTchar(DWORD addr, DWORD &len);
+std::wstring GetMsgByAddress(DWORD addr, DWORD &len);

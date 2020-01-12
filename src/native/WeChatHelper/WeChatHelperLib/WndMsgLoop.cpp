@@ -166,7 +166,7 @@ void RegisterWeChatHelper() {
 	o["Login_WechatName"] = stringToUTF8(TcharToChar(sWeChatLoginInfo->WechatName));
 
 	HttpRequest httpReq("127.0.0.1", 6877);
-	std::string res = httpReq.HttpPost("/wechatRegister", o.dump());
+	std::string res = httpReq.HttpPost("/wechatRobot", o.dump());
 	std::string body = httpReq.getBody(res);
 	int code = 201;
 	if (body != "") {
@@ -214,17 +214,21 @@ void  CALLBACK Do_CheckWeChatCtrl(HWND   hwnd, UINT   uMsg, UINT   idEvent, DWOR
 	}
 	
 	// 失败次数过多
-	if (checkFailNum > 10) {
+	if (checkFailNum > 5) {
 		LogRecord(L"Do_CheckWeChatCtrl:检查WeChatCtl:失败次数过多,开始进行DLL卸载", ofs);
 
 		checkFailNum = 0;
+		KillTimer(hwnd, 1);
 		KillTimer(hwnd, 2);
 		LogRecord(L"Do_CheckWeChatCtrl:复原所有的HOOK点", ofs);
 		if (sWeChatHookPoint->enable_WX_ReciveMsg_Hook) {
 			LogRecord(L"Do_CheckWeChatCtrl:复原WX_ReciveMsg_Hook", ofs);
 			UnHOOK_ReciveMsg();
 		}
-
+		if (sWeChatHookPoint->enable_GetItemInfo_Hook) {
+			LogRecord(L"Do_CheckWeChatCtrl:复原UnHOOK_GetFriendList", ofs);
+			UnHOOK_GetItemInfo();
+		}
 		LogRecord(L"Do_CheckWeChatCtrl:卸载DLL", ofs);
 		HANDLE hThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)UnloadProc, NULL, 0, NULL);
 		CloseHandle(hThread);
@@ -237,7 +241,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 	// 仅处理WM_COPYDATA类消息
 	if (Message == WM_COPYDATA)
 	{
-		LogRecord(L"收到WM_COPYDATA类消息", ofs);
+		LogRecord(L"收到WM_COPYDATA类消息-开始", ofs);
 		COPYDATASTRUCT *pCopyData = (COPYDATASTRUCT*)lParam;
 		LogRecord(L"switch type", ofs);
 		switch (pCopyData->dwData)
@@ -249,6 +253,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		case WM_HookReciveMsg: {
 			LogRecord(L"收到WM_HookReciveMsg指令", ofs);
 			HOOK_ReciveMsg();
+			HOOK_AntiRevoke();
+			HOOK_GetItemInfo();
 			break;
 		}
 		case WM_HookAntiRevoke: {
@@ -265,5 +271,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			break;
 		}
 	}
+	LogRecord(L"收到WM_COPYDATA类消息-结束", ofs);
 	return DefWindowProc(hWnd, Message, wParam, lParam);
 }

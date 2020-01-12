@@ -1,5 +1,7 @@
 #pragma once
 #include <string>
+#include <vector>
+
 
 //消息结构体
 struct WeChatMessage
@@ -20,6 +22,10 @@ struct WeChatHookPoint
 	bool enable_WX_ReciveMsg_Hook = false;
 	CHAR WX_ReciveMsg_Hook[5] = { 0 };
 
+	//====读取信息HOOK====
+	bool enable_GetItemInfo_Hook = false;
+	CHAR GetItemInfo_Hook[5] = { 0 };
+
 };
 
 // WeChatHookReg
@@ -35,9 +41,25 @@ struct WeChatLoginInfo
 	wchar_t WechatName[100];
 };
 
+struct UserInfo
+{
+	wchar_t wxid[120]; // 微信ID
+	wchar_t wxname[120]; // 微信号
+	wchar_t wxv1[120]; //v1_
+	wchar_t realname[120]; // 姓名
+	wchar_t nickname[120]; // 昵称
+	DWORD sex; // 性别
+	wchar_t f_nickname[80]; // 昵称首字母
+	wchar_t p_nickname[200]; // 昵称拼音
+	wchar_t f_realname[80]; // 姓名首字母
+	wchar_t p_realname[200]; // 姓名拼音
+	DWORD type; // 类型
+};
+
 extern WeChatHookPoint *sWeChatHookPoint;
 extern WeChatHookReg *sWeChatHookReg;
 extern WeChatLoginInfo *sWeChatLoginInfo;
+extern std::vector<std::wstring> vUserList;
 
 //====消息状态类消息表示====
 
@@ -49,13 +71,21 @@ extern WeChatLoginInfo *sWeChatLoginInfo;
 #define WM_ReciveMsg 503	// 消息接收
 #define WM_RegWeChatHelper 505 // WeChatHelper注册
 #define WM_UnRegWeChatHelper 506 // WeChatHelper注销
+#define WM_OpenWeChat 507 //多开微信
+#define WM_GetFriendList 508	// 好友列表接收
 
+int IsLogin();
+WeChatLoginInfo * GetWechatLoginInfo();
 
 //====接收消息HOOK====
 void HOOK_ReciveMsg();
 void UnHOOK_ReciveMsg();
 void RecieveWxMesage();
 void SendWxMessage();
-std::wstring GetMsgByAddress(DWORD memAddress);
-WeChatLoginInfo * GetWechatLoginInfo();
-int IsLogin();
+
+void HOOK_AntiRevoke();
+
+void HOOK_GetItemInfo();
+void GetItemInfo();
+void SendItemInfo();
+void UnHOOK_GetItemInfo();

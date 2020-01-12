@@ -40,6 +40,7 @@ void sendWeChatMessage(WeChatMessage *msg)
 	o["typeStr"] = stringToUTF8(Wchar_tToString(msg->typeStr));
 	o["sourceType"] = msg->sourceType;
 	o["sourceTypeStr"] = stringToUTF8(Wchar_tToString(msg->sourceTypeStr));
+	o["Act"] = "ReciveMsg";
 	HttpRequest httpReq("127.0.0.1", 6877);
 	std::string res = httpReq.HttpPost("/wechatRobot", o.dump());
 }
