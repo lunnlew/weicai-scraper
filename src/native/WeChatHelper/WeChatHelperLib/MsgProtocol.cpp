@@ -419,8 +419,12 @@ void SendItemInfo()
 	LPVOID pUserWxid = *((LPVOID *)(dwItemInfo_eax + 0x10));
 	LPVOID pUserWxname = *((LPVOID *)(dwItemInfo_eax + 0x44));
 	LPVOID pUserWxv1 = *((LPVOID *)(dwItemInfo_eax + 0x58));
+	DWORD unflag = *((DWORD*)(dwItemInfo_eax + 0x74));
 	LPVOID pUserRealname = *((LPVOID *)(dwItemInfo_eax + 0x78));
+	DWORD unflag1 = *((DWORD*)(dwItemInfo_eax + 0x78));
+
 	LPVOID pUserNickname = *((LPVOID *)(dwItemInfo_eax + 0x8C));
+	DWORD accflag = *((DWORD*)(dwItemInfo_eax + 0xC8));
 	LPVOID pUserFNickname = *((LPVOID *)(dwItemInfo_eax + 0xCC));
 	LPVOID pUserPNickname = *((LPVOID *)(dwItemInfo_eax + 0xE0));
 	LPVOID pUserFRealname = *((LPVOID *)(dwItemInfo_eax + 0xF4));
@@ -436,6 +440,16 @@ void SendItemInfo()
 	swprintf_s(user->f_realname, L"%s", (wchar_t*)pUserFRealname);
 	swprintf_s(user->p_realname, L"%s", (wchar_t*)pUserPRealname);
 	user->sex = 0;
+	if (unflag == 0x0) {
+		// 好友 群聊
+		user->type = 1;
+	}
+	else {
+		if (unflag1 == 0x0) {
+			// 公众号
+			user->type = 2;
+		}
+	}
 
 	//控制窗口
 	HWND hWeChatRoot = FindWindow(NULL, L"WeChatCtl");

@@ -176,6 +176,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			o["wxname"] = stringToUTF8(LPCWSTRtoString(user->wxname));
 			o["wxv1"] = stringToUTF8(LPCWSTRtoString(user->wxv1));
 			o["sex"] = std::to_string(user->sex);
+			o["type"] = std::to_string(user->type);
 			o["realname"] = stringToUTF8(LPCWSTRtoString(user->realname));
 			o["nickname"] = stringToUTF8(LPCWSTRtoString(user->nickname));
 

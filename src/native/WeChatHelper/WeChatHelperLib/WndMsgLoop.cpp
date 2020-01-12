@@ -214,19 +214,21 @@ void  CALLBACK Do_CheckWeChatCtrl(HWND   hwnd, UINT   uMsg, UINT   idEvent, DWOR
 	}
 	
 	// 失败次数过多
-	if (checkFailNum > 10) {
+	if (checkFailNum > 5) {
 		LogRecord(L"Do_CheckWeChatCtrl:检查WeChatCtl:失败次数过多,开始进行DLL卸载", ofs);
 
 		checkFailNum = 0;
+		KillTimer(hwnd, 1);
 		KillTimer(hwnd, 2);
 		LogRecord(L"Do_CheckWeChatCtrl:复原所有的HOOK点", ofs);
 		if (sWeChatHookPoint->enable_WX_ReciveMsg_Hook) {
 			LogRecord(L"Do_CheckWeChatCtrl:复原WX_ReciveMsg_Hook", ofs);
 			UnHOOK_ReciveMsg();
+		}
+		if (sWeChatHookPoint->enable_GetItemInfo_Hook) {
 			LogRecord(L"Do_CheckWeChatCtrl:复原UnHOOK_GetFriendList", ofs);
 			UnHOOK_GetItemInfo();
 		}
-
 		LogRecord(L"Do_CheckWeChatCtrl:卸载DLL", ofs);
 		HANDLE hThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)UnloadProc, NULL, 0, NULL);
 		CloseHandle(hThread);
