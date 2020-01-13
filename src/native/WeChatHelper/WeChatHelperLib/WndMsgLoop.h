@@ -8,6 +8,7 @@ extern DWORD isRegisterWnd;
 extern LPCWSTR WeChatHelper;
 extern HWND hWnd;
 extern HMODULE dlModule;
+extern HANDLE hThread;
 extern DWORD checkFailNum;
 extern DWORD pProcessId;
 
