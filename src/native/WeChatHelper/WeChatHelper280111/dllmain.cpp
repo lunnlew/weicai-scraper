@@ -21,7 +21,7 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 	{
 	case DLL_PROCESS_ATTACH: {
 		pProcessId = GetCurrentProcessId();
-		CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)InitWindow, hModule, 0, NULL);
+		hThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)InitWindow, hModule, 0, NULL);
 		break;
 	}
 	case DLL_THREAD_ATTACH:

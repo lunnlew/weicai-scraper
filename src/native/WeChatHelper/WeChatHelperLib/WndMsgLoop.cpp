@@ -19,6 +19,7 @@ DWORD isRegisterWnd;
 LPCWSTR WeChatHelper;
 HWND hWnd;
 HMODULE dlModule;
+HANDLE hThread;
 DWORD checkFailNum;
 DWORD pProcessId;
 
@@ -126,6 +127,9 @@ void UnRegisterWeChatHelper() {
 	SendMessage(hWeChatRoot, WM_COPYDATA, NULL, (LPARAM)&chatmsg);
 
 	isRegisterWnd = false;
+
+	if(hThread)
+	CloseHandle(hThread);
 
 	// 未知原因，如果在此处使用sock发送的话，无法发送。
 }
@@ -270,7 +274,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			LogRecord(L"Not_Support_Msg", ofs);
 			break;
 		}
+		LogRecord(L"收到WM_COPYDATA类消息-结束", ofs);
 	}
-	LogRecord(L"收到WM_COPYDATA类消息-结束", ofs);
 	return DefWindowProc(hWnd, Message, wParam, lParam);
 }
