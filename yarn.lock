@@ -4462,7 +4462,7 @@ electron-to-chromium@^1.3.322:
 
 electron@7.1.3:
   version "7.1.3"
-  resolved "http://r.cnpmjs.org/electron/download/electron-7.1.3.tgz#9f6779846ced5b145b6303f10dcf4bf7f84e7f27"
+  resolved "https://r.cnpmjs.org/electron/download/electron-7.1.3.tgz#9f6779846ced5b145b6303f10dcf4bf7f84e7f27"
   integrity sha1-n2d5hGztWxRbYwPxDc9L9/hOfyc=
   dependencies:
     "@electron/get" "^1.0.1"
@@ -4890,9 +4890,9 @@ event-pubsub@4.3.0:
   integrity sha1-9o2Ba8KfHsAsU53FjI3UDOcss24=
 
 eventemitter3@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.npm.taobao.org/eventemitter3/download/eventemitter3-4.0.0.tgz#d65176163887ee59f386d64c82610b696a4a74eb"
-  integrity sha1-1lF2FjiH7lnzhtZMgmELaWpKdOs=
+  version "4.0.7"
+  resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-4.0.7.tgz#2de9b68f6528d5644ef5c59526a1b4a07306169f"
+  integrity sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw==
 
 events@^1.1.0:
   version "1.1.1"
@@ -5402,11 +5402,9 @@ follow-redirects@1.5.10:
     debug "=3.1.0"
 
 follow-redirects@^1.0.0:
-  version "1.9.0"
-  resolved "https://registry.npm.taobao.org/follow-redirects/download/follow-redirects-1.9.0.tgz#8d5bcdc65b7108fe1508649c79c12d732dcedb4f"
-  integrity sha1-jVvNxltxCP4VCGScecEtcy3O208=
-  dependencies:
-    debug "^3.0.0"
+  version "1.13.0"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.13.0.tgz#b42e8d93a2a7eea5ed88633676d6597bc8e384db"
+  integrity sha512-aq6gF1BEKje4a9i9+5jimNFIpq4Q1WiwBToeRK5NvZBd/TRsmW8BsJfOEGkr76TbOyPVD3OVDN910EcUNtRYEA==
 
 for-in@^1.0.2:
   version "1.0.2"
@@ -6252,9 +6250,9 @@ http-proxy-middleware@0.19.1:
     micromatch "^3.1.10"
 
 http-proxy@^1.17.0:
-  version "1.18.0"
-  resolved "https://registry.npm.taobao.org/http-proxy/download/http-proxy-1.18.0.tgz#dbe55f63e75a347db7f3d99974f2692a314a6a3a"
-  integrity sha1-2+VfY+daNH2389mZdPJpKjFKajo=
+  version "1.18.1"
+  resolved "https://registry.yarnpkg.com/http-proxy/-/http-proxy-1.18.1.tgz#401541f0534884bbf95260334e72f88ee3976549"
+  integrity sha512-7mz/721AbnJwIVbnaSv1Cz3Am0ZLT/UBwkC92VlxhXv/k/BBQfM2fXElQNC27BVGr0uwUpplYPQM9LnaBMR5NQ==
   dependencies:
     eventemitter3 "^4.0.0"
     follow-redirects "^1.0.0"
@@ -7125,7 +7123,7 @@ json-stringify-safe@^5.0.1, json-stringify-safe@~5.0.1:
 
 json2csv@^4.5.4:
   version "4.5.4"
-  resolved "http://r.cnpmjs.org/json2csv/download/json2csv-4.5.4.tgz#2b59c2869a137ec48cd2e243e0180466155f773f"
+  resolved "https://r.cnpmjs.org/json2csv/download/json2csv-4.5.4.tgz#2b59c2869a137ec48cd2e243e0180466155f773f"
   integrity sha1-K1nChpoTfsSM0uJD4BgEZhVfdz8=
   dependencies:
     commander "^2.15.1"
@@ -7165,7 +7163,7 @@ jsonfile@^4.0.0:
 
 jsonparse@^1.3.1:
   version "1.3.1"
-  resolved "http://r.cnpmjs.org/jsonparse/download/jsonparse-1.3.1.tgz#3f4dae4a91fac315f71062f8521cc239f1366280"
+  resolved "https://r.cnpmjs.org/jsonparse/download/jsonparse-1.3.1.tgz#3f4dae4a91fac315f71062f8521cc239f1366280"
   integrity sha1-P02uSpH6wxX3EGL4UhzCOfE2YoA=
 
 jsprim@^1.2.2:
@@ -7537,7 +7535,7 @@ lodash.defaultsdeep@^4.6.1:
 
 lodash.get@^4.4.2:
   version "4.4.2"
-  resolved "http://r.cnpmjs.org/lodash.get/download/lodash.get-4.4.2.tgz#2d177f652fa31e939b4438d5341499dfa3825e99"
+  resolved "https://r.cnpmjs.org/lodash.get/download/lodash.get-4.4.2.tgz#2d177f652fa31e939b4438d5341499dfa3825e99"
   integrity sha1-LRd/ZS+jHpObRDjVNBSZ36OCXpk=
 
 lodash.isarguments@^3.0.0:
@@ -10420,7 +10418,7 @@ require-main-filename@^2.0.0:
 
 requires-port@^1.0.0:
   version "1.0.0"
-  resolved "https://registry.npm.taobao.org/requires-port/download/requires-port-1.0.0.tgz#925d2601d39ac485e091cf0da5c6e694dc3dcaff"
+  resolved "https://registry.yarnpkg.com/requires-port/-/requires-port-1.0.0.tgz#925d2601d39ac485e091cf0da5c6e694dc3dcaff"
   integrity sha1-kl0mAdOaxIXgkc8NpcbmlNw9yv8=
 
 reselect@^3.0.1:
