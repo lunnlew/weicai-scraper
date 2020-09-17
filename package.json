@@ -65,7 +65,7 @@
     "less-loader": "^5.0.0",
     "long": "^4.0.0",
     "nedb": "^1.8.0",
-    "node-forge": "0.9.1",
+    "node-forge": "0.10.0",
     "node-powershell": "^4.0.0",
     "p-queue": "^6.1.1",
     "pug": "^2.0.4",
